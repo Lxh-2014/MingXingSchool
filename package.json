@@ -1,0 +1,29 @@
+{
+  "name": "mingxing-school",
+  "version": "1.0.0",
+  "description": "明星学校",
+  "private": true,
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@simonwep/pickr": "^1.10.2",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dompurify": "^3.4.17",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.3",
+    "linkifyjs": "^4.4.0",
+    "marked": "^18.2.0",
+    "multer": "^1.4.5-lts.1",
+    "nodemailer": "^10.2.1",
+    "qrcode": "^1.5.4",
+    "sql.js": "^1.14.2",
+    "ws": "^8.18.0"
+  }
+}

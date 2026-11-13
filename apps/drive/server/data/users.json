@@ -1,0 +1,68 @@
+{
+  "0": {
+    "name": "刘潇月",
+    "psw": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+    "avatar": null,
+    "color": null
+  },
+  "1": {
+    "name": "涵猫",
+    "psw": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+    "avatar": "color",
+    "color": "#4A90E2"
+  },
+  "2": {
+    "name": "星星",
+    "psw": "d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35",
+    "avatar": null,
+    "color": null
+  },
+  "5": {
+    "name": "粉粉",
+    "psw": "ef2d127de37b942baad06145e54b0c619a1f22327b2ebbcfbec78f5564afe39d",
+    "avatar": null,
+    "color": null
+  },
+  "6": {
+    "name": "螃螃",
+    "psw": "e7f6c011776e8db7cd330b54174fd76f7d0216b612387a5ffcfb81e6f0919683",
+    "avatar": null,
+    "color": null
+  },
+  "Lxh2014": {
+    "name": "刘校长",
+    "psw": "e4995dcae7fd529a763df21bca0728c34287a4eac6c7d5de12084431ba5f5832",
+    "avatar": null,
+    "color": null
+  },
+  "3-1": {
+    "name": "小小",
+    "psw": "73e23b443f02b5eeecab79cce1271719db43827879e7baf0849233db8742a240",
+    "avatar": null,
+    "color": null
+  },
+  "3-2": {
+    "name": "吸力星",
+    "psw": "cd7da774aa7f1d6b5a15c22c2d655f2cd3dc5d977367dc9e17afb5682153dd1f",
+    "avatar": null,
+    "color": null
+  },
+  "4-1": {
+    "name": "小名星星",
+    "psw": "4caaa93fb401cbc51daf1066360a3605f7836a30d999f6fff3d12d77f66e29db",
+    "avatar": null,
+    "color": null
+  },
+  "4-2": {
+    "name": "星球公主",
+    "psw": "2afafcddf683494cf329001ae8ce6a2c3f0037c0c0b84f431eb43faefead5baf",
+    "avatar": null,
+    "color": null
+  },
+  "Admin": {
+    "name": "Admin",
+    "psw": "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9",
+    "avatar": "picture",
+    "color": null
+  }
+}

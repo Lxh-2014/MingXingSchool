@@ -1,0 +1,3748 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>明星学校</title>
+<!-- 全站国际化框架：提供 window.I18n，语言包位于 /assets/locales/ -->
+<script src="/assets/i18n.js"></script>
+<!-- 标签页图标：使用平台直播应用 logo -->
+<link rel="icon" type="image/png" href="/assets/home/live.png">
+<!-- 全站唯一样式表：颜色/按钮/侧栏/顶栏/Toast 等基础样式均来自这里 -->
+<link rel="stylesheet" href="/assets/all.css?v=0.48">
+<style>
+/* =====================================================================
+   明星直播 · 样式
+   色板、圆角、多邻国按钮阴影均对齐主项目 docs/UI设计规范.md
+   ===================================================================== */
+
+/* ---------- 全局交互：禁用文本选择 ---------- */
+/* 本页未加载全站 all.css，因此单独声明；输入类控件保留可选中 */
+body { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; -webkit-touch-callout: none; }
+input, textarea, select, [contenteditable="true"] { -webkit-user-select: text; -moz-user-select: text; -ms-user-select: text; user-select: text; -webkit-touch-callout: default; }
+
+/* ---------- 设计变量：颜色、阴影、按钮色统一继承全站 all.css，本页只保留独有变量 ---------- */
+:root {
+  --seg-bg: rgba(0, 0, 0, 0.04);              /* 分段控件底槽 */
+  --seg-active-bg: #FFFFFF;                   /* 分段控件激活底色 */
+}
+
+/* ---------- 深色模式：仅覆盖本页独有变量，其余由 all.css 的 body.dark-mode 提供 ---------- */
+body.dark-mode {
+  --seg-bg: #1d1d1d;
+  --seg-active-bg: #2a2b30;
+}
+
+/* ---------- 基础重置 ---------- */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { height: 100%; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background: var(--bg-color);
+  color: var(--text-primary);
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- 整体布局：左侧固定侧栏 + 右侧主内容 ---------- */
+.main-container { display: flex; height: 100vh; overflow: hidden; }
+
+/* ---------- 侧边栏（与主项目一致：宽 72px） ---------- */
+.sidebar {
+  width: 72px;
+  flex-shrink: 0;
+  background: var(--white);
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px 0;
+  position: relative;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+.sidebar-header { width: 100%; display: flex; justify-content: center; margin-bottom: 24px; }
+.sidebar-logo {
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  overflow: hidden;
+  display: block;
+  flex-shrink: 0;
+}
+.sidebar-logo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.sidebar-nav { flex: 1; width: 100%; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+
+/* 频道按钮：只用数字 1~4，尺寸/圆角与主项目 .nav-item 完全一致 */
+.channel-btn {
+  width: 48px; height: 48px;
+  border: none; border-radius: 14px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 18px; font-weight: 800;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+}
+.channel-btn:hover { background: var(--nav-hover-bg); color: var(--primary-color); }
+.channel-btn.active { background: var(--nav-active-bg); color: var(--primary-color); }
+
+/* 侧边栏底部「直播设置」：齿轮按钮 + 频道选择浮层 */
+.sidebar-setting { width: 100%; display: flex; justify-content: center; margin-top: 8px; position: relative; }
+.settings-btn svg { width: 22px; height: 22px; }
+.host-settings-pop {
+  position: absolute;
+  left: calc(100% + 8px);
+  bottom: 0;
+  width: 168px;
+  padding: 8px;
+  background: var(--white);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  box-shadow: var(--shadow-hover);
+  z-index: 1000;
+}
+.host-settings-title { padding: 2px 10px 8px; font-size: 12px; color: var(--text-secondary); }
+.host-settings-item {
+  display: block; width: 100%;
+  padding: 9px 10px;
+  border: none; border-radius: 8px;
+  background: transparent;
+  color: var(--text-primary);
+  font-family: inherit; font-size: 14px; text-align: left;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.host-settings-item:hover { background: var(--nav-hover-bg); }
+.host-settings-item.active { background: var(--nav-active-bg); color: var(--primary-color); font-weight: 700; }
+
+/* ---------- 主内容区 ---------- */
+.main-content {
+  flex: 1; min-width: 0; min-height: 0;
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+
+/* ---------- 顶栏（高 60px，与主项目一致：无标题，仅右侧状态/工具/用户信息） ---------- */
+.topbar {
+  height: 60px; flex-shrink: 0;
+  background: var(--white);
+  border-bottom: 1px solid var(--border-color);
+  display: flex; align-items: center; justify-content: flex-end;
+  padding: 0 25px;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+.topbar-right { display: flex; align-items: center; gap: 14px; }
+
+/* 信令状态胶囊 */
+.status-pill {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 5px 11px; border-radius: 999px;
+  font-size: 12px; font-weight: 600;
+  background: var(--nav-hover-bg);
+  color: var(--primary-color);
+  white-space: nowrap;
+}
+.status-pill .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+.status-pill.is-wait { background: rgba(241, 196, 15, 0.14); color: #B7950B; }
+.status-pill.is-off { background: rgba(231, 76, 60, 0.1); color: var(--error); }
+body.dark-mode .status-pill.is-wait { color: #ffd43b; }
+
+/* 顶栏图标按钮 */
+.icon-btn {
+  width: 36px; height: 36px;
+  border: none; border-radius: 10px;
+  background: transparent;
+  color: var(--text-secondary);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.icon-btn:hover { background: var(--nav-btn-hover-bg); color: var(--text-primary); }
+.icon-btn svg { width: 18px; height: 18px; }
+
+/* ---------- 顶栏用户信息（与主项目一致：桌面仅头像，小屏头像+姓名靠左） ---------- */
+.user-info { display: flex; align-items: center; gap: 10px; position: relative; }
+.user-avatar {
+  width: 40px; height: 40px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden; flex-shrink: 0;
+  cursor: pointer;
+}
+.user-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.user-name { display: none; font-weight: 500; color: var(--text-primary); }
+
+/* ---------- 头像下拉菜单（与主项目同款 figma 结构） ---------- */
+.avatar-menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 256px;
+  padding: 18px 8px 8px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 0 0 1px #d1d9e040, 0 6px 12px -3px #25292e0a, 0 6px 18px 0 #25292e1f;
+  z-index: 1000;
+}
+.avatar-menu-head { display: flex; align-items: center; gap: 8px; padding: 0 10px; }
+.avatar-menu-avatar { width: 32px; height: 32px; border-radius: 64px; object-fit: cover; flex-shrink: 0; }
+.avatar-menu-meta { display: flex; flex-direction: column; min-width: 0; }
+.avatar-menu-name {
+  margin: 0; height: 18px; display: flex; align-items: center;
+  font-size: 15px; color: #000000; letter-spacing: 0;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.avatar-menu-id {
+  margin: 0; height: 13px; display: flex; align-items: center;
+  font-size: 11px; color: #59636e; letter-spacing: 0;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.avatar-menu-divider { margin-top: 10px; height: 1px; background: #d1d9e0b2; }
+.avatar-menu-point {
+  display: flex; align-items: center; justify-content: flex-start; gap: 8px;
+  margin-top: 9px; padding: 7px 11px 7px 7px;
+  min-width: 240px; height: 30px; border-radius: 6px;
+  color: #393f47; user-select: none;
+}
+.avatar-menu-point svg { width: 16px; height: 16px; flex-shrink: 0; }
+.avatar-menu-point-text { font-size: 13px; letter-spacing: 1; }
+.avatar-menu-row {
+  display: flex; align-items: center; justify-content: flex-start; gap: 8px;
+  margin-top: 9px; padding: 7px 11px 7px 7px;
+  min-width: 240px; height: 30px; border-radius: 6px;
+  color: #393f47; cursor: pointer; user-select: none;
+}
+.avatar-menu-row svg { width: 16px; height: 16px; flex-shrink: 0; }
+.avatar-menu-row-text { font-size: 13px; letter-spacing: 1; }
+.avatar-menu-row:hover { background: #afb8c133; }
+.avatar-menu-row:active { background: #afb8c14d; }
+body.dark-mode .avatar-menu {
+  background: #010409;
+  border: 1px solid #3d444d;
+  box-shadow: none;
+}
+body.dark-mode .avatar-menu-name { color: #f0f6fc; }
+body.dark-mode .avatar-menu-id { color: #9198a1; }
+body.dark-mode .avatar-menu-point { color: #f0f6fc; }
+body.dark-mode .avatar-menu-row { color: #f0f6fc; }
+body.dark-mode .avatar-menu-row:hover { background: #909ba31f; }
+body.dark-mode .avatar-menu-row:active { background: #909ba333; }
+
+/* ---------- 内容滚动区 ---------- */
+.content-area {
+  flex: 1; min-height: 0;
+  overflow-y: auto;
+  padding: 24px 28px 40px;
+}
+.content-area::-webkit-scrollbar { width: 8px; }
+.content-area::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
+
+/* 非安全上下文提示条 */
+.warn-banner {
+  margin-bottom: 20px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: rgba(241, 196, 15, 0.12);
+  border: 1px solid rgba(241, 196, 15, 0.35);
+  color: #8A6D00;
+  font-size: 13px; line-height: 1.65;
+}
+body.dark-mode .warn-banner { color: #ffd43b; }
+
+/* ---------- 卡片网格 ---------- */
+.layout-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(300px, 0.85fr);
+  gap: 20px;
+  align-items: start;
+}
+.col-left, .col-right { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+
+.card {
+  background: var(--white);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: var(--shadow);
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+.card-head {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 12px; margin-bottom: 16px;
+}
+.card-title { font-size: 15px; font-weight: 700; color: var(--text-title); }
+.card-sub { margin-top: 4px; font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+
+/* 小徽标 */
+.badge {
+  flex-shrink: 0;
+  font-size: 11px; font-weight: 600;
+  padding: 3px 9px; border-radius: 999px;
+  background: var(--nav-btn-hover-bg);
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+/* ---------- 摄像头预览 ---------- */
+.video-box {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #0f1220;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+}
+/* 主播本地预览：等比完整显示（contain），不裁剪画面 */
+#camera-preview { width: 100%; height: 100%; object-fit: contain; background: #0f1220; }
+.video-placeholder {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 13px;
+  text-align: center;
+  padding: 16px;
+  pointer-events: none;
+}
+
+/* 全屏按钮（主播预览与观众观看共用） */
+.fs-btn {
+  position: absolute;
+  right: 12px; bottom: 12px;
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  border: none; border-radius: 10px;
+  background: rgba(0, 0, 0, 0.5);
+  color: #FFFFFF;
+  cursor: pointer;
+  opacity: 0.75;
+  z-index: 6;
+  transition: opacity 0.15s ease, background 0.15s ease;
+}
+.fs-btn:hover { opacity: 1; background: rgba(0, 0, 0, 0.72); }
+.fs-btn svg { width: 18px; height: 18px; }
+
+/* 全屏时铺满屏幕，并保持视频原始 16:9，不裁切不拉伸 */
+.video-box:fullscreen,
+.viewer-video-box:fullscreen {
+  border-radius: 0;
+  background: #05060a;
+}
+.video-box:fullscreen #camera-preview,
+.viewer-video-box:fullscreen #viewer-video { object-fit: contain; }
+
+/* ---------- 表单控件 ---------- */
+.field { margin-top: 16px; }
+.field-label { display: block; font-size: 13px; color: var(--text-secondary); margin-bottom: 7px; }
+.select {
+  width: 100%; height: 42px;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  background: var(--white);
+  color: var(--text-primary);
+  padding: 0 12px;
+  font-family: inherit;
+  font-size: 13.5px;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.select:focus { border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.15); }
+
+/* ---------- 分段音源切换 ---------- */
+.segmented {
+  display: flex; gap: 4px;
+  background: var(--seg-bg);
+  border-radius: 12px; padding: 4px;
+  margin: 16px 0 14px;
+}
+.seg-btn {
+  flex: 1; height: 38px;
+  border: none; border-radius: 9px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: inherit; font-size: 13.5px; font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.seg-btn:hover { color: var(--text-primary); }
+.seg-btn.active { background: var(--seg-active-bg); color: var(--primary-color); box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12); }
+.seg-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+/* ---------- 监听按钮行 ---------- */
+.monitor-row { display: flex; align-items: center; gap: 12px; }
+.monitor-state { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+
+/* ---------- 多邻国风格按钮 ---------- */
+.btn {
+  --btn-bg: var(--btn_col5_bg);
+  --btn-shadow: var(--btn_col5_shadow);
+  --btn-hover-bg: var(--btn_col5_hover_bg);
+  --btn-hover-shadow: var(--btn_col5_hover_shadow);
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  min-height: 40px;
+  padding: 10px 18px;
+  border: none; border-radius: 10px;
+  background: var(--btn-bg);
+  box-shadow: 0 4px 0 var(--btn-shadow);
+  color: #FFFFFF;
+  font-family: inherit; font-size: 14px; font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+.btn:hover { background: var(--btn-hover-bg); box-shadow: 0 4px 0 var(--btn-hover-shadow); }
+.btn:active { transform: translateY(4px); box-shadow: 0 0 0 var(--btn-shadow); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.btn svg { width: 16px; height: 16px; }
+.btn-column2 { --btn-bg: var(--btn_col2_bg); --btn-shadow: var(--btn_col2_shadow); --btn-hover-bg: var(--btn_col2_hover_bg); --btn-hover-shadow: var(--btn_col2_hover_shadow); }
+.btn-column3 { --btn-bg: var(--btn_col3_bg); --btn-shadow: var(--btn_col3_shadow); --btn-hover-bg: var(--btn_col3_hover_bg); --btn-hover-shadow: var(--btn_col3_hover_shadow); }
+.btn-column4 { --btn-bg: var(--btn_col4_bg); --btn-shadow: var(--btn_col4_shadow); --btn-hover-bg: var(--btn_col4_hover_bg); --btn-hover-shadow: var(--btn_col4_hover_shadow); }
+.btn-column5 { --btn-bg: var(--btn_col5_bg); --btn-shadow: var(--btn_col5_shadow); --btn-hover-bg: var(--btn_col5_hover_bg); --btn-hover-shadow: var(--btn_col5_hover_shadow); color: #3C3C3C; }
+.btn-sm { min-height: 34px; padding: 7px 12px; font-size: 12.5px; border-radius: 9px; box-shadow: 0 3px 0 var(--btn-shadow); }
+.btn-sm:hover { box-shadow: 0 3px 0 var(--btn-hover-shadow); }
+.btn-sm:active { transform: translateY(3px); box-shadow: 0 0 0 var(--btn-shadow); }
+.btn-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+
+/* ---------- 配对二维码 ---------- */
+.qr-wrap { display: flex; flex-direction: column; align-items: center; gap: 12px; margin: 2px 0 14px; }
+.qr-img-box {
+  width: 190px; height: 190px;
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  background: #FFFFFF;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+#qr-img { width: 100%; height: 100%; object-fit: contain; padding: 8px; }
+.qr-empty { font-size: 12px; color: var(--text-secondary); text-align: center; padding: 12px; line-height: 1.6; }
+.pair-status { display: flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 600; color: var(--text-secondary); }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--text-secondary); flex-shrink: 0; }
+.dot.on { background: var(--success); box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.15); }
+.dot.wait { background: var(--warning); box-shadow: 0 0 0 3px rgba(241, 196, 15, 0.18); }
+.dot.err { background: var(--error); box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.15); }
+
+.token-line {
+  font-family: ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace;
+  font-size: 12px;
+  color: var(--text-secondary);
+  background: var(--nav-btn-hover-bg);
+  padding: 9px 11px;
+  border-radius: 8px;
+  word-break: break-all;
+  line-height: 1.5;
+  user-select: all;
+}
+
+/* ---------- 状态清单 ---------- */
+.state-list { list-style: none; }
+.state-list li {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px dashed var(--border-color);
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+.state-list li:last-child { border-bottom: none; }
+.state-list strong { color: var(--text-primary); font-weight: 600; text-align: right; }
+
+.hint { margin-top: 12px; font-size: 12px; line-height: 1.7; color: var(--text-secondary); }
+
+/* ---------- Toast 提示（右上角滑入） ---------- */
+.toast-container {
+  position: fixed; top: 20px; right: 20px;
+  display: flex; flex-direction: column; gap: 10px;
+  z-index: 9999;
+  pointer-events: none;
+}
+.toast {
+  min-width: 200px; max-width: 320px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  background: var(--white);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-left: 4px solid var(--info);
+  color: var(--text-primary);
+  font-size: 13px; line-height: 1.5;
+  opacity: 0;
+  transform: translateX(100%);
+  transition: all 0.3s ease;
+}
+.toast.show { opacity: 1; transform: translateX(0); }
+.toast.is-success { border-left-color: var(--success); }
+.toast.is-error { border-left-color: var(--error); }
+.toast.is-warning { border-left-color: var(--warning); }
+
+/* ---------- 手机端视图（同一页面的 role=app 模式） ---------- */
+.app-view {
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px;
+  background: var(--bg-color);
+}
+.app-card {
+  width: 100%; max-width: 380px;
+  background: var(--white);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 28px 22px;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+.app-logo { width: 56px; height: 56px; margin: 0 auto 16px; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 10px rgba(11, 110, 246, 0.28); }
+.app-logo svg { width: 100%; height: 100%; display: block; }
+.app-card h1 { font-size: 18px; font-weight: 700; color: var(--text-title); margin-bottom: 6px; }
+.app-channel { font-size: 13px; color: var(--text-secondary); margin-bottom: 18px; }
+.app-state {
+  min-height: 52px;
+  padding: 14px;
+  border-radius: 12px;
+  background: var(--nav-hover-bg);
+  color: var(--primary-color);
+  font-size: 13px; font-weight: 600; line-height: 1.6;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 18px;
+}
+.app-state.is-error { background: rgba(231, 76, 60, 0.1); color: var(--error); }
+.app-state.is-ok { background: rgba(39, 174, 96, 0.1); color: var(--success); }
+.btn-block { width: 100%; margin-bottom: 10px; }
+
+/* ---------- 观看端（非管理员进入的大画面直播） ---------- */
+.viewer-stage {
+  flex: 1; min-width: 0; min-height: 0;
+  display: flex; flex-direction: column;
+  gap: 14px;
+  padding: 20px 24px 24px;
+}
+.viewer-video-box {
+  position: relative;
+  flex: 1; min-height: 0;
+  width: 100%;
+  background: #05060a;
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: var(--shadow);
+}
+#viewer-video { width: 100%; height: 100%; object-fit: contain; background: #05060a; display: block; }
+.viewer-placeholder {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 10px;
+  padding: 24px;
+  color: rgba(255, 255, 255, 0.66);
+  font-size: 14px; line-height: 1.7;
+  text-align: center;
+  pointer-events: none;
+}
+.viewer-placeholder strong { font-size: 16px; color: rgba(255, 255, 255, 0.9); font-weight: 700; }
+.viewer-cover {
+  position: absolute; inset: 0;
+  border: none;
+  background: rgba(0, 0, 0, 0.6);
+  color: #FFFFFF;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  font-family: inherit; font-size: 15px; font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+.viewer-cover:hover { background: rgba(0, 0, 0, 0.68); }
+.viewer-cover svg { width: 28px; height: 28px; }
+.viewer-footer {
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; flex-wrap: wrap;
+  font-size: 12.5px; color: var(--text-secondary);
+}
+.viewer-footer .viewer-tip { line-height: 1.6; }
+
+/* ---------- 桌面客户端嵌入模式（embed=1）：隐藏网页自带侧栏与顶栏，由桌面外壳提供导航 ---------- */
+body.lv-embed .sidebar,
+body.lv-embed .topbar { display: none !important; }
+body.lv-embed .main-container { height: 100vh; }
+body.lv-embed .content-area { padding: 18px 20px 28px; }
+body.lv-embed .viewer-stage { padding: 14px 16px 16px; }
+
+/* ---------- 响应式 ---------- */
+@media (max-width: 1024px) {
+  .layout-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 768px) {
+  .sidebar { width: 60px; padding: 12px 0; }
+  .sidebar-logo { width: 36px; height: 36px; }
+  .channel-btn { width: 40px; height: 40px; font-size: 16px; }
+  .topbar { padding: 0 15px; justify-content: flex-start; }
+  .topbar-right { flex-direction: row-reverse; }
+  .user-name { display: inline; }
+  /* 小屏：头像菜单改为顶栏下方全宽下拉抽屉 */
+  .avatar-menu {
+    position: fixed;
+    top: 60px;
+    left: 0; right: 0;
+    width: auto;
+    padding: 14px 16px 12px;
+    border-radius: 0 0 12px 12px;
+    border-top: none;
+    box-shadow: 0 12px 24px -8px #25292e2e, 0 4px 10px 0 #25292e1a;
+    animation: avatarMenuDrop 0.18s ease-out;
+  }
+  .avatar-menu-row { min-width: 0; width: 100%; height: 34px; }
+  body.dark-mode .avatar-menu { border-top: none; }
+  .content-area { padding: 15px; }
+  .card { padding: 16px; }
+  .monitor-row { flex-wrap: wrap; }
+  .viewer-stage { padding: 12px; }
+}
+/* 头像菜单下滑动画（小屏抽屉） */
+@keyframes avatarMenuDrop {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+/* 手机扫码采集页（.app-mode）不需要平台右侧悬浮工具条，避免小屏遮挡操作区 */
+body.app-mode .cui-dock { display: none; }
+/* 桌面客户端嵌入模式（.lv-embed）的顶部按钮由原生外壳提供，隐藏网页悬浮工具条 */
+body.lv-embed .cui-dock { display: none; }
+</style>
+</head>
+<body class="lv-app">
+<div class="toast-container" id="toast-container"></div>
+
+<!-- ==================================================================
+     主播端：左侧 4 个频道 + 摄像头预览 + 音源监听 + 手机配对
+     ================================================================== -->
+<div class="main-container" id="host-view">
+
+  <!-- 侧边栏：平台 logo + 频道 1~4 -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo" title="明星直播" data-i18n-title="live.logo">
+        <img src="/assets/home/live.png" alt="明星直播" data-i18n-alt="live.logo">
+      </div>
+    </div>
+    <nav class="sidebar-nav" id="channel-nav" aria-label="频道选择" data-i18n-aria-label="live.channel.navAria">
+      <button class="channel-btn active" type="button" data-channel="ch1" title="频道 1" data-i18n-title="live.channel.ch1">1</button>
+      <button class="channel-btn" type="button" data-channel="ch2" title="频道 2" data-i18n-title="live.channel.ch2">2</button>
+      <button class="channel-btn" type="button" data-channel="ch3" title="频道 3" data-i18n-title="live.channel.ch3">3</button>
+      <button class="channel-btn" type="button" data-channel="ch4" title="频道 4" data-i18n-title="live.channel.ch4">4</button>
+    </nav>
+
+    <!-- 侧边栏底部：直播设置（选择开播频道） -->
+    <div class="sidebar-setting">
+      <button class="channel-btn settings-btn" type="button" id="btn-host-settings" title="直播设置" aria-label="直播设置" data-i18n-title="live.host.settings" data-i18n-aria-label="live.host.settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+      </button>
+      <div class="host-settings-pop" id="host-settings-pop" hidden>
+        <p class="host-settings-title" data-i18n="live.channel.selectLabel">选择直播频道</p>
+        <button type="button" class="host-settings-item active" data-channel="ch1" data-i18n="live.channel.ch1">频道 1</button>
+        <button type="button" class="host-settings-item" data-channel="ch2" data-i18n="live.channel.ch2">频道 2</button>
+        <button type="button" class="host-settings-item" data-channel="ch3" data-i18n="live.channel.ch3">频道 3</button>
+        <button type="button" class="host-settings-item" data-channel="ch4" data-i18n="live.channel.ch4">频道 4</button>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main-content">
+    <!-- 顶栏：无标题、无工具按钮（与主项目一致），右侧仅用户头像 -->
+    <header class="topbar">
+      <div class="topbar-right">
+        <div class="user-info" id="host-user-info"></div>
+      </div>
+    </header>
+
+    <main class="content-area">
+      <!-- 非 HTTPS / 非 localhost 时的麦克风权限提示 -->
+      <div class="warn-banner" id="secure-warn" hidden data-i18n="live.host.secureWarn">
+        当前页面不是安全上下文（HTTPS 或 localhost），浏览器会拒绝摄像头 / 麦克风访问。请在本机用 http://localhost 打开主播端；手机浏览器如需直接采集麦克风，也需要 HTTPS。
+      </div>
+
+      <div class="layout-grid">
+        <div class="col-left">
+          <!-- 摄像头预览 -->
+          <section class="card">
+            <div class="card-head">
+              <div>
+                <h2 class="card-title" data-i18n="live.host.camera.title">摄像头预览</h2>
+                <p class="card-sub" data-i18n="live.host.camera.sub">仅本机预览，音频直播不依赖摄像头</p>
+              </div>
+              <span class="badge" id="camera-badge" data-i18n="live.host.camera.badgeOff">未启用</span>
+            </div>
+            <div class="video-box" id="preview-box">
+              <video id="camera-preview" autoplay playsinline muted></video>
+              <div class="video-placeholder" id="video-placeholder" data-i18n="live.host.camera.placeholder">点击「刷新设备」授权后显示本机摄像头画面</div>
+              <button class="fs-btn" type="button" id="btn-preview-fullscreen" title="全屏预览" aria-label="全屏预览" data-i18n-title="live.host.camera.fullscreen" data-i18n-aria-label="live.host.camera.fullscreen">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+                </svg>
+              </button>
+            </div>
+            <div class="field">
+              <label class="field-label" for="camera-select" data-i18n="live.host.camera.label">本机摄像头</label>
+              <select class="select" id="camera-select">
+                <option value="" data-i18n="live.devices.none">未获取设备列表</option>
+              </select>
+            </div>
+          </section>
+
+          <!-- 音源与监听 -->
+          <section class="card">
+            <div class="card-head">
+              <div>
+                <h2 class="card-title" data-i18n="live.host.audio.title">音源与监听</h2>
+                <p class="card-sub" data-i18n="live.host.audio.sub">本机麦克风、手机麦克风、电脑系统声音三选一，通过电脑扬声器监听</p>
+              </div>
+              <button class="btn btn-column5 btn-sm" type="button" id="btn-refresh-devices" data-i18n="live.host.audio.refreshDevices">刷新设备</button>
+            </div>
+
+            <div class="field" style="margin-top:0;">
+              <label class="field-label" for="mic-select" data-i18n="live.host.audio.micLabel">本机麦克风</label>
+              <select class="select" id="mic-select">
+                <option value="" data-i18n="live.devices.none">未获取设备列表</option>
+              </select>
+            </div>
+
+            <div class="segmented" id="source-switch" role="group" aria-label="音源选择" data-i18n-aria-label="live.channel.sourceAria">
+              <button class="seg-btn active" type="button" data-source="local" data-i18n="live.host.source.local">本机麦克风</button>
+              <button class="seg-btn" type="button" data-source="app" id="seg-app" disabled data-i18n="live.host.source.app">手机麦克风</button>
+              <button class="seg-btn" type="button" data-source="computer" id="seg-computer" data-i18n="live.host.source.computer">电脑音频</button>
+            </div>
+
+            <p class="hint" id="computer-hint" hidden data-i18n-html="live.host.audio.computerHint">
+              选择「电脑音频」后会弹出共享窗口：Chrome 共享「整个屏幕」时可勾选「分享系统音频」；Edge / Firefox 请选择「标签页」并勾选「分享标签页音频」（这两个浏览器不支持整个屏幕的系统声音）。共享窗口可最小化但不能关闭。<br>
+              如果浏览器始终没有音频选项：可在 Windows「声音设置 → 录音设备」中启用「立体声混音（Stereo Mix）」，然后用「本机麦克风」选择该设备来采集系统声音。
+            </p>
+
+            <div class="monitor-row">
+              <button class="btn btn-column2" type="button" id="btn-monitor" data-i18n="live.host.audio.monitorOn">开启扬声器监听</button>
+              <span class="monitor-state" id="monitor-state" data-i18n="live.host.audio.monitorStateOff">监听未开启</span>
+            </div>
+
+            <p class="hint" data-i18n="live.host.audio.hint">
+              浏览器要求用户点击后才能播放声音，所以监听必须手动开启。监听本机麦克风时请佩戴耳机，否则可能产生啸叫。
+            </p>
+          </section>
+        </div>
+
+        <div class="col-right">
+          <!-- 手机配对 -->
+          <section class="card">
+            <div class="card-head">
+              <div>
+                <h2 class="card-title" data-i18n="live.host.pair.title">手机麦克风配对</h2>
+                <p class="card-sub" data-i18n="live.host.pair.sub">扫码后手机音频通过 WebRTC 直连本页</p>
+              </div>
+            </div>
+
+            <div class="qr-wrap">
+              <div class="qr-img-box">
+                <img id="qr-img" alt="手机配对二维码" hidden data-i18n-alt="live.host.pair.qrAlt">
+                <div class="qr-empty" id="qr-empty" data-i18n="live.host.pair.qrPending">正在生成配对二维码…</div>
+              </div>
+              <div class="pair-status">
+                <i class="dot wait" id="pair-dot"></i>
+                <span id="pair-status-text" data-i18n="live.host.pair.waitScan">等待扫码配对</span>
+              </div>
+            </div>
+
+            <div class="token-line" id="token-line" data-i18n="live.host.pair.tokenDash">配对令牌：—</div>
+
+            <div class="btn-row">
+              <button class="btn btn-column5" type="button" id="btn-refresh-token" disabled data-i18n="live.host.pair.refresh">重新生成</button>
+              <button class="btn btn-column5" type="button" id="btn-copy-link" disabled data-i18n="live.host.pair.copyLink">复制链接</button>
+              <button class="btn btn-column4" type="button" id="btn-kick" hidden data-i18n="live.host.pair.kick">断开手机</button>
+            </div>
+
+            <p class="hint" id="pair-hint" data-i18n="live.host.pair.hint">
+              手机与电脑需在同一局域网。扫码地址会自动替换为局域网 IP；手机浏览器采集麦克风需要 HTTPS 环境，原生 APP 不受此限制。
+            </p>
+          </section>
+
+          <!-- 观众观看：普通用户可进入观看页，主播音画实时广播 -->
+          <section class="card">
+            <div class="card-head">
+              <div>
+                <h2 class="card-title" data-i18n="live.host.viewer.title">观众观看</h2>
+                <p class="card-sub" data-i18n="live.host.viewer.sub">普通用户登录后凭链接进入观看页</p>
+              </div>
+              <span class="badge" id="viewer-badge">0 人</span>
+            </div>
+
+            <div class="token-line" id="viewer-url" data-i18n="live.host.viewer.linkPending">观看链接：生成中…</div>
+
+            <div class="btn-row">
+              <button class="btn btn-column2" type="button" id="btn-copy-viewer" disabled data-i18n="live.host.viewer.copy">复制观看链接</button>
+            </div>
+
+            <p class="hint" data-i18n="live.host.viewer.hint">
+              摄像头画面与当前音源会实时同步给所有观众。观众端浏览器同样需要点击一次播放按钮才能出声。
+            </p>
+          </section>
+
+          <!-- 连接状态 -->
+          <section class="card">
+            <div class="card-head">
+              <h2 class="card-title" data-i18n="live.host.conn.title">连接状态</h2>
+            </div>
+            <ul class="state-list">
+              <li><span data-i18n="live.host.conn.channel">频道</span><strong id="state-channel" data-i18n="live.channel.ch1">频道 1</strong></li>
+              <li><span data-i18n="live.host.conn.signal">信令服务器</span><strong id="state-signal" data-i18n="live.host.conn.connecting">连接中</strong></li>
+              <li><span data-i18n="live.host.conn.app">手机端</span><strong id="state-app" data-i18n="live.host.conn.disconnected">未连接</strong></li>
+              <li><span data-i18n="live.host.conn.peer">P2P 音频</span><strong id="state-peer" data-i18n="live.host.conn.peerDown">未建立</strong></li>
+              <li><span data-i18n="live.host.conn.source">当前音源</span><strong id="state-source" data-i18n="live.host.source.local">本机麦克风</strong></li>
+              <li><span data-i18n="live.host.conn.viewers">观看人数</span><strong id="state-viewers">0 人</strong></li>
+            </ul>
+          </section>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- ==================================================================
+     手机端：同一个 index.html，通过 ?role=app&ch=ch1&token=xxx 打开
+     ================================================================== -->
+<div class="app-view" id="app-view" hidden>
+  <div class="app-card">
+    <div class="app-logo">
+      <svg viewBox="0 0 64 64" role="img" aria-label="明星直播 Logo" data-i18n-aria-label="live.app.logoAlt">
+        <rect width="64" height="64" rx="15" fill="#0B6EF6"></rect>
+        <g fill="none" stroke="#A9CBFF" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M23.5 23.5 19 15.5"></path>
+          <path d="M40.5 23.5 45 15.5"></path>
+          <rect x="13" y="24" width="38" height="26" rx="8"></rect>
+        </g>
+        <g fill="#A9CBFF">
+          <rect x="25" y="33" width="4" height="9" rx="2"></rect>
+          <rect x="35" y="33" width="4" height="9" rx="2"></rect>
+        </g>
+      </svg>
+    </div>
+    <h1 data-i18n="live.app.title">手机麦克风</h1>
+    <p class="app-channel" id="app-channel" data-i18n="live.app.channelPending">正在读取配对信息…</p>
+    <div class="app-state" id="app-state" data-i18n="live.app.waitStart">等待开始</div>
+    <button class="btn btn-column2 btn-block" type="button" id="app-start" data-i18n="live.app.start">开始采集并连接</button>
+    <button class="btn btn-column5 btn-block" type="button" id="app-stop" hidden data-i18n="live.app.stop">停止并断开</button>
+    <p class="hint" data-i18n="live.app.hint">
+      开始后手机会把麦克风音频以 WebRTC P2P 直连主播电脑，服务端只转发信令。请保持页面在前台。
+    </p>
+  </div>
+</div>
+
+<!-- ==================================================================
+     观看端：同一个 index.html，通过 /live/channel/1~4 打开
+     任意已登录用户都可观看（非管理员也可）
+     ================================================================== -->
+<div class="main-container" id="viewer-view" hidden>
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo" title="明星直播" data-i18n-title="live.logo">
+        <img src="/assets/home/live.png" alt="明星直播" data-i18n-alt="live.logo">
+      </div>
+    </div>
+    <nav class="sidebar-nav" id="viewer-channel-nav" aria-label="频道选择" data-i18n-aria-label="live.channel.navAria">
+      <button class="channel-btn active" type="button" data-channel="ch1" title="频道 1" data-i18n-title="live.channel.ch1">1</button>
+      <button class="channel-btn" type="button" data-channel="ch2" title="频道 2" data-i18n-title="live.channel.ch2">2</button>
+      <button class="channel-btn" type="button" data-channel="ch3" title="频道 3" data-i18n-title="live.channel.ch3">3</button>
+      <button class="channel-btn" type="button" data-channel="ch4" title="频道 4" data-i18n-title="live.channel.ch4">4</button>
+    </nav>
+
+    <!-- 侧边栏底部：设置（管理员点击进入直播页，与主播端侧边栏保持一致） -->
+    <div class="sidebar-setting" data-admin-only hidden>
+      <button class="channel-btn settings-btn" type="button" id="btn-viewer-settings" title="设置（进入直播页）" aria-label="设置" data-i18n-title="live.viewer.settingsTitle" data-i18n-aria-label="live.viewer.settingsAria">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+      </button>
+    </div>
+  </aside>
+
+  <div class="main-content">
+    <header class="topbar">
+      <div class="topbar-right">
+        <div class="user-info" id="viewer-user-info"></div>
+      </div>
+    </header>
+
+    <main class="viewer-stage">
+      <div class="viewer-video-box" id="viewer-box">
+        <video id="viewer-video" playsinline autoplay></video>
+        <div class="viewer-placeholder" id="viewer-placeholder">
+          <strong id="viewer-placeholder-title" data-i18n="live.viewer.waitTitle">等待直播画面</strong>
+          <span id="viewer-placeholder-text" data-i18n="live.viewer.connectingText">正在连接频道…</span>
+        </div>
+        <button class="viewer-cover" type="button" id="viewer-cover" hidden>
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M8 5v14l11-7z"></path>
+          </svg>
+          <span data-i18n="live.viewer.playBtn">点击播放</span>
+        </button>
+        <button class="fs-btn" type="button" id="btn-viewer-fullscreen" title="全屏观看" aria-label="全屏观看" data-i18n-title="live.viewer.fullscreen" data-i18n-aria-label="live.viewer.fullscreen">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+          </svg>
+        </button>
+      </div>
+
+      <div class="viewer-footer">
+        <span class="viewer-tip" id="viewer-tip" data-i18n="live.viewer.tip">主播会在本频道推送摄像头画面与麦克风声音</span>
+        <span id="viewer-meta" data-i18n="live.channel.ch1">频道 1</span>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- 隐藏的音频播放元素：本机麦克风与手机端远程音频分别使用一个 -->
+<audio id="local-audio" preload="auto" playsinline></audio>
+<audio id="remote-audio" preload="auto" playsinline></audio>
+<audio id="computer-audio" preload="auto" playsinline></audio>
+
+<script>
+/* =====================================================================
+   明星直播 · 前端逻辑
+   - 主播端：频道切换、设备选择、本机/手机/电脑音源切换、扬声器监听、配对二维码，
+             并把音视频实时推送给所有观看者
+   - 观看端：任意已登录用户（含非管理员）通过 /channel/1~4 进入大画面观看
+   - 手机端：采集麦克风，通过 WebSocket 信令建立 WebRTC P2P，把音频发给主播
+   - 服务端只转发 SDP / ICE，不参与媒体传输
+   ===================================================================== */
+(function () {
+  'use strict';
+
+  /* ---------------- 国际化工具 ---------------- */
+
+  /**
+   * 取直播子应用的多语言文案
+   * @param {string} key 语言包键（如 live.host.camera.title）
+   * @param {string} fallback 中文兜底文案
+   * @param {object} [params] 占位参数（如 {count: 3}）
+   * @returns {string} 展示文案；i18n 框架未加载时回退中文原文
+   */
+  function liveT(key, fallback, params) {
+    return (window.I18n && window.I18n.t) ? window.I18n.t(key, params, fallback) : (fallback || key);
+  }
+
+  /* ---------------- 基础常量 ---------------- */
+
+  /** 支持的四个频道，与侧边栏 1~4 对应 */
+  var CHANNELS = ['ch1', 'ch2', 'ch3', 'ch4'];
+
+  /** 频道显示名称（中文兜底，实际展示走 channelLabel） */
+  var CHANNEL_LABELS = { ch1: '频道 1', ch2: '频道 2', ch3: '频道 3', ch4: '频道 4' };
+
+  /** 音源标识对应的中文名称（中文兜底，实际展示走 sourceLabel） */
+  var SOURCE_LABELS = { local: '本机麦克风', app: '手机麦克风', computer: '电脑音频' };
+
+  /**
+   * 取频道显示名称（如 频道 1）
+   * @param {string} channel 频道标识 ch1~ch4
+   * @returns {string} 频道名称
+   */
+  function channelLabel(channel) {
+    if (!channel) return '';
+    return liveT('live.channel.' + channel, CHANNEL_LABELS[channel] || channel);
+  }
+
+  /**
+   * 取音源显示名称（如 本机麦克风）
+   * @param {string} source 音源标识 local / app / computer
+   * @returns {string} 音源名称
+   */
+  function sourceLabel(source) {
+    if (!source) return '';
+    return liveT('live.host.source.' + source, SOURCE_LABELS[source] || source);
+  }
+
+  /**
+   * 翻译图片 alt（i18n 框架未内置 data-i18n-alt，这里按 data-i18n-alt 标注补齐）
+   * @param {HTMLElement|Document} [root] 翻译范围，默认整篇文档
+   */
+  function applyAltTranslations(root) {
+    var scope = root || document;
+    if (!scope.querySelectorAll) return;
+    Array.prototype.forEach.call(scope.querySelectorAll('[data-i18n-alt]'), function (el) {
+      var key = el.getAttribute('data-i18n-alt');
+      if (key) el.setAttribute('alt', liveT(key, el.getAttribute('alt') || ''));
+    });
+  }
+
+  /** 应用基础路径：独立运行为 ''，挂载在主项目时为 '/live'
+   *  新路由会在基础路径后追加 /stream 或 /channel/N，这里统一剥离后缀 */
+  var BASE = (function computeBase() {
+    var p = location.pathname.replace(/\/index\.html$/, '');
+    p = p.replace(/\/(?:channel\/[^/]+|stream)(?:\/)?$/, '');
+    if (p === '/' || p === '') return '';
+    return p.replace(/\/$/, '');
+  })();
+
+  /** HTTP 接口前缀，例如 '' + '/api' 或 '/live' + '/api' */
+  var API = BASE + '/api';
+
+  /** WebSocket 信令地址：自动适配 http/https 与挂载路径 */
+  var WS_URL = (location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host + BASE + '/ws';
+
+  /** 默认 STUN 配置；服务端 /api/info 返回后会覆盖 */
+  var DEFAULT_ICE_SERVERS = [{ urls: ['stun:stun.l.google.com:19302', 'stun:stun1.l.google.com:19302'] }];
+
+  /** 去掉基础路径后的当前相对路径，例如 '/channel/1'、'/stream/' */
+  var REL_PATH = location.pathname.slice(BASE.length);
+
+  /** /channel/:n 路由匹配结果（观看页） */
+  var CHANNEL_ROUTE = /\/channel\/(\d+)(?:\/)?$/.exec(REL_PATH);
+
+  /** 路径中指定的频道（1~4 合法时生效，否则空串） */
+  var PATH_CHANNEL = '';
+  if (CHANNEL_ROUTE) {
+    var channelIndex = parseInt(CHANNEL_ROUTE[1], 10);
+    if (channelIndex >= 1 && channelIndex <= CHANNELS.length) PATH_CHANNEL = CHANNELS[channelIndex - 1];
+  }
+
+  /** 页面是否以手机端身份打开 */
+  var IS_APP_MODE = new URLSearchParams(location.search).get('role') === 'app';
+
+  /** 页面是否以观看端身份打开（路径 /channel/N 或旧的 ?role=viewer） */
+  var IS_VIEWER_MODE = new URLSearchParams(location.search).get('role') === 'viewer' || !!PATH_CHANNEL;
+
+  /** 是否运行在桌面客户端（WebView2）中：embed=1 时隐藏网页自带侧栏与顶栏 */
+  var IS_EMBED_MODE = new URLSearchParams(location.search).get('embed') === '1';
+
+  /** WebView2 原生桥对象；直接用浏览器打开时为 null */
+  var NATIVE_BRIDGE = (window.chrome && window.chrome.webview) ? window.chrome.webview : null;
+
+  /**
+   * 原生系统声音桥接状态（桌面端用 WASAPI 环回采集扬声器输出，再分块回传到页面）
+   */
+  var nativeAudio = {
+    active: false,        // 原生端是否正在采集
+    ctx: null,            // 页面侧 Web Audio 上下文（把 PCM 合成连续音频流）
+    dest: null,           // MediaStreamDestination，其 track 作为「电脑音频」音轨
+    nextTime: 0,          // 下一段音频的排程开始时间（秒）
+    sampleRate: 48000,    // 原生端回报的采样率
+    channels: 2,          // 原生端回报的声道数
+    pendingStart: null    // 等待原生端回报「开始成功/失败」的回调
+  };
+
+  /* ---------------- 通用工具 ---------------- */
+
+  /**
+   * 按 id 获取 DOM 元素
+   * @param {string} id 元素 id
+   * @returns {HTMLElement}
+   */
+  function $(id) { return document.getElementById(id); }
+
+  /**
+   * 显示右上角 Toast 提示
+   * @param {string} message 提示内容
+   * @param {'info'|'success'|'error'|'warning'} [type] 提示类型
+   */
+  function showToast(message, type) {
+    var container = $('toast-container');
+    if (!container) return;
+    var toast = document.createElement('div');
+    toast.className = 'toast is-' + (type || 'info');
+    toast.textContent = message;
+    container.appendChild(toast);
+    // 双层 requestAnimationFrame 保证浏览器先应用初始态，再触发过渡
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () { toast.classList.add('show'); });
+    });
+    setTimeout(function () {
+      toast.classList.remove('show');
+      setTimeout(function () {
+        if (toast.parentNode) toast.parentNode.removeChild(toast);
+      }, 300);
+    }, 3000);
+  }
+
+  /**
+   * 把时间戳/文本安全写入元素
+   * @param {HTMLElement} el 目标元素
+   * @param {string} text 文本
+   */
+  function setText(el, text) { if (el) el.textContent = text; }
+
+  /**
+   * 读取 URL 中的频道参数，非法时回退到 ch1
+   * @returns {string} 频道标识
+   */
+  function readChannelFromUrl() {
+    if (PATH_CHANNEL) return PATH_CHANNEL;                 // 路径 /channel/N 优先
+    var ch = new URLSearchParams(location.search).get('ch');
+    return CHANNELS.indexOf(ch) >= 0 ? ch : 'ch1';
+  }
+
+  /**
+   * 生成频道观看页路径（不带域名与端口）
+   * @param {string} channel 频道标识
+   * @returns {string} 例如 /live/channel/1
+   */
+  function channelPath(channel) {
+    var index = CHANNELS.indexOf(channel) + 1;             // 频道编号 1~4
+    return BASE + '/channel/' + (index > 0 ? index : 1);
+  }
+
+  /**
+   * 深色模式初始化：只读取用户显式保存的偏好，默认浅色
+   * 主播端与观看端各有自己的主题按钮，统一按 .theme-btn 绑定
+   */
+  function initTheme() {
+    var toggles = document.querySelectorAll('.theme-btn');
+    var saved = null;
+    try { saved = localStorage.getItem('darkMode'); } catch (err) { /* 隐私模式可能禁止访问 */ }
+    if (saved === 'true') document.body.classList.add('dark-mode');
+
+    /**
+     * 按当前主题生成按钮图标：浅色显示月亮，深色显示太阳
+     * @returns {string} 图标 SVG
+     */
+    function iconSvg() {
+      var dark = document.body.classList.contains('dark-mode');
+      return dark
+        ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>'
+        : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+    }
+
+    /** 刷新所有主题按钮的图标 */
+    function renderIcons() {
+      for (var i = 0; i < toggles.length; i++) toggles[i].innerHTML = iconSvg();
+    }
+    renderIcons();
+
+    for (var i = 0; i < toggles.length; i++) {
+      toggles[i].addEventListener('click', function () {
+        document.body.classList.toggle('dark-mode');
+        var dark = document.body.classList.contains('dark-mode');
+        try { localStorage.setItem('darkMode', dark ? 'true' : 'false'); } catch (err) { /* 忽略 */ }
+        renderIcons();
+      });
+    }
+  }
+
+  /* =====================================================================
+     顶栏用户区（与主项目同款：头像 + 下拉菜单）
+     ===================================================================== */
+
+  /** 积分图标（金色星币 SVG 16px，与主项目 ICON_COIN 保持一致） */
+  var ICON_COIN = '<svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6.5" fill="#f5a623" stroke="#d48806"/><path d="M8 4.6l.9 1.83 2.02.29-1.46 1.42.35 2.01L8 9.2l-1.81.95.35-2.01-1.46-1.42 2.02-.29L8 4.6z" fill="#fff"/></svg>';
+
+  /** 退出登录图标（SVG 16px，与主项目 ICON_LOGOUT 保持一致） */
+  var ICON_LOGOUT = '<svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 2H3.5C2.67 2 2 2.67 2 3.5v9C2 13.33 2.67 14 3.5 14H6M10.5 11L14 8L10.5 5M14 8H6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+  /**
+   * 渲染顶栏用户区：头像（桌面仅头像、悬浮显示名字；小屏头像+名字靠左）
+   * 点击头像弹出下拉菜单：姓名/ID → 积分 → 分隔线 → 退出登录；点空白处关闭
+   * @param {string} containerId 用户区容器元素 id
+   */
+  function initTopbarUser(containerId) {
+    var box = $(containerId);
+    if (!box) return;
+
+    fetch('/api/me')
+      .then(function (res) { return res.json(); })
+      .then(function (me) {
+        if (!me || !me.loggedIn) return;   // 未登录（理论上不会出现）则不渲染
+
+        // 管理员专属的侧边栏入口（观看端底部的「设置」→ 直播页）
+        if (me.isAdmin) {
+          Array.prototype.forEach.call(document.querySelectorAll('[data-admin-only]'), function (el) {
+            el.hidden = false;
+          });
+        }
+        box.innerHTML = '';
+
+        var avatarUrl = me.avatar || '/assets/home/default-avatar.png';  // 头像地址：无自定义头像时用平台默认图
+
+        var avatar = document.createElement('div');     // 头像容器（点击弹菜单，禁止彩色底）
+        avatar.className = 'user-avatar';
+        avatar.title = me.name || '';                    // 桌面端悬浮头像显示姓名
+        var img = document.createElement('img');         // 头像图片
+        img.src = avatarUrl;
+        img.alt = me.name || liveT('live.common.avatar', '头像');
+        avatar.appendChild(img);
+
+        var name = document.createElement('span');       // 姓名：桌面隐藏，小屏显示
+        name.className = 'user-name';
+        name.textContent = me.name || '';
+
+        // ---- 下拉菜单（figma 结构：头像+姓名/ID → 积分 → 分割线 → 退出登录） ----
+        var menu = document.createElement('div');        // 菜单容器
+        menu.className = 'avatar-menu';
+        menu.hidden = true;
+
+        var head = document.createElement('div');        // 上段：头像 + 姓名/ID
+        head.className = 'avatar-menu-head';
+        var mAv = document.createElement('img');         // 菜单内头像
+        mAv.className = 'avatar-menu-avatar';
+        mAv.src = avatarUrl;
+        mAv.alt = me.name || liveT('live.common.avatar', '头像');
+        var meta = document.createElement('div');        // 姓名/ID 纵排
+        meta.className = 'avatar-menu-meta';
+        var mName = document.createElement('p');         // 姓名行
+        mName.className = 'avatar-menu-name';
+        mName.textContent = me.name || '';
+        var mId = document.createElement('p');           // ID 行
+        mId.className = 'avatar-menu-id';
+        mId.textContent = me.userId || '';
+        meta.appendChild(mName);
+        meta.appendChild(mId);
+        head.appendChild(mAv);
+        head.appendChild(meta);
+
+        var pointRow = document.createElement('div');    // 积分行（纯展示）
+        pointRow.className = 'avatar-menu-point';
+        pointRow.innerHTML = ICON_COIN;
+        var pointText = document.createElement('span');  // 积分数值（按字符串展示，支持超长整数）
+        pointText.className = 'avatar-menu-point-text';
+        pointText.textContent = String(me.points == null ? 0 : me.points);
+        pointRow.appendChild(pointText);
+
+        var divider = document.createElement('div');     // 分割线
+        divider.className = 'avatar-menu-divider';
+
+        var row = document.createElement('div');         // 退出登录行
+        row.className = 'avatar-menu-row';
+        row.innerHTML = ICON_LOGOUT;
+        var rowText = document.createElement('span');    // 退出登录文字
+        rowText.className = 'avatar-menu-row-text';
+        rowText.textContent = liveT('live.common.logout', '退出登录');
+        row.appendChild(rowText);
+        row.addEventListener('click', function () {
+          fetch('/api/logout', { method: 'POST' })
+            .catch(function () { /* 网络异常也继续跳登录页 */ })
+            .then(function () { window.location.href = '/login'; });
+        });
+
+        menu.appendChild(head);
+        menu.appendChild(pointRow);
+        menu.appendChild(divider);
+        menu.appendChild(row);
+
+        // 点头像开/关菜单（阻止冒泡，避免被空白关闭逻辑立刻收起）
+        avatar.addEventListener('click', function (event) {
+          event.stopPropagation();
+          menu.hidden = !menu.hidden;
+        });
+
+        box.appendChild(avatar);
+        box.appendChild(name);
+        box.appendChild(menu);
+      })
+      .catch(function () { /* /api/me 失败时保持空用户区，不影响直播功能 */ });
+  }
+
+  /** 点击空白处关闭已打开的头像菜单（document 级只注册一次） */
+  document.addEventListener('click', function (event) {
+    var open = document.querySelector('.avatar-menu:not([hidden])');  // 当前打开菜单
+    if (!open) return;
+    if (open.contains(event.target)) return;                          // 点在菜单内：保留
+    var owner = open.parentElement;                                   // 菜单归属的用户区
+    if (owner && owner.contains(event.target)) return;                // 点在头像上：交给 toggle
+    open.hidden = true;
+  });
+
+  /** 点击空白处关闭直播设置浮层（document 级只注册一次） */
+  document.addEventListener('click', function (event) {
+    var pop = document.getElementById('host-settings-pop');
+    if (!pop || pop.hidden) return;
+    if (pop.contains(event.target)) return;
+    var btn = document.getElementById('btn-host-settings');
+    if (btn && btn.contains(event.target)) return;
+    pop.hidden = true;
+  });
+
+  /**
+   * 绑定全屏按钮：点击在「容器全屏」与「退出全屏」之间切换
+   * @param {string} buttonId 按钮元素 id
+   * @param {string} targetId 需要全屏的视频容器 id
+   */
+  function bindFullscreenButton(buttonId, targetId) {
+    var btn = $(buttonId);
+    var target = $(targetId);
+    if (!btn || !target) return;
+    btn.addEventListener('click', function (event) {
+      event.stopPropagation();                    // 避免触发观看遮罩上的播放点击
+      if (document.fullscreenElement) {
+        document.exitFullscreen().catch(function () { /* 已是窗口状态则忽略 */ });
+        return;
+      }
+      if (!target.requestFullscreen) {
+        showToast(liveT('live.host.toast.fullscreenUnsupported', '当前浏览器不支持全屏'), 'warning');
+        return;
+      }
+      target.requestFullscreen().catch(function () {
+        showToast(liveT('live.host.toast.fullscreenRejected', '浏览器拒绝了全屏请求'), 'warning');
+      });
+    });
+  }
+
+  /* =====================================================================
+     一、主播端
+     ===================================================================== */
+
+  /** 主播端运行状态（全部保存在内存，不使用数据库 / localStorage） */
+  var state = {
+    channel: 'ch1',           // 当前频道
+    ws: null,                 // 信令 WebSocket
+    manualClose: false,       // 是否主动关闭了信令（避免误重连）
+    reconnectTimer: null,     // 断线重连定时器
+    signalState: 'connecting',// 信令状态：connecting / online / offline
+    token: null,               // 当前频道配对令牌
+    pairUrl: '',               // 二维码对应的手机端链接
+    appConnected: false,       // 手机端是否已加入频道
+    peerConnected: false,      // WebRTC P2P 是否已建立
+    pc: null,                  // 与手机端的 PeerConnection
+    remoteStream: null,        // 手机端传来的音频流
+    remoteAudio: null,         // 播放手机音频的 <audio>
+    localAudio: null,          // 播放本机麦克风的 <audio>
+    computerAudio: null,       // 播放电脑系统声音的 <audio>
+    source: 'local',           // 当前音源：local / app / computer
+    monitorOn: false,          // 是否已开启扬声器监听
+    localMicStream: null,      // 本机麦克风流
+    cameraStopping: false,     // 是否正在主动停止摄像头（用于抑制 ended 误报）
+    cameraRetryAt: 0,          // 上次摄像头中断自动重试的时间戳（防止频繁重试）
+    computerStream: null,      // 电脑系统声音采集流（含被静默丢弃的屏幕视频轨道）
+    cameraStream: null,        // 本机摄像头流
+    devices: [],               // 当前设备列表
+    devicesLoaded: false,      // 是否已完成过一次设备枚举（决定语言切换时是否重建下拉项）
+    iceServers: DEFAULT_ICE_SERVERS, // STUN 配置
+    lanIp: '',                 // 服务端探测到的首个局域网 IP
+    pendingCandidates: [],     // 对端描述设置前暂存的 ICE 候选
+    viewerPeers: new Map(),    // 观众连接表：viewerId -> { pc, audioSender, videoSender, pendingCandidates }
+    viewerUrl: ''              // 观众观看页链接（展示在「观众观看」卡片）
+  };
+
+  /**
+   * 主播端初始化入口
+   */
+  function initHostMode() {
+    // 读取 URL 中的频道，便于刷新后保持当前频道
+    state.channel = readChannelFromUrl();
+    state.remoteAudio = $('remote-audio');
+    state.localAudio = $('local-audio');
+    state.computerAudio = $('computer-audio');
+
+    // 非安全上下文时给出明确提示
+    if (!window.isSecureContext) {
+      var warn = $('secure-warn');
+      if (warn) warn.hidden = false;
+    }
+
+    bindHostEvents();
+    updateChannelUI();
+    renderConnectionUI();
+    applyViewerUrl();
+    fetchServerInfo();
+    initTopbarUser('host-user-info');     // 顶栏头像与用户菜单（与主项目一致）
+    bindFullscreenButton('btn-preview-fullscreen', 'preview-box');  // 摄像头预览全屏
+    connectSignaling();
+
+    // 页面关闭/刷新时释放电脑音频与麦克风采集，避免系统共享残留
+    window.addEventListener('pagehide', function () {
+      stopComputerAudio();
+      stopLocalMic();
+    });
+  }
+
+  /**
+   * 绑定主播端所有交互事件
+   */
+  function bindHostEvents() {
+    // 频道切换
+    var nav = $('channel-nav');
+    if (nav) {
+      nav.addEventListener('click', function (event) {
+        var btn = event.target.closest('.channel-btn');
+        if (!btn) return;
+        switchChannel(btn.getAttribute('data-channel'));
+      });
+    }
+
+    // 设备刷新
+    var refreshBtn = $('btn-refresh-devices');
+    if (refreshBtn) refreshBtn.addEventListener('click', refreshDevices);
+
+    // 直播设置：齿轮按钮开/关频道选择浮层
+    var settingsBtn = $('btn-host-settings');
+    var settingsPop = $('host-settings-pop');
+    if (settingsBtn && settingsPop) {
+      settingsBtn.addEventListener('click', function (event) {
+        event.stopPropagation();
+        settingsPop.hidden = !settingsPop.hidden;
+      });
+      settingsPop.addEventListener('click', function (event) {
+        var item = event.target.closest('.host-settings-item');
+        if (!item) return;
+        switchChannel(item.getAttribute('data-channel'));
+        settingsPop.hidden = true;
+      });
+    }
+
+    // 设备选择变化
+    var cameraSelect = $('camera-select');
+    if (cameraSelect) cameraSelect.addEventListener('change', startCamera);
+    var micSelect = $('mic-select');
+    if (micSelect) micSelect.addEventListener('change', startLocalMic);
+
+    // 音源切换
+    var sourceSwitch = $('source-switch');
+    if (sourceSwitch) {
+      sourceSwitch.addEventListener('click', function (event) {
+        var btn = event.target.closest('.seg-btn');
+        if (!btn || btn.disabled) return;
+        setSource(btn.getAttribute('data-source'), false);
+      });
+    }
+
+    // 扬声器监听开关
+    var monitorBtn = $('btn-monitor');
+    if (monitorBtn) monitorBtn.addEventListener('click', toggleMonitor);
+
+    // 重新生成配对令牌
+    var refreshTokenBtn = $('btn-refresh-token');
+    if (refreshTokenBtn) refreshTokenBtn.addEventListener('click', function () {
+      sendMessage({ type: 'host:refresh-token' });
+    });
+
+    // 复制手机端链接
+    var copyBtn = $('btn-copy-link');
+    if (copyBtn) copyBtn.addEventListener('click', function () {
+      if (!state.pairUrl) return;
+      copyText(state.pairUrl).then(function () {
+        showToast(liveT('live.host.pair.copied', '配对链接已复制'), 'success');
+      }).catch(function () {
+        showToast(liveT('live.host.pair.copyFailed', '复制失败，请手动选择令牌下方的链接'), 'error');
+      });
+    });
+
+    // 主动断开手机端
+    var kickBtn = $('btn-kick');
+    if (kickBtn) kickBtn.addEventListener('click', function () {
+      sendMessage({ type: 'host:kick' });
+    });
+
+    // 复制观众观看链接
+    var copyViewerBtn = $('btn-copy-viewer');
+    if (copyViewerBtn) copyViewerBtn.addEventListener('click', function () {
+      if (!state.viewerUrl) return;
+      copyText(state.viewerUrl).then(function () {
+        showToast(liveT('live.host.viewer.copied', '观看链接已复制，普通用户登录后即可观看'), 'success');
+      }).catch(function () {
+        showToast(liveT('live.host.viewer.copyFailed', '复制失败，请手动选择观看链接'), 'error');
+      });
+    });
+
+    // 二维码加载失败兜底
+    var qrImg = $('qr-img');
+    if (qrImg) {
+      qrImg.addEventListener('error', function () {
+        qrImg.hidden = true;
+        var empty = $('qr-empty');
+        if (empty) {
+          empty.hidden = false;
+          empty.textContent = liveT('live.host.pair.qrFailed', '二维码加载失败，请点击「重新生成」');
+        }
+      });
+    }
+  }
+
+  /**
+   * 获取服务端配置：STUN、局域网 IP、端口
+   */
+  function fetchServerInfo() {
+    fetch(API + '/info', { cache: 'no-store' })
+      .then(function (res) { return res.json(); })
+      .then(function (info) {
+        if (info && Array.isArray(info.iceServers) && info.iceServers.length) {
+          state.iceServers = info.iceServers;
+        }
+        if (info && Array.isArray(info.lanIps) && info.lanIps.length) {
+          state.lanIp = info.lanIps[0];
+        }
+        // 观看链接依赖局域网 IP，拿到配置后立即刷新
+        applyViewerUrl();
+        // 若令牌已先到达，用局域网地址重建二维码
+        if (state.token) applyToken(state.token);
+      })
+      .catch(function () {
+        showToast(liveT('live.host.toast.serverConfigFailed', '获取服务器配置失败，继续使用默认 STUN'), 'warning');
+      });
+  }
+
+  /**
+   * 生成手机端配对链接
+   * 主播用 localhost 打开时，二维码必须替换为局域网 IP，手机才能访问。
+   * @param {string} token 配对令牌
+   * @returns {string} 手机端链接
+   */
+  function buildPairUrl(token) {
+    var hostname = location.hostname;
+    if ((hostname === 'localhost' || hostname === '127.0.0.1') && state.lanIp) {
+      hostname = state.lanIp;
+    }
+    var portPart = location.port ? ':' + location.port : '';
+    return location.protocol + '//' + hostname + portPart + BASE + '/?role=app&ch=' + state.channel + '&token=' + encodeURIComponent(token);
+  }
+
+  /**
+   * 生成观众观看链接（普通用户登录后打开即可观看）
+   * @returns {string} 观看页链接
+   */
+  function buildViewerUrl() {
+    var hostname = location.hostname;
+    if ((hostname === 'localhost' || hostname === '127.0.0.1') && state.lanIp) {
+      hostname = state.lanIp;
+    }
+    var portPart = location.port ? ':' + location.port : '';
+    return location.protocol + '//' + hostname + portPart + channelPath(state.channel);
+  }
+
+  /**
+   * 刷新「观众观看」卡片中的链接与复制按钮
+   */
+  function applyViewerUrl() {
+    state.viewerUrl = buildViewerUrl();
+    setText($('viewer-url'), liveT('live.host.viewer.link', '观看链接：{url}', { url: state.viewerUrl }));
+    var copyBtn = $('btn-copy-viewer');
+    if (copyBtn) copyBtn.disabled = false;
+  }
+
+  /**
+   * 应用新的配对令牌：更新文本、链接和二维码
+   * @param {string} token 配对令牌
+   */
+  function applyToken(token) {
+    state.token = token;
+    setText($('token-line'), liveT('live.host.pair.token', '配对令牌：{token}', { token: token }));
+
+    state.pairUrl = buildPairUrl(token);
+    var qrImg = $('qr-img');
+    var empty = $('qr-empty');
+    if (qrImg) {
+      qrImg.hidden = false;
+      qrImg.onload = function () {
+        if (empty) empty.hidden = true;
+      };
+      qrImg.src = API + '/qrcode?text=' + encodeURIComponent(state.pairUrl);
+    }
+    if (empty) {
+      empty.hidden = true;
+      empty.textContent = liveT('live.host.pair.qrPending', '正在生成配对二维码…');
+    }
+
+    var refreshBtn = $('btn-refresh-token');
+    if (refreshBtn) refreshBtn.disabled = false;
+    var copyBtn = $('btn-copy-link');
+    if (copyBtn) copyBtn.disabled = false;
+  }
+
+  /**
+   * 清空配对展示（切换频道或手机端断开时使用）
+   */
+  function resetPairUI() {
+    state.token = null;
+    state.pairUrl = '';
+    setText($('token-line'), liveT('live.host.pair.tokenPending', '配对令牌：生成中…'));
+    var qrImg = $('qr-img');
+    if (qrImg) { qrImg.hidden = true; qrImg.removeAttribute('src'); }
+    var empty = $('qr-empty');
+    if (empty) { empty.hidden = false; empty.textContent = liveT('live.host.pair.qrPending', '正在生成配对二维码…'); }
+    var refreshBtn = $('btn-refresh-token');
+    if (refreshBtn) refreshBtn.disabled = true;
+    var copyBtn = $('btn-copy-link');
+    if (copyBtn) copyBtn.disabled = true;
+  }
+
+  /**
+   * 建立主播端信令连接
+   */
+  function connectSignaling() {
+    closeSignaling();
+    state.manualClose = false;
+    state.signalState = 'connecting';
+    renderConnectionUI();
+
+    var ws;
+    try {
+      ws = new WebSocket(WS_URL);
+    } catch (err) {
+      state.signalState = 'offline';
+      renderConnectionUI();
+      scheduleReconnect();
+      return;
+    }
+    state.ws = ws;
+
+    ws.addEventListener('open', function () {
+      sendMessage({ type: 'host:join', channel: state.channel });
+      state.signalState = 'online';
+      renderConnectionUI();
+    });
+
+    ws.addEventListener('message', function (event) {
+      var msg;
+      try { msg = JSON.parse(event.data); } catch (err) { return; }
+      handleHostMessage(msg);
+    });
+
+    ws.addEventListener('close', function () {
+      if (state.ws !== ws) return;
+      state.ws = null;
+      state.signalState = 'offline';
+      state.appConnected = false;
+      state.peerConnected = false;
+      closePeer();
+      closeAllViewerPeers();
+      if (state.source === 'app') setSource('local', true);
+      renderConnectionUI();
+      if (!state.manualClose) scheduleReconnect();
+    });
+
+    ws.addEventListener('error', function () {
+      // 连接失败后浏览器会继续触发 close，这里不用重复提示
+    });
+  }
+
+  /**
+   * 主动关闭信令连接
+   */
+  function closeSignaling() {
+    state.manualClose = true;
+    if (state.reconnectTimer) {
+      clearTimeout(state.reconnectTimer);
+      state.reconnectTimer = null;
+    }
+    if (state.ws) {
+      try { state.ws.close(); } catch (err) { /* 忽略 */ }
+      state.ws = null;
+    }
+  }
+
+  /**
+   * 信令断开后 2 秒自动重连（LAN 网络抖动时可自愈）
+   */
+  function scheduleReconnect() {
+    if (state.reconnectTimer || state.manualClose) return;
+    state.reconnectTimer = setTimeout(function () {
+      state.reconnectTimer = null;
+      if (!state.manualClose) connectSignaling();
+    }, 2000);
+  }
+
+  /**
+   * 发送 JSON 信令消息
+   * @param {object} payload 消息体
+   */
+  function sendMessage(payload) {
+    if (!state.ws || state.ws.readyState !== WebSocket.OPEN) return;
+    state.ws.send(JSON.stringify(payload));
+  }
+
+  /**
+   * 处理服务端下发的信令消息
+   * @param {object} msg 消息体
+   */
+  async function handleHostMessage(msg) {
+    if (!msg || !msg.type) return;
+
+    if (msg.type === 'host:joined' || msg.type === 'host:token') {
+      if (msg.token) applyToken(msg.token);
+      return;
+    }
+
+    if (msg.type === 'app:joined') {
+      state.appConnected = true;
+      state.peerConnected = false;
+      renderConnectionUI();
+      // 手机端接入后默认切换到手机麦克风，用户仍可手动切回本机
+      setSource('app', true);
+      showToast(liveT('live.host.toast.appConnected', '手机麦克风已连接，正在建立 P2P 音频连接…'), 'success');
+      createAndSendOffer();
+      return;
+    }
+
+    if (msg.type === 'app:left') {
+      state.appConnected = false;
+      state.peerConnected = false;
+      closePeer();
+      if (state.source === 'app') setSource('local', true);
+      renderConnectionUI();
+      return;
+    }
+
+    if (msg.type === 'signal') {
+      handleHostSignal(msg.data);
+      return;
+    }
+
+    // 有观众进入：为该观众单独建立一条 P2P 连接并推送音视频
+    if (msg.type === 'viewer:joined') {
+      createViewerPeer(msg.viewerId);
+      renderConnectionUI();
+      return;
+    }
+
+    // 观众离开：释放该观众的 P2P 连接
+    if (msg.type === 'viewer:left') {
+      closeViewerPeer(msg.viewerId);
+      renderConnectionUI();
+      return;
+    }
+
+    // 观众回传的信令（Answer / ICE）
+    if (msg.type === 'viewer:signal') {
+      handleViewerSignal(msg.viewerId, msg.data);
+      return;
+    }
+
+    if (msg.type === 'error') {
+      var text = msg.message || liveT('live.host.toast.signalError', '信令服务器返回错误');   // 服务端返回的错误文案
+      // 被其他主播顶下线 / 无开播权限：停止自动重连，否则两处页面会互抢主播位、把观众反复踢下线
+      if (text.indexOf('已有其他主播') >= 0 || text.indexOf('仅管理员') >= 0) {
+        state.manualClose = true;
+        state.hostBlocked = true;
+        showToast(liveT('live.host.toast.hostBlocked', '{message}（已停止自动重连，请处理后刷新本页）', { message: text }), 'error');
+      } else {
+        showToast(text, 'error');
+      }
+    }
+  }
+
+  /**
+   * 主播端创建 PeerConnection 并发送 Offer
+   * 主播只接收音频（recvonly），媒体流由手机端直接发送到浏览器。
+   */
+  async function createAndSendOffer() {
+    closePeer();
+    if (!state.ws || state.ws.readyState !== WebSocket.OPEN) return;
+
+    var pc;
+    try {
+      pc = new RTCPeerConnection({ iceServers: state.iceServers });
+    } catch (err) {
+      showToast(liveT('live.host.toast.webrtcUnsupported', '当前浏览器不支持 WebRTC'), 'error');
+      return;
+    }
+    state.pc = pc;
+
+    // 只接收音频，不发送主播本机的任何媒体
+    pc.addTransceiver('audio', { direction: 'recvonly' });
+
+    pc.onicecandidate = function (event) {
+      if (event.candidate) {
+        sendMessage({ type: 'host:signal', data: { candidate: event.candidate } });
+      }
+    };
+
+    pc.ontrack = function (event) {
+      var stream = event.streams && event.streams[0];
+      if (!stream) stream = new MediaStream([event.track]);
+      state.remoteStream = stream;
+      if (state.remoteAudio) state.remoteAudio.srcObject = stream;
+      // 手机音频到达后同步给所有观众
+      syncViewerMedia();
+      // 若已开启监听且当前音源是手机，则立即播放
+      if (state.source === 'app' && state.monitorOn) playActiveSource();
+      renderConnectionUI();
+    };
+
+    pc.onconnectionstatechange = function () {
+      var s = pc.connectionState;
+      if (s === 'connected') {
+        state.peerConnected = true;
+        renderConnectionUI();
+        showToast(liveT('live.host.toast.p2pConnected', 'P2P 音频连接已建立'), 'success');
+      } else if (s === 'failed') {
+        state.peerConnected = false;
+        renderConnectionUI();
+        showToast(liveT('live.host.toast.p2pFailed', 'P2P 连接失败，请让手机重新扫码'), 'error');
+      } else if (s === 'disconnected' || s === 'closed') {
+        state.peerConnected = false;
+        renderConnectionUI();
+      }
+    };
+
+    try {
+      var offer = await pc.createOffer();
+      await pc.setLocalDescription(offer);
+      sendMessage({ type: 'host:signal', data: { sdp: pc.localDescription } });
+    } catch (err) {
+      showToast(liveT('live.host.toast.offerFailed', '创建 WebRTC Offer 失败：{message}', { message: err.message }), 'error');
+    }
+  }
+
+  /**
+   * 处理手机端回传的信令（Answer / ICE）
+   * @param {object} data 信令数据
+   */
+  async function handleHostSignal(data) {
+    if (!data || !state.pc) return;
+    var pc = state.pc;
+
+    if (data.sdp) {
+      try {
+        await pc.setRemoteDescription(new RTCSessionDescription(data.sdp));
+        // 对端描述就绪后，补加之前暂存的 ICE 候选
+        flushHostCandidates();
+      } catch (err) {
+        showToast(liveT('live.host.toast.sdpFailed', '设置远端 SDP 失败：{message}', { message: err.message }), 'error');
+      }
+      return;
+    }
+
+    if (data.candidate) {
+      addHostCandidate(data.candidate);
+    }
+  }
+
+  /**
+   * 添加 ICE 候选；远端描述未就绪时先缓存
+   * @param {RTCIceCandidateInit} candidate ICE 候选
+   */
+  function addHostCandidate(candidate) {
+    if (!state.pc) return;
+    if (!state.pc.remoteDescription) {
+      state.pendingCandidates.push(candidate);
+      return;
+    }
+    state.pc.addIceCandidate(new RTCIceCandidate(candidate)).catch(function () {
+      // 单个候选失败不影响整体连接
+    });
+  }
+
+  /**
+   * 把缓存中的 ICE 候选补加到 PeerConnection
+   */
+  function flushHostCandidates() {
+    var pc = state.pc;
+    if (!pc) return;
+    var list = state.pendingCandidates.slice();
+    state.pendingCandidates = [];
+    list.forEach(function (candidate) {
+      pc.addIceCandidate(new RTCIceCandidate(candidate)).catch(function () { /* 忽略 */ });
+    });
+  }
+
+  /**
+   * 关闭 PeerConnection 并清理远程音频
+   */
+  function closePeer() {
+    state.pendingCandidates = [];
+    state.peerConnected = false;
+    if (state.pc) {
+      try { state.pc.close(); } catch (err) { /* 忽略 */ }
+      state.pc = null;
+    }
+    state.remoteStream = null;
+    if (state.remoteAudio) {
+      state.remoteAudio.pause();
+      state.remoteAudio.srcObject = null;
+    }
+  }
+
+  /* ---------------- 主播端：向观众广播音视频 ---------------- */
+
+  /**
+   * 获取当前音源对应的音频轨道
+   * 手机音源取手机端 P2P 传来的远程轨道，电脑音源取系统声音采集轨道，本机音源取本机麦克风轨道。
+   * @returns {MediaStreamTrack|null} 音频轨道，没有可用音源时返回 null
+   */
+  function getActiveAudioTrack() {
+    if (state.source === 'app') {
+      return state.remoteStream ? (state.remoteStream.getAudioTracks()[0] || null) : null;
+    }
+    if (state.source === 'computer') {
+      return state.computerStream ? (state.computerStream.getAudioTracks()[0] || null) : null;
+    }
+    if (state.localMicStream) return state.localMicStream.getAudioTracks()[0] || null;
+    return null;
+  }
+
+  /**
+   * 把当前音源与摄像头画面同步到所有观众的 P2P 连接
+   * 音源切换、摄像头开关、手机音频到达时都会调用，保证观众听到看到的始终是当前直播内容。
+   */
+  function syncViewerMedia() {
+    if (!state.viewerPeers.size) return;
+    var audioTrack = getActiveAudioTrack();                                        // 当前音源轨道
+    var videoTrack = state.cameraStream ? (state.cameraStream.getVideoTracks()[0] || null) : null; // 摄像头轨道
+    state.viewerPeers.forEach(function (entry) {
+      if (entry.audioSender) entry.audioSender.replaceTrack(audioTrack).catch(function () { /* 忽略 */ });
+      if (entry.videoSender) entry.videoSender.replaceTrack(videoTrack).catch(function () { /* 忽略 */ });
+    });
+  }
+
+  /**
+   * 调高观众推流的编码参数，避免浏览器在大画面下自动降分辨率导致发糊
+   * @param {RTCRtpSender} sender 视频发送器
+   */
+  function tuneViewerVideoSender(sender) {
+    if (!sender || typeof sender.getParameters !== 'function') return;
+    try {
+      var params = sender.getParameters();
+      if (!params.encodings || !params.encodings.length) params.encodings = [{}];
+      params.encodings[0].maxBitrate = 6000000;                       // 码率上限 6 Mbps，保证 1080p60 细节
+      params.encodings[0].maxFramerate = 60;                          // 最高 60 帧，保证动作流畅
+      params.degradationPreference = 'maintain-resolution';           // 带宽不足时优先保分辨率
+      sender.setParameters(params).catch(function () { /* 个别浏览器不支持时忽略 */ });
+    } catch (err) {
+      // getParameters 在部分浏览器可能抛错，忽略即可，不影响直播
+    }
+  }
+
+  /**
+   * 为一位观众创建 PeerConnection 并发送 Offer
+   * 每个观众一条独立连接，均为 sendonly（主播发、观众收）。
+   * @param {string} viewerId 服务端分配的观众编号
+   */
+  function createViewerPeer(viewerId) {
+    if (!viewerId) return;
+    closeViewerPeer(viewerId);       // 同编号旧连接先释放，避免重复
+
+    var pc;
+    try {
+      pc = new RTCPeerConnection({ iceServers: state.iceServers });
+    } catch (err) {
+      showToast(liveT('live.host.toast.multiWebrtcUnsupported', '当前浏览器不支持多路 WebRTC 推流'), 'error');
+      return;
+    }
+
+    /** 该观众的连接信息 */
+    var entry = {
+      pc: pc,
+      audioSender: null,
+      videoSender: null,
+      pendingCandidates: []
+    };
+
+    // 音频与视频各一路，方向固定为 sendonly（观众只收不发）
+    entry.audioSender = pc.addTransceiver('audio', { direction: 'sendonly' }).sender;
+    entry.videoSender = pc.addTransceiver('video', { direction: 'sendonly' }).sender;
+
+    // 先挂上当前轨道，再创建 Offer，观众一连接即可看到画面
+    var audioTrack = getActiveAudioTrack();
+    if (audioTrack) entry.audioSender.replaceTrack(audioTrack).catch(function () { /* 忽略 */ });
+    var videoTrack = state.cameraStream ? state.cameraStream.getVideoTracks()[0] : null;
+    if (videoTrack) entry.videoSender.replaceTrack(videoTrack).catch(function () { /* 忽略 */ });
+
+    pc.onicecandidate = function (event) {
+      if (event.candidate) {
+        sendMessage({
+          type: 'host:viewer-signal',
+          viewerId: viewerId,
+          data: { candidate: event.candidate }
+        });
+      }
+    };
+
+    pc.onconnectionstatechange = function () {
+      if (pc.connectionState === 'failed' || pc.connectionState === 'closed') {
+        closeViewerPeer(viewerId);
+        renderConnectionUI();
+      }
+    };
+
+    state.viewerPeers.set(viewerId, entry);
+
+    // 创建 Offer 并转给该观众
+    pc.createOffer()
+      .then(function (offer) { return pc.setLocalDescription(offer); })
+      .then(function () {
+        // SDP 就绪后再设置编码参数（此时 encodings 已生成）
+        tuneViewerVideoSender(entry.videoSender);
+        sendMessage({
+          type: 'host:viewer-signal',
+          viewerId: viewerId,
+          data: { sdp: pc.localDescription }
+        });
+      })
+      .catch(function (err) {
+        showToast(liveT('live.host.toast.viewerOfferFailed', '创建观众推流 Offer 失败：{message}', { message: err.message }), 'error');
+        closeViewerPeer(viewerId);
+        renderConnectionUI();
+      });
+  }
+
+  /**
+   * 处理观众回传的信令（Answer / ICE）
+   * @param {string} viewerId 观众编号
+   * @param {object} data 信令数据
+   */
+  async function handleViewerSignal(viewerId, data) {
+    var entry = state.viewerPeers.get(viewerId);
+    if (!entry || !data) return;
+    var pc = entry.pc;
+
+    if (data.sdp) {
+      try {
+        await pc.setRemoteDescription(new RTCSessionDescription(data.sdp));
+        // 远端描述就绪后补加缓存的 ICE 候选
+        entry.pendingCandidates.forEach(function (candidate) {
+          pc.addIceCandidate(new RTCIceCandidate(candidate)).catch(function () { /* 忽略 */ });
+        });
+        entry.pendingCandidates = [];
+        // 重连或重新协商后再次同步当前音视频
+        syncViewerMedia();
+      } catch (err) {
+        // 观众端已离开时设置远端描述会失败，忽略即可
+      }
+      return;
+    }
+
+    if (data.candidate) {
+      if (!pc.remoteDescription) {
+        entry.pendingCandidates.push(data.candidate);
+        return;
+      }
+      pc.addIceCandidate(new RTCIceCandidate(data.candidate)).catch(function () { /* 忽略 */ });
+    }
+  }
+
+  /**
+   * 释放单个观众的 P2P 连接
+   * @param {string} viewerId 观众编号
+   */
+  function closeViewerPeer(viewerId) {
+    var entry = state.viewerPeers.get(viewerId);
+    if (!entry) return;
+    try { entry.pc.close(); } catch (err) { /* 忽略 */ }
+    state.viewerPeers.delete(viewerId);
+  }
+
+  /**
+   * 释放所有观众的 P2P 连接（切换频道 / 断线 / 主播重新加入时调用）
+   */
+  function closeAllViewerPeers() {
+    state.viewerPeers.forEach(function (entry) {
+      try { entry.pc.close(); } catch (err) { /* 忽略 */ }
+    });
+    state.viewerPeers.clear();
+  }
+
+  /**
+   * 切换频道：关闭旧连接，清空令牌，重新加入新频道
+   * @param {string} channel 频道标识
+   */
+  function switchChannel(channel) {
+    if (CHANNELS.indexOf(channel) < 0 || channel === state.channel) return;
+
+    closeSignaling();
+    closePeer();
+    closeAllViewerPeers();
+    state.channel = channel;
+    state.appConnected = false;
+    state.peerConnected = false;
+    state.signalState = 'connecting';
+    resetPairUI();
+    applyViewerUrl();
+    if (state.source === 'app') setSource('local', true);
+
+    updateChannelUI();
+    renderConnectionUI();
+
+    // 把频道写进地址栏（直播页固定在 /stream/，频道用查询参数保留），刷新后仍停留在该频道
+    try {
+      history.replaceState(null, '', BASE + '/stream/?ch=' + channel + (IS_EMBED_MODE ? '&embed=1' : ''));
+    } catch (err) { /* 忽略 */ }
+
+    connectSignaling();
+  }
+
+  /**
+   * 更新频道相关的所有静态文案与按钮激活态
+   */
+  function updateChannelUI() {
+    var buttons = document.querySelectorAll('.channel-btn');
+    for (var i = 0; i < buttons.length; i++) {
+      var btn = buttons[i];
+      // 设置按钮没有 data-channel，跳过，避免被误判为非激活
+      if (!btn.getAttribute('data-channel')) continue;
+      btn.classList.toggle('active', btn.getAttribute('data-channel') === state.channel);
+    }
+    // 同步「直播设置」浮层中的频道高亮
+    var items = document.querySelectorAll('.host-settings-item');
+    for (var j = 0; j < items.length; j++) {
+      items[j].classList.toggle('active', items[j].getAttribute('data-channel') === state.channel);
+    }
+    var label = channelLabel(state.channel);
+    setText($('state-channel'), label);
+  }
+
+  /**
+   * 统一刷新连接状态 UI（信令 / 手机端 / P2P / 音源）
+   */
+  function renderConnectionUI() {
+    // 信令胶囊
+    var pill = $('signal-status');
+    if (pill) {
+      pill.classList.remove('is-wait', 'is-off');
+      var pillText = liveT('live.host.signalPill.connecting', '信令连接中');
+      if (state.signalState === 'online') pillText = liveT('live.host.signalPill.online', '信令已连接');
+      if (state.signalState === 'offline') { pillText = liveT('live.host.signalPill.offline', '信令已断开'); pill.classList.add('is-off'); }
+      if (state.signalState === 'connecting') pill.classList.add('is-wait');
+      var span = pill.querySelector('span');
+      if (span) span.textContent = pillText;
+    }
+
+    // 状态清单
+    var signalText = state.signalState === 'online'
+      ? liveT('live.host.conn.connected', '已连接')
+      : (state.signalState === 'connecting'
+        ? liveT('live.host.conn.connecting', '连接中')
+        : liveT('live.host.conn.disconnected', '已断开'));
+    setText($('state-signal'), signalText);
+    setText($('state-app'), state.appConnected
+      ? liveT('live.host.conn.connected', '已连接')
+      : liveT('live.host.conn.disconnected', '未连接'));
+    setText($('state-peer'), state.peerConnected
+      ? liveT('live.host.conn.peerUp', '已建立')
+      : liveT('live.host.conn.peerDown', '未建立'));
+    setText($('state-source'), sourceLabel(state.source));
+
+    // 手机端配对状态
+    var dot = $('pair-dot');
+    var pairText = $('pair-status-text');
+    if (dot) dot.className = 'dot ' + (state.appConnected ? 'on' : 'wait');
+    if (pairText) {
+      pairText.textContent = state.appConnected
+        ? (state.peerConnected
+          ? liveT('live.host.pair.statusConnectedPeer', '手机已连接（P2P 已建立）')
+          : liveT('live.host.pair.statusConnecting', '手机已连接，正在建立 P2P…'))
+        : liveT('live.host.pair.waitScan', '等待扫码配对');
+    }
+
+    // 手机音源按钮与断开按钮
+    var segApp = $('seg-app');
+    if (segApp) segApp.disabled = !state.appConnected;
+    var kickBtn = $('btn-kick');
+    if (kickBtn) kickBtn.hidden = !state.appConnected;
+
+    // 音源按钮激活态
+    var segBtns = document.querySelectorAll('.seg-btn');
+    for (var i = 0; i < segBtns.length; i++) {
+      segBtns[i].classList.toggle('active', segBtns[i].getAttribute('data-source') === state.source);
+    }
+
+    // 监听按钮
+    var monitorBtn = $('btn-monitor');
+    if (monitorBtn) {
+      monitorBtn.textContent = state.monitorOn
+        ? liveT('live.host.audio.monitorOff', '停止扬声器监听')
+        : liveT('live.host.audio.monitorOn', '开启扬声器监听');
+      monitorBtn.className = 'btn ' + (state.monitorOn ? 'btn-column4' : 'btn-column2');
+    }
+    setText($('monitor-state'), state.monitorOn
+      ? liveT('live.host.audio.monitorStateOn', '正在监听：{source}', { source: sourceLabel(state.source) })
+      : liveT('live.host.audio.monitorStateOff', '监听未开启'));
+
+    // 选择电脑音频时展示共享操作提示
+    var computerHint = $('computer-hint');
+    if (computerHint) computerHint.hidden = state.source !== 'computer';
+
+    // 观众数量（主播端每建立一条观众连接计 1 人）
+    var viewerCount = state.viewerPeers.size;
+    var viewerCountText = liveT('live.host.viewer.count', '{count} 人', { count: viewerCount });
+    setText($('state-viewers'), viewerCountText);
+    setText($('viewer-badge'), viewerCountText);
+  }
+
+  /**
+   * 切换音源（本机麦克风 / 手机麦克风 / 电脑音频）
+   * 选择电脑音频且尚未采集时，会在此处弹出系统共享窗口（必须由用户点击触发）
+   * @param {'local'|'app'|'computer'} source 目标音源
+   * @param {boolean} silent 是否静默切换（不弹出提示）
+   */
+  async function setSource(source, silent) {
+    if (source === 'app' && !state.appConnected) {
+      if (!silent) showToast(liveT('live.host.toast.appNotConnected', '手机麦克风尚未连接，请先扫码配对'), 'warning');
+      return;
+    }
+    if (source === 'computer' && !state.computerStream) {
+      var started = await startComputerAudio();     // 弹出共享窗口采集系统声音
+      if (!started) return;                         // 用户取消或采集失败时不切换音源
+    }
+    state.source = source;
+    // 桌面客户端采集系统声音时，不能把同一路声音再输出到扬声器，否则会形成回声循环
+    if (source === 'computer' && NATIVE_BRIDGE) {
+      state.monitorOn = false;
+    }
+    // 切换时先暂停三路音频，再按需播放当前音源
+    if (state.localAudio) state.localAudio.pause();
+    if (state.remoteAudio) state.remoteAudio.pause();
+    if (state.computerAudio) state.computerAudio.pause();
+    renderConnectionUI();
+    // 音源切换后立即把新音轨同步给所有观众
+    syncViewerMedia();
+    if (state.monitorOn) await playActiveSource();
+  }
+
+  /**
+   * 获取当前音源对应的监听 <audio> 元素
+   * @returns {HTMLAudioElement|null} 播放元素
+   */
+  function getMonitorElement() {
+    if (state.source === 'app') return state.remoteAudio;
+    if (state.source === 'computer') return state.computerAudio;
+    return state.localAudio;
+  }
+
+  /**
+   * 播放当前音源；必须在用户点击手势中调用才能绕过自动播放限制
+   * @returns {Promise<void>}
+   */
+  function playActiveSource() {
+    var el = getMonitorElement();
+    if (!el || !el.srcObject) return Promise.resolve();
+    return el.play().catch(function () {
+      state.monitorOn = false;
+      renderConnectionUI();
+      showToast(liveT('live.host.toast.playBlocked', '浏览器拦截了播放，请再次点击「开启扬声器监听」'), 'error');
+    });
+  }
+
+  /**
+   * 开启 / 关闭扬声器监听（用户点击后才会播放声音）
+   */
+  async function toggleMonitor() {
+    // 桌面客户端采集系统声音后，再从扬声器播放会形成回声循环，直接提示并忽略
+    if (state.source === 'computer' && NATIVE_BRIDGE) {
+      showToast(liveT('live.host.toast.echoWarning', '系统声音采集无法再从扬声器监听（会形成回声），观众端不受影响'), 'warning');
+      return;
+    }
+    if (state.monitorOn) {
+      state.monitorOn = false;
+      if (state.localAudio) state.localAudio.pause();
+      if (state.remoteAudio) state.remoteAudio.pause();
+      if (state.computerAudio) state.computerAudio.pause();
+      renderConnectionUI();
+      return;
+    }
+
+    var el = getMonitorElement();
+    if (!el || !el.srcObject) {
+      var noSourceTip = state.source === 'app'
+        ? liveT('live.host.toast.appAudioPending', '手机音频尚未到达，请稍候')
+        : (state.source === 'computer'
+          ? liveT('live.host.toast.computerAudioPending', '电脑音频尚未开始采集，请重新点击「电脑音频」')
+          : liveT('live.host.toast.localMicNotReady', '本机麦克风尚未就绪，请先刷新设备'));
+      showToast(noSourceTip, 'warning');
+      return;
+    }
+
+    try {
+      await el.play();
+      state.monitorOn = true;
+      renderConnectionUI();
+    } catch (err) {
+      showToast(liveT('live.host.toast.playBlockedAgain', '浏览器拦截了播放，请再次点击'), 'error');
+    }
+  }
+
+  /**
+   * 刷新设备列表：先申请权限解锁设备名称，再重新枚举
+   */
+  async function refreshDevices() {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      showToast(liveT('live.host.toast.mediaUnsupported', '当前浏览器不支持媒体设备访问'), 'error');
+      return;
+    }
+    var btn = $('btn-refresh-devices');
+    if (btn) btn.disabled = true;
+
+    try {
+      // 一次性申请摄像头 + 麦克风，浏览器才会返回完整设备名称
+      var temp = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+      temp.getTracks().forEach(function (track) { track.stop(); });
+    } catch (err) {
+      // 没有摄像头时退回只申请麦克风
+      try {
+        var tempAudio = await navigator.mediaDevices.getUserMedia({ audio: true });
+        tempAudio.getTracks().forEach(function (track) { track.stop(); });
+      } catch (err2) {
+        var reason = err2 && err2.name === 'NotAllowedError'
+          ? liveT('live.host.toast.micDenied', '麦克风权限被拒绝，请在浏览器地址栏允许权限')
+          : liveT('live.host.toast.micAccessFailed', '无法访问麦克风：{message}', { message: err2 && err2.message ? err2.message : liveT('live.common.unknownError', '未知错误') });
+        showToast(reason, 'error');
+        if (btn) btn.disabled = false;
+        return;
+      }
+    }
+
+    try {
+      state.devices = await navigator.mediaDevices.enumerateDevices();
+    } catch (err) {
+      state.devices = [];
+    }
+    state.devicesLoaded = true;
+
+    fillDeviceSelect($('camera-select'), filterDevices('videoinput'), 'camera');
+    fillDeviceSelect($('mic-select'), filterDevices('audioinput'), 'mic');
+
+    await startCamera();
+    await startLocalMic();
+
+    if (btn) btn.disabled = false;
+    showToast(liveT('live.host.toast.devicesRefreshed', '设备列表已刷新'), 'success');
+  }
+
+  /**
+   * 从设备列表中筛选指定类型
+   * @param {'audioinput'|'videoinput'} kind 设备类型
+   * @returns {MediaDeviceInfo[]} 设备列表
+   */
+  function filterDevices(kind) {
+    return (state.devices || []).filter(function (device) { return device.kind === kind; });
+  }
+
+  /**
+   * 填充下拉框设备选项
+   * @param {HTMLSelectElement} select 下拉框
+   * @param {MediaDeviceInfo[]} list 设备列表
+   * @param {'camera'|'mic'} kind 设备类型（用于生成兜底名称）
+   */
+  function fillDeviceSelect(select, list, kind) {
+    if (!select) return;
+    var current = select.value;
+    select.innerHTML = '';
+
+    if (!list.length) {
+      var emptyOption = document.createElement('option');
+      emptyOption.value = '';
+      emptyOption.textContent = kind === 'camera'
+        ? liveT('live.devices.noCamera', '未检测到摄像头')
+        : liveT('live.devices.noMic', '未检测到麦克风');
+      select.appendChild(emptyOption);
+      return;
+    }
+
+    list.forEach(function (device, index) {
+      var option = document.createElement('option');
+      option.value = device.deviceId;
+      option.textContent = device.label || (kind === 'camera'
+        ? liveT('live.devices.cameraGeneric', '摄像头 {index}', { index: index + 1 })
+        : liveT('live.devices.micGeneric', '麦克风 {index}', { index: index + 1 }));
+      select.appendChild(option);
+    });
+
+    // 尽量保留之前选中的设备
+    var exists = Array.prototype.some.call(select.options, function (option) { return option.value === current; });
+    if (exists && current) select.value = current;
+  }
+
+  /**
+   * 打开摄像头并返回媒体流
+   * 先按要求采集 1080p60；若浏览器/驱动不支持（如 Edge 某些摄像头对精确约束敏感），
+   * 依次降级到 720p30 与默认约束，避免直接失败导致观众端没有画面。
+   * @param {string} deviceId 目标摄像头设备 id
+   * @returns {Promise<MediaStream>} 摄像头媒体流
+   */
+  async function openCameraStream(deviceId) {
+    var attempts = [
+      { video: { deviceId: { exact: deviceId }, width: { ideal: 1920 }, height: { ideal: 1080 }, frameRate: { ideal: 60, max: 60 } } },
+      { video: { deviceId: { ideal: deviceId }, width: { ideal: 1280 }, height: { ideal: 720 }, frameRate: { ideal: 30 } } },
+      { video: true }
+    ];
+    var lastErr = null;
+    for (var i = 0; i < attempts.length; i++) {
+      try {
+        return await navigator.mediaDevices.getUserMedia(attempts[i]);
+      } catch (err) {
+        lastErr = err;
+        // 用户拒绝授权或找不到设备时重试没有意义，直接抛出
+        if (err && (err.name === 'NotAllowedError' || err.name === 'NotFoundError')) throw err;
+      }
+    }
+    throw lastErr || new Error(liveT('live.host.toast.cameraOpenFailed', '无法打开摄像头'));
+  }
+
+  /**
+   * 启动摄像头预览
+   */
+  async function startCamera() {
+    stopCamera();
+    var select = $('camera-select');
+    var video = $('camera-preview');
+    var placeholder = $('video-placeholder');
+    var badge = $('camera-badge');
+    var deviceId = select ? select.value : '';
+
+    if (!deviceId) {
+      if (placeholder) placeholder.hidden = false;
+      if (badge) badge.textContent = liveT('live.host.camera.badgeOff', '未启用');
+      if (video) video.srcObject = null;
+      return;
+    }
+
+    try {
+      var stream = await openCameraStream(deviceId);
+      state.cameraStream = stream;
+      // 提示编码器优先保留细节（清晰度），带宽紧张时再降帧率
+      var videoTrack = stream.getVideoTracks()[0];                 // 摄像头视频轨道
+      var currentStream = stream;                                  // 本次采集的流，供 ended 回调判断
+      if (videoTrack) {
+        if ('contentHint' in videoTrack) {
+          try { videoTrack.contentHint = 'detail'; } catch (e) { /* 个别浏览器不支持，忽略 */ }
+        }
+        // 摄像头被拔出或被其他程序抢占时轨道会 ended；主动刷新设备时的停止不提示
+        videoTrack.addEventListener('ended', function () {
+          if (state.cameraStopping || state.cameraStream !== currentStream) return;
+          state.cameraStream = null;
+          syncViewerMedia();
+          var now = Date.now();                                     // 当前时间戳，用于限制自动重试频率
+          if (now - state.cameraRetryAt > 5000) {
+            state.cameraRetryAt = now;
+            showToast(liveT('live.host.toast.cameraInterrupted', '摄像头连接中断，正在尝试自动恢复…'), 'warning');
+            setTimeout(function () {
+              if (!state.cameraStream) startCamera();
+            }, 1200);
+          } else {
+            showToast(liveT('live.host.toast.cameraDisconnected', '摄像头已断开，请点击「刷新设备」重新连接'), 'error');
+            stopCamera();
+          }
+        });
+      }
+      if (video) {
+        video.srcObject = stream;
+        video.play().catch(function () { /* 静音视频自动播放失败时忽略 */ });
+      }
+      if (placeholder) placeholder.hidden = true;
+      if (badge) badge.textContent = liveT('live.host.camera.badgePreview', '预览中');
+      // 摄像头就绪后把画面推给所有观众
+      syncViewerMedia();
+    } catch (err) {
+      var cameraError = liveT('live.host.camera.failed', '摄像头启动失败：{message}', { message: err && err.message ? err.message : liveT('live.common.unknownError', '未知错误') });
+      if (placeholder) {
+        placeholder.hidden = false;
+        placeholder.textContent = cameraError;
+      }
+      if (badge) badge.textContent = liveT('live.host.camera.badgeUnavailable', '不可用');
+      showToast(cameraError, 'error');
+    }
+  }
+
+  /**
+   * 停止摄像头预览并释放设备
+   */
+  function stopCamera() {
+    var oldStream = state.cameraStream;                           // 旧摄像头流，稍后释放轨道
+    state.cameraStream = null;
+    state.cameraStopping = true;                                  // 主动停止标记，避免 ended 回调误报“摄像头断开”
+    if (oldStream) oldStream.getTracks().forEach(function (track) { track.stop(); });
+    var video = $('camera-preview');
+    if (video) video.srcObject = null;
+    // 摄像头关闭后恢复占位提示，避免预览区域一片黑
+    var placeholder = $('video-placeholder');
+    if (placeholder) {
+      placeholder.hidden = false;
+      placeholder.textContent = liveT('live.host.camera.placeholder', '点击「刷新设备」授权后显示本机摄像头画面');
+    }
+    var badge = $('camera-badge');
+    if (badge) badge.textContent = liveT('live.host.camera.badgeOff', '未启用');
+    // 摄像头关闭后停止向观众推送画面
+    syncViewerMedia();
+    // 同步触发的 ended 事件处理完后立即复位标记
+    setTimeout(function () { state.cameraStopping = false; }, 0);
+  }
+
+  /**
+   * 启动本机麦克风采集，用于本机监听
+   */
+  async function startLocalMic() {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return;
+    stopLocalMic();
+    var select = $('mic-select');
+    var deviceId = select ? select.value : '';
+    if (!deviceId) return;
+
+    try {
+      var constraints = {
+        audio: {
+          deviceId: { exact: deviceId },
+          echoCancellation: false,   // 关闭回声消除，保留原始声音
+          noiseSuppression: false,   // 关闭降噪
+          autoGainControl: false     // 关闭自动增益
+        }
+      };
+      var stream = await navigator.mediaDevices.getUserMedia(constraints);
+      state.localMicStream = stream;
+      if (state.localAudio) state.localAudio.srcObject = stream;
+      // 本机麦克风就绪后同步给所有观众
+      syncViewerMedia();
+      if (state.source === 'local' && state.monitorOn) playActiveSource();
+    } catch (err) {
+      // 设备被拔出时回退到系统默认麦克风
+      try {
+        var fallback = await navigator.mediaDevices.getUserMedia({ audio: true });
+        state.localMicStream = fallback;
+        if (state.localAudio) state.localAudio.srcObject = fallback;
+        syncViewerMedia();                 // 回退麦克风同样同步给观众
+        showToast(liveT('live.host.toast.micFallback', '指定麦克风不可用，已切换到系统默认麦克风'), 'warning');
+      } catch (err2) {
+        showToast(liveT('live.host.toast.micStartFailed', '麦克风启动失败：{message}', { message: err2 && err2.message ? err2.message : liveT('live.common.unknownError', '未知错误') }), 'error');
+      }
+    }
+  }
+
+  /**
+   * 停止本机麦克风采集
+   */
+  function stopLocalMic() {
+    if (state.localMicStream) {
+      state.localMicStream.getTracks().forEach(function (track) { track.stop(); });
+      state.localMicStream = null;
+    }
+    if (state.localAudio) {
+      state.localAudio.pause();
+      state.localAudio.srcObject = null;
+    }
+    // 本机麦克风停止后不再向观众推送音频
+    syncViewerMedia();
+  }
+
+  /**
+   * 把 base64 字符串解码成字节数组（原生端回传的 PCM16 数据）
+   * @param {string} b64 base64 数据
+   * @returns {Uint8Array} 解码后的字节
+   */
+  function base64ToBytes(b64) {
+    var bin = atob(b64 || '');
+    var len = bin.length;
+    var bytes = new Uint8Array(len);
+    for (var i = 0; i < len; i++) bytes[i] = bin.charCodeAt(i);
+    return bytes;
+  }
+
+  /**
+   * 开启原生系统声音采集（桌面客户端专用）
+   * 流程：页面请求开始 → 原生回报 started → 原生持续回传 PCM 分块
+   * @returns {Promise<boolean>} 是否成功开始
+   */
+  function startNativeSystemAudio() {
+    if (!NATIVE_BRIDGE) return Promise.resolve(false);
+    if (nativeAudio.active && nativeAudio.dest) return Promise.resolve(true);
+    try {
+      if (!nativeAudio.ctx) {
+        nativeAudio.ctx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (!nativeAudio.dest) {
+        nativeAudio.dest = nativeAudio.ctx.createMediaStreamDestination();
+      }
+      nativeAudio.active = true;
+      nativeAudio.nextTime = 0;
+    } catch (err) {
+      nativeAudio.active = false;
+      return Promise.resolve(false);
+    }
+
+    return new Promise(function (resolve) {
+      var settled = false;                           // 防止超时与回报重复结算
+      var timer = setTimeout(function () {
+        if (settled) return;
+        settled = true;
+        nativeAudio.pendingStart = null;
+        showToast(liveT('live.host.toast.systemAudioTimeout', '系统声音采集启动超时，请重试'), 'error');
+        resolve(false);
+      }, 3000);
+      nativeAudio.pendingStart = function (ok) {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timer);
+        nativeAudio.pendingStart = null;
+        resolve(ok);
+      };
+      // 音频上下文可能因自动播放策略处于 suspended，先恢复再请求原生采集
+      var resume = nativeAudio.ctx.state === 'suspended' ? nativeAudio.ctx.resume() : Promise.resolve();
+      resume.catch(function () { /* 忽略 */ }).then(function () {
+        NATIVE_BRIDGE.postMessage({ type: 'live:system-audio-start' });
+      });
+    });
+  }
+
+  /**
+   * 停止原生系统声音采集并释放页面侧音频资源
+   */
+  function stopNativeSystemAudio() {
+    if (NATIVE_BRIDGE) {
+      try { NATIVE_BRIDGE.postMessage({ type: 'live:system-audio-stop' }); } catch (err) { /* 忽略 */ }
+    }
+    if (nativeAudio.pendingStart) {
+      nativeAudio.pendingStart(false);
+    }
+    nativeAudio.active = false;
+    nativeAudio.nextTime = 0;
+    if (nativeAudio.dest) {
+      try {
+        nativeAudio.dest.stream.getTracks().forEach(function (track) { track.stop(); });
+      } catch (err) { /* 忽略 */ }
+      try { nativeAudio.dest.disconnect(); } catch (err) { /* 忽略 */ }
+      nativeAudio.dest = null;
+    }
+    if (nativeAudio.ctx) {
+      try { nativeAudio.ctx.close(); } catch (err) { /* 忽略 */ }
+      nativeAudio.ctx = null;
+    }
+  }
+
+  /**
+   * 把原生端回传的一段 PCM16 数据排程播放，形成连续的「电脑音频」音轨
+   * @param {{data: string, sampleRate: number, channels: number}} msg 原生消息
+   */
+  function pushNativePcmChunk(msg) {
+    if (!nativeAudio.active || !nativeAudio.ctx || !nativeAudio.dest) return;
+    var sampleRate = msg.sampleRate || nativeAudio.sampleRate || 48000;   // 原生采样率
+    var channels = msg.channels || nativeAudio.channels || 2;             // 声道数
+    var bytes = base64ToBytes(msg.data);                                  // PCM16 字节
+    var total = Math.floor(bytes.length / 2);                             // 采样点总数
+    if (channels <= 0 || total <= 0 || total % channels !== 0) return;
+    var frames = total / channels;                                        // 每声道帧数
+    var pcm = new Int16Array(bytes.buffer, bytes.byteOffset, total);      // 16 位采样
+    var buffer = nativeAudio.ctx.createBuffer(channels, frames, sampleRate);
+    for (var c = 0; c < channels; c++) {
+      var data = buffer.getChannelData(c);
+      for (var i = 0; i < frames; i++) data[i] = pcm[i * channels + c] / 32768;
+    }
+    var now = nativeAudio.ctx.currentTime;                                // 当前播放时间
+    // 队列落后（刚启动或卡顿）时重新对齐，避免一次性补播大量积压音频
+    if (nativeAudio.nextTime < now + 0.04 || nativeAudio.nextTime > now + 1) {
+      nativeAudio.nextTime = now + 0.04;
+    }
+    var source = nativeAudio.ctx.createBufferSource();
+    source.buffer = buffer;
+    source.connect(nativeAudio.dest);
+    source.start(nativeAudio.nextTime);
+    nativeAudio.nextTime += buffer.duration;
+  }
+
+  /**
+   * 处理原生端（桌面客户端）回传的消息
+   * @param {MessageEvent} event WebView2 消息事件
+   */
+  function handleNativeMessage(event) {
+    var msg = event.data;
+    if (!msg || !msg.type) return;
+
+    if (msg.type === 'live:system-audio-started') {
+      nativeAudio.sampleRate = msg.sampleRate || 48000;
+      nativeAudio.channels = msg.channels || 2;
+      if (nativeAudio.pendingStart) nativeAudio.pendingStart(true);
+      return;
+    }
+    if (msg.type === 'live:system-audio-failed') {
+      showToast(liveT('live.host.toast.systemAudioFailed', '系统声音采集失败：{message}', { message: msg.message || liveT('live.common.unknownError', '未知错误') }), 'error');
+      if (nativeAudio.pendingStart) nativeAudio.pendingStart(false);
+      return;
+    }
+    if (msg.type === 'live:system-audio-chunk') {
+      pushNativePcmChunk(msg);
+      return;
+    }
+    if (msg.type === 'live:system-audio-ended') {
+      // 原生采集被系统终止：清理并回退到本机麦克风
+      stopNativeSystemAudio();
+      if (state.source === 'computer') {
+        state.source = 'local';
+        showToast(liveT('live.host.toast.systemAudioStopped', '系统声音采集已停止，已切换回本机麦克风'), 'warning');
+        renderConnectionUI();
+        syncViewerMedia();
+      }
+    }
+  }
+
+  /**
+   * 渲染电脑音频提示（桌面客户端展示原生采集说明，语言切换后重新翻译）
+   */
+  function refreshComputerHint() {
+    if (!NATIVE_BRIDGE) return;
+    var hint = $('computer-hint');
+    if (hint) {
+      hint.innerHTML = liveT('live.host.audio.computerHintNative', '桌面客户端已内置系统声音采集：选择「电脑音频」会直接采集本机扬声器输出（WASAPI 环回），'
+        + '不会弹出共享窗口。系统声音不会再从扬声器监听，避免形成回声循环；观众端可正常听到。');
+    }
+  }
+
+  /**
+   * 初始化原生桥：绑定消息监听，并替换电脑音频提示文案
+   */
+  function initNativeBridge() {
+    if (!NATIVE_BRIDGE) return;
+    NATIVE_BRIDGE.addEventListener('message', handleNativeMessage);
+    refreshComputerHint();
+  }
+
+  /**
+   * 返回当前浏览器采集电脑音频的操作指引（不同内核对系统声音的支持不同）
+   * @returns {string} 中文提示文案
+   */
+  function computerAudioGuide() {
+    var ua = navigator.userAgent;                     // 浏览器 UA，用于区分内核
+    if (/firefox\//i.test(ua)) {
+      return liveT('live.host.audio.guideFirefox', 'Firefox 不支持共享系统声音：请在共享窗口选择「标签页」并勾选共享音频，或改用 Chrome');
+    }
+    if (/edg\//i.test(ua)) {
+      return liveT('live.host.audio.guideEdge', 'Edge 不支持共享整个屏幕的系统声音：请在共享窗口选择「标签页」并勾选「分享标签页音频」，或改用 Chrome');
+    }
+    return liveT('live.host.audio.guideDefault', '没有拿到电脑音频：请在共享窗口勾选「分享系统音频」，或选择「标签页」并勾选「分享标签页音频」');
+  }
+
+  /**
+   * 采集电脑系统声音（走 getDisplayMedia，必须由用户点击触发）
+   * 浏览器只允许在共享屏幕时勾选「分享系统音频」，这里保留屏幕轨道但不推送给观众
+   * @returns {Promise<boolean>} 是否成功拿到系统声音轨道
+   */
+  async function startComputerAudio() {
+    // 桌面客户端内优先走原生系统声音采集（不受浏览器共享屏幕限制，直接采集扬声器输出）
+    if (NATIVE_BRIDGE) {
+      var nativeOk = await startNativeSystemAudio();
+      if (nativeOk) {
+        state.computerStream = nativeAudio.dest ? nativeAudio.dest.stream : null;
+        if (state.computerAudio) state.computerAudio.srcObject = state.computerStream;
+        showToast(liveT('live.host.audio.computerConnectedNative', '电脑音频已接入（系统声音原生采集）'), 'success');
+        return true;
+      }
+      // 原生采集失败时继续尝试浏览器共享方式，尽量保证功能可用
+    }
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
+      showToast(liveT('live.host.audio.computerUnsupported', '当前浏览器不支持采集电脑音频，请使用 Chrome / Edge'), 'error');
+      return false;
+    }
+    var ua = navigator.userAgent;                     // 浏览器 UA，用于区分内核
+    var preferTab = /firefox\//i.test(ua) || /edg\//i.test(ua);  // Edge / Firefox 只有「标签页」共享才带音频
+    try {
+      // audio: true 才会在共享窗口中提供「分享音频」选项
+      // Edge / Firefox 预设为标签页（displaySurface: browser），提高拿到音频的概率
+      // systemAudio: include 让 Chromium 默认勾选系统声音；其余浏览器会忽略该参数
+      var stream = await navigator.mediaDevices.getDisplayMedia({
+        video: preferTab ? { displaySurface: 'browser' } : true,
+        audio: true,
+        systemAudio: 'include'
+      });
+      var audioTracks = stream.getAudioTracks();       // 系统声音轨道
+      if (!audioTracks.length) {
+        stream.getTracks().forEach(function (track) { track.stop(); });
+        showToast(computerAudioGuide(), 'error');
+        return false;
+      }
+      var audioTrack = audioTracks[0];                 // 实际使用的音频轨道
+      if ('contentHint' in audioTrack) {
+        try { audioTrack.contentHint = 'music'; } catch (err) { /* 忽略 */ }
+      }
+      // 用户点击「停止共享」时自动清理并回退音源
+      audioTrack.addEventListener('ended', handleComputerAudioEnded);
+      state.computerStream = stream;
+      if (state.computerAudio) state.computerAudio.srcObject = new MediaStream([audioTrack]);
+      showToast(liveT('live.host.audio.computerConnected', '电脑音频已接入'), 'success');
+      return true;
+    } catch (err) {
+      if (err && (err.name === 'NotAllowedError' || err.name === 'AbortError')) {
+        showToast(liveT('live.host.audio.computerCancelled', '已取消共享电脑音频'), 'warning');
+      } else {
+        showToast(liveT('live.host.audio.computerFailed', '获取电脑音频失败：{message}', { message: err && err.message ? err.message : liveT('live.common.unknownError', '未知错误') }), 'error');
+      }
+      return false;
+    }
+  }
+
+  /**
+   * 电脑音频共享被用户主动停止：清理采集并回退到本机麦克风
+   */
+  function handleComputerAudioEnded() {
+    stopComputerAudio();
+    if (state.source === 'computer') {
+      state.source = 'local';
+      showToast(liveT('live.host.audio.sharedStopped', '电脑音频共享已停止，已切换回本机麦克风'), 'warning');
+    }
+    renderConnectionUI();
+    syncViewerMedia();
+    if (state.monitorOn) {
+      state.monitorOn = false;                         // 旧音源已失效，需用户重新点击开启监听
+      renderConnectionUI();
+    }
+  }
+
+  /**
+   * 停止电脑音频采集（切换页面或卸载时释放麦克风/屏幕采集）
+   */
+  function stopComputerAudio() {
+    if (NATIVE_BRIDGE) {
+      stopNativeSystemAudio();          // 桌面客户端：通知原生端停止 WASAPI 采集
+    }
+    if (state.computerStream) {
+      state.computerStream.getTracks().forEach(function (track) { track.stop(); });
+      state.computerStream = null;
+    }
+    if (state.computerAudio) {
+      state.computerAudio.pause();
+      state.computerAudio.srcObject = null;
+    }
+  }
+
+  /**
+   * 复制文本到剪贴板（HTTP 局域网环境降级为 execCommand）
+   * @param {string} text 待复制文本
+   * @returns {Promise<void>}
+   */
+  function copyText(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+      return navigator.clipboard.writeText(text);
+    }
+    return new Promise(function (resolve, reject) {
+      var textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.select();
+      try {
+        var ok = document.execCommand('copy');
+        document.body.removeChild(textarea);
+        ok ? resolve() : reject(new Error('copy failed'));
+      } catch (err) {
+        document.body.removeChild(textarea);
+        reject(err);
+      }
+    });
+  }
+
+  /* =====================================================================
+     二、观看端（任意已登录用户，含非管理员）
+     ===================================================================== */
+
+  /** 观看端运行状态 */
+  var viewerState = {
+    channel: 'ch1',              // 当前观看频道
+    ws: null,                    // 信令连接
+    manualClose: false,          // 是否主动关闭（避免误重连）
+    reconnectTimer: null,        // 信令断线重连定时器
+    retryTimer: null,            // 主播未开播时的重新申请定时器
+    signalState: 'connecting',   // 信令状态：connecting / online / offline
+    hostOnline: false,           // 主播是否在播
+    joined: false,               // 是否已加入频道（服务端已分配观众编号）
+    viewerId: '',                // 服务端分配的观众编号
+    pc: null,                    // 与主播的 PeerConnection
+    remoteStream: null,          // 主播推送的音视频合并流（音轨与视频轨都放进同一条流）
+    notified: false,             // 是否已提示过“画面已到达”，避免重复弹 Toast
+    pendingCandidates: [],       // 暂存的 ICE 候选
+    iceServers: DEFAULT_ICE_SERVERS // STUN 配置
+  };
+
+  /**
+   * 观看端初始化入口
+   */
+  function initViewerMode() {
+    var hostView = $('host-view');
+    if (hostView) hostView.hidden = true;
+    var appView = $('app-view');
+    if (appView) appView.hidden = true;
+    var viewerView = $('viewer-view');
+    if (viewerView) viewerView.hidden = false;
+
+    viewerState.channel = readChannelFromUrl();
+    bindViewerEvents();
+    updateViewerChannelUI();
+    renderViewerUI();
+    initTopbarUser('viewer-user-info');   // 顶栏头像与用户菜单（与主项目一致）
+    bindFullscreenButton('btn-viewer-fullscreen', 'viewer-box');   // 观看画面全屏
+
+    // 侧边栏「设置」：管理员从这里进入直播页（主播端）
+    var viewerSettingsBtn = $('btn-viewer-settings');
+    if (viewerSettingsBtn) {
+      viewerSettingsBtn.addEventListener('click', function () {
+        window.location.href = BASE + '/stream/';
+      });
+    }
+
+    // 画面解码出首帧或尺寸变化时刷新占位提示（从“等待帧”切换为“已就绪”）
+    var viewerVideoEl = $('viewer-video');
+    if (viewerVideoEl) {
+      ['loadeddata', 'playing', 'resize'].forEach(function (name) {
+        viewerVideoEl.addEventListener(name, renderViewerUI);
+      });
+    }
+
+    // 拉取 STUN 配置（带 role=viewer，通过“已登录即可观看”的守卫）
+    fetch(API + '/info?role=viewer', { cache: 'no-store' })
+      .then(function (res) { return res.json(); })
+      .then(function (info) {
+        if (info && Array.isArray(info.iceServers) && info.iceServers.length) {
+          viewerState.iceServers = info.iceServers;
+        }
+      })
+      .catch(function () { /* 使用默认 STUN 即可 */ })
+      .then(connectViewerSignaling);
+  }
+
+  /**
+   * 绑定观看端交互：频道切换、点击播放
+   */
+  function bindViewerEvents() {
+    var nav = $('viewer-channel-nav');
+    if (nav) {
+      nav.addEventListener('click', function (event) {
+        var btn = event.target.closest('.channel-btn');
+        if (!btn) return;
+        switchViewerChannel(btn.getAttribute('data-channel'));
+      });
+    }
+
+    // 浏览器自动播放被拦截后，用户点击遮罩即可出声
+    var cover = $('viewer-cover');
+    if (cover) {
+      cover.addEventListener('click', function () {
+        var video = $('viewer-video');
+        if (!video) return;
+        if (!video.srcObject) {
+          showToast(liveT('live.viewer.toast.noHostVideo', '主播画面还没到，请稍候再试'), 'warning');
+          return;
+        }
+        // 点击属于用户手势，此时浏览器允许有声播放
+        var done = function () {
+          setCoverVisible(false);
+          renderViewerUI();
+        };
+        var promise = video.play();
+        if (promise && typeof promise.then === 'function') {
+          promise.then(done).catch(function () {
+            showToast(liveT('live.viewer.toast.playFailed', '播放失败，请检查浏览器是否禁止了声音播放'), 'error');
+          });
+        } else {
+          done();
+        }
+      });
+    }
+  }
+
+  /**
+   * 更新观看端频道文案与侧栏激活态
+   */
+  function updateViewerChannelUI() {
+    var nav = $('viewer-channel-nav');
+    if (nav) {
+      var buttons = nav.querySelectorAll('.channel-btn');
+      for (var i = 0; i < buttons.length; i++) {
+        buttons[i].classList.toggle('active', buttons[i].getAttribute('data-channel') === viewerState.channel);
+      }
+    }
+    var label = channelLabel(viewerState.channel);
+    setText($('viewer-meta'), label);
+  }
+
+  /**
+   * 显示 / 隐藏“点击播放”遮罩
+   * @param {boolean} visible 是否显示
+   */
+  function setCoverVisible(visible) {
+    var cover = $('viewer-cover');
+    if (cover) cover.hidden = !visible;
+  }
+
+  /**
+   * 统一刷新观看端状态（信令胶囊 + 等待文案）
+   */
+  function renderViewerUI() {
+    var pill = $('viewer-status');
+    if (pill) {
+      pill.classList.remove('is-wait', 'is-off');
+      var text = liveT('live.viewer.statusConnecting', '连接中');
+      if (viewerState.signalState === 'online' && viewerState.hostOnline) text = liveT('live.viewer.statusOnline', '主播在线');
+      if (viewerState.signalState === 'online' && !viewerState.hostOnline) { text = liveT('live.viewer.statusWaiting', '等待主播开播'); pill.classList.add('is-wait'); }
+      if (viewerState.signalState === 'offline') { text = liveT('live.viewer.statusOffline', '连接已断开'); pill.classList.add('is-off'); }
+      if (viewerState.signalState === 'connecting') pill.classList.add('is-wait');
+      var span = pill.querySelector('span');
+      if (span) span.textContent = text;
+    }
+
+    var stream = viewerState.remoteStream;                    // 当前收到的远程流
+    var videoEl = $('viewer-video');                          // 观看画面元素
+    // 只有“存在未结束的视频轨道且已经解码出画面”才算真正有画面，
+    // 否则（轨道已 ended 或还没收到帧）继续显示占位提示，避免纯黑无文字
+    var liveVideoTrack = !!stream && stream.getVideoTracks().some(function (t) { return t.readyState === 'live'; });
+    var hasVideo = !!(liveVideoTrack && videoEl && videoEl.videoWidth > 0);
+    var placeholderText = $('viewer-placeholder-text');
+    var placeholderTitle = $('viewer-placeholder-title');
+    if (placeholderTitle) {
+      if (hasVideo || !liveVideoTrack) placeholderTitle.textContent = liveT('live.viewer.waitTitle', '等待直播画面');
+      else placeholderTitle.textContent = liveT('live.viewer.receivingTitle', '正在接收画面');
+    }
+    if (placeholderText) {
+      if (viewerState.signalState !== 'online') placeholderText.textContent = liveT('live.viewer.signalConnecting', '正在连接信令服务器…');
+      else if (!viewerState.hostOnline) placeholderText.textContent = liveT('live.viewer.waitStart', '主播尚未开播，保持页面即可自动接入');
+      else if (!stream || !liveVideoTrack) placeholderText.textContent = liveT('live.viewer.noCamera', '主播未开启摄像头，当前仅有声音');
+      else if (!hasVideo) placeholderText.textContent = liveT('live.viewer.waitFrame', '已连接主播，正在等待画面帧…');
+      else placeholderText.textContent = liveT('live.viewer.ready', '画面已就绪');
+    }
+
+    // 占位层只在“还没有摄像头画面”时显示，音频直播时仍可看到提示
+    var placeholder = $('viewer-placeholder');
+    if (placeholder) placeholder.hidden = hasVideo;
+  }
+
+  /**
+   * 建立观看端信令连接并申请加入频道
+   */
+  function connectViewerSignaling() {
+    closeViewerSignaling();
+    viewerState.manualClose = false;
+    viewerState.signalState = 'connecting';
+    viewerState.joined = false;
+    renderViewerUI();
+
+    var ws;
+    try {
+      ws = new WebSocket(WS_URL);
+    } catch (err) {
+      viewerState.signalState = 'offline';
+      renderViewerUI();
+      scheduleViewerReconnect();
+      return;
+    }
+    viewerState.ws = ws;
+
+    ws.addEventListener('open', function () {
+      viewerState.signalState = 'online';
+      renderViewerUI();
+      sendViewer({ type: 'viewer:join', channel: viewerState.channel });
+    });
+
+    ws.addEventListener('message', function (event) {
+      var msg;
+      try { msg = JSON.parse(event.data); } catch (err) { return; }
+      handleViewerMessage(msg);
+    });
+
+    ws.addEventListener('close', function () {
+      if (viewerState.ws !== ws) return;
+      viewerState.ws = null;
+      viewerState.signalState = 'offline';
+      viewerState.hostOnline = false;
+      viewerState.joined = false;
+      closeViewerConnection();
+      renderViewerUI();
+      if (!viewerState.manualClose) scheduleViewerReconnect();
+    });
+
+    ws.addEventListener('error', function () {
+      // 连接失败后浏览器会继续触发 close
+    });
+  }
+
+  /**
+   * 主动关闭观看端信令
+   */
+  function closeViewerSignaling() {
+    viewerState.manualClose = true;
+    if (viewerState.reconnectTimer) {
+      clearTimeout(viewerState.reconnectTimer);
+      viewerState.reconnectTimer = null;
+    }
+    if (viewerState.retryTimer) {
+      clearTimeout(viewerState.retryTimer);
+      viewerState.retryTimer = null;
+    }
+    if (viewerState.ws) {
+      try { viewerState.ws.close(); } catch (err) { /* 忽略 */ }
+      viewerState.ws = null;
+    }
+  }
+
+  /**
+   * 信令断开后 2 秒自动重连
+   */
+  function scheduleViewerReconnect() {
+    if (viewerState.reconnectTimer || viewerState.manualClose) return;
+    viewerState.reconnectTimer = setTimeout(function () {
+      viewerState.reconnectTimer = null;
+      if (!viewerState.manualClose) connectViewerSignaling();
+    }, 2000);
+  }
+
+  /**
+   * 主播未开播时，每 3 秒重新申请加入频道
+   */
+  function scheduleViewerJoinRetry() {
+    if (viewerState.retryTimer || viewerState.manualClose) return;
+    viewerState.retryTimer = setTimeout(function () {
+      viewerState.retryTimer = null;
+      if (viewerState.manualClose) return;
+      if (!viewerState.ws || viewerState.ws.readyState !== WebSocket.OPEN) return;
+      sendViewer({ type: 'viewer:join', channel: viewerState.channel });
+    }, 3000);
+  }
+
+  /**
+   * 发送观看端信令
+   * @param {object} payload 消息体
+   */
+  function sendViewer(payload) {
+    if (!viewerState.ws || viewerState.ws.readyState !== WebSocket.OPEN) return;
+    viewerState.ws.send(JSON.stringify(payload));
+  }
+
+  /**
+   * 处理服务端下发的观看端消息
+   * @param {object} msg 消息体
+   */
+  async function handleViewerMessage(msg) {
+    if (!msg || !msg.type) return;
+
+    if (msg.type === 'viewer:joined') {
+      viewerState.joined = true;
+      viewerState.hostOnline = true;
+      viewerState.viewerId = msg.viewerId || '';
+      renderViewerUI();
+      return;
+    }
+
+    if (msg.type === 'viewer:rejected') {
+      viewerState.joined = false;
+      viewerState.hostOnline = false;
+      renderViewerUI();
+      // 主播尚未开播或人数已满：稍后重新申请
+      scheduleViewerJoinRetry();
+      return;
+    }
+
+    if (msg.type === 'viewer:closed') {
+      viewerState.joined = false;
+      viewerState.hostOnline = false;
+      closeViewerConnection();
+      renderViewerUI();
+      scheduleViewerJoinRetry();
+      return;
+    }
+
+    if (msg.type === 'signal') {
+      await handleViewerPeerSignal(msg.data);
+    }
+  }
+
+  /**
+   * 处理主播端发来的 Offer / ICE
+   * @param {object} data 信令数据
+   */
+  async function handleViewerPeerSignal(data) {
+    if (!data) return;
+
+    if (data.candidate) {
+      addViewerCandidate(data.candidate);
+      return;
+    }
+
+    if (data.sdp && data.sdp.type === 'offer') {
+      try {
+        var pc = ensureViewerPeer();
+        await pc.setRemoteDescription(new RTCSessionDescription(data.sdp));
+        flushViewerCandidates();
+        var answer = await pc.createAnswer();
+        await pc.setLocalDescription(answer);
+        sendViewer({ type: 'viewer:signal', data: { sdp: pc.localDescription } });
+      } catch (err) {
+        showToast(liveT('live.viewer.toast.connectFailed', '建立观看连接失败：{message}', { message: err.message }), 'error');
+      }
+    }
+  }
+
+  /**
+   * 创建观看端 PeerConnection（只接收主播的音视频）
+   * @returns {RTCPeerConnection} 连接对象
+   */
+  function ensureViewerPeer() {
+    if (viewerState.pc) return viewerState.pc;
+    var pc = new RTCPeerConnection({ iceServers: viewerState.iceServers });
+    viewerState.pc = pc;
+
+    pc.onicecandidate = function (event) {
+      if (event.candidate) sendViewer({ type: 'viewer:signal', data: { candidate: event.candidate } });
+    };
+
+    pc.ontrack = function (event) {
+      // 主播端每一路轨道是独立发送的，这里统一合并到同一条 MediaStream，
+      // 避免音轨与视频轨互相覆盖导致“只有画面没声音”或“点了没反应”。
+      if (!viewerState.remoteStream) viewerState.remoteStream = new MediaStream();
+      var stream = viewerState.remoteStream;
+      var exists = stream.getTracks().some(function (track) { return track.id === event.track.id; });
+      if (!exists) stream.addTrack(event.track);
+
+      // 主播关闭摄像头或切换设备时轨道会 ended，及时移除并恢复占位提示，避免纯黑无文字
+      event.track.addEventListener('ended', function () {
+        try { stream.removeTrack(event.track); } catch (err) { /* 忽略 */ }
+        renderViewerUI();
+      });
+      // 轨道被静音（暂时没有数据）时也刷新提示
+      event.track.addEventListener('mute', renderViewerUI);
+      event.track.addEventListener('unmute', renderViewerUI);
+
+      attachViewerStream(stream);
+    };
+
+    pc.onconnectionstatechange = function () {
+      if (pc.connectionState === 'failed' || pc.connectionState === 'closed') {
+        closeViewerConnection();
+        renderViewerUI();
+      }
+    };
+    return pc;
+  }
+
+  /**
+   * 把主播推送的媒体流挂到 <video> 上
+   * 浏览器自动播放策略可能拦截有声播放，失败时显示“点击播放”遮罩。
+   * @param {MediaStream} stream 远程音视频流
+   */
+  function attachViewerStream(stream) {
+    viewerState.remoteStream = stream;
+    var video = $('viewer-video');
+    if (!video) return;
+    // 只在首次挂载时设置 srcObject，后续追加轨道会自动沿用同一条流
+    if (video.srcObject !== stream) video.srcObject = stream;
+    renderViewerUI();
+
+    if (!video.paused) {
+      // 已经在播放：无需再次调用 play()，否则可能重新触发自动播放拦截
+      setCoverVisible(false);
+    } else {
+      // 尝试自动播放；被浏览器拦截时显示“点击播放”遮罩，等待用户手势
+      video.play().then(function () {
+        setCoverVisible(false);
+        renderViewerUI();
+      }).catch(function () {
+        setCoverVisible(true);
+      });
+    }
+
+    // 只在第一次收到流时提示一次，避免每个轨道都弹 Toast
+    if (!viewerState.notified) {
+      viewerState.notified = true;
+      showToast(liveT('live.viewer.toast.frameArrived', '直播画面已到达，若没有声音请点击画面播放'), 'success');
+    }
+  }
+
+  /**
+   * 添加 ICE 候选；远端描述未就绪时先缓存
+   * @param {RTCIceCandidateInit} candidate ICE 候选
+   */
+  function addViewerCandidate(candidate) {
+    if (!viewerState.pc || !viewerState.pc.remoteDescription) {
+      viewerState.pendingCandidates.push(candidate);
+      return;
+    }
+    viewerState.pc.addIceCandidate(new RTCIceCandidate(candidate)).catch(function () { /* 忽略 */ });
+  }
+
+  /**
+   * 补加缓存的 ICE 候选
+   */
+  function flushViewerCandidates() {
+    if (!viewerState.pc) return;
+    var list = viewerState.pendingCandidates.slice();
+    viewerState.pendingCandidates = [];
+    list.forEach(function (candidate) {
+      viewerState.pc.addIceCandidate(new RTCIceCandidate(candidate)).catch(function () { /* 忽略 */ });
+    });
+  }
+
+  /**
+   * 关闭观看端 PeerConnection 并清空画面
+   */
+  function closeViewerConnection() {
+    viewerState.pendingCandidates = [];
+    if (viewerState.pc) {
+      try { viewerState.pc.close(); } catch (err) { /* 忽略 */ }
+      viewerState.pc = null;
+    }
+    viewerState.remoteStream = null;
+    viewerState.notified = false;
+    var video = $('viewer-video');
+    if (video) {
+      video.pause();
+      video.srcObject = null;
+    }
+    setCoverVisible(false);
+  }
+
+  /**
+   * 切换观看频道：关闭旧连接并重新加入新频道
+   * @param {string} channel 频道标识
+   */
+  function switchViewerChannel(channel) {
+    if (CHANNELS.indexOf(channel) < 0 || channel === viewerState.channel) return;
+    closeViewerSignaling();
+    closeViewerConnection();
+    viewerState.channel = channel;
+    viewerState.hostOnline = false;
+    viewerState.joined = false;
+    viewerState.signalState = 'connecting';
+    updateViewerChannelUI();
+    renderViewerUI();
+
+    // 频道写入地址栏（观看页使用 /channel/N 路径），刷新后仍停留在该频道
+    try {
+      history.replaceState(null, '', channelPath(channel) + (IS_EMBED_MODE ? '?embed=1' : ''));
+    } catch (err) { /* 忽略 */ }
+
+    connectViewerSignaling();
+  }
+
+  /* =====================================================================
+     三、手机端（扫码后打开）
+     ===================================================================== */
+
+  /** 手机端运行状态 */
+  var appState = {
+    channel: 'ch1',              // 配对频道
+    token: '',                   // 配对令牌
+    ws: null,                    // 信令连接
+    pc: null,                    // 与主播的 PeerConnection
+    micStream: null,             // 手机麦克风流
+    pendingCandidates: [],       // 暂存的 ICE 候选
+    stopping: false,             // 是否主动停止
+    channelError: false,         // 配对信息是否无效（决定频道行文案）
+    stateView: null,             // 当前状态文案视图 { key, fallback, params, mood }
+    iceServers: DEFAULT_ICE_SERVERS // STUN 配置
+  };
+
+  /**
+   * 手机端初始化入口
+   */
+  function initAppMode() {
+    document.body.classList.add('app-mode');
+    var hostView = $('host-view');
+    if (hostView) hostView.hidden = true;
+    var appView = $('app-view');
+    if (appView) appView.hidden = false;
+
+    var params = new URLSearchParams(location.search);
+    var ch = params.get('ch');
+    var token = params.get('token') || '';
+
+    var stateEl = $('app-state');
+    var channelEl = $('app-channel');
+    var startBtn = $('app-start');
+    var stopBtn = $('app-stop');
+
+    if (CHANNELS.indexOf(ch) < 0 || !token) {
+      appState.channelError = true;
+      setAppState('live.app.channelInvalid', '配对信息无效，请重新扫描主播页面上的二维码', null, 'error');
+      if (startBtn) startBtn.disabled = true;
+      setText(channelEl, liveT('live.app.channelMissing', '频道信息缺失'));
+      return;
+    }
+
+    appState.channel = ch;
+    appState.token = token;
+    renderAppChannel();
+
+    if (!window.isSecureContext) {
+      setAppState('live.app.insecureWarn', '当前页面不是 HTTPS 安全环境，浏览器会拒绝麦克风权限。请改用原生 APP 或通过 HTTPS 访问。', null, 'error');
+    }
+
+    // 拉取 STUN 配置（手机端带 role=app，跳过主播端的登录/管理员校验）
+    fetch(API + '/info?role=app', { cache: 'no-store' })
+      .then(function (res) { return res.json(); })
+      .then(function (info) {
+        if (info && Array.isArray(info.iceServers) && info.iceServers.length) {
+          appState.iceServers = info.iceServers;
+        }
+      })
+      .catch(function () { /* 使用默认 STUN 即可 */ });
+
+    if (startBtn) startBtn.addEventListener('click', startAppMic);
+    if (stopBtn) stopBtn.addEventListener('click', function () { stopApp(true); });
+  }
+
+  /**
+   * 更新手机端状态文案
+   * @param {string|null} key 语言包键；为 null 时直接展示 fallback（如服务端下发的原文）
+   * @param {string} fallback 中文兜底文案
+   * @param {object} [params] 占位参数
+   * @param {'normal'|'error'|'ok'} [mood] 视觉状态
+   */
+  function setAppState(key, fallback, params, mood) {
+    appState.stateView = { key: key, fallback: fallback, params: params || null, mood: mood || '' };
+    renderAppState();
+  }
+
+  /**
+   * 按当前保存的状态视图渲染手机端状态文案（语言切换后可重新调用）
+   */
+  function renderAppState() {
+    var el = $('app-state');
+    if (!el) return;
+    var view = appState.stateView;
+    if (!view) return;
+    el.textContent = view.key ? liveT(view.key, view.fallback, view.params) : (view.fallback || '');
+    el.className = 'app-state' + (view.mood === 'error' ? ' is-error' : (view.mood === 'ok' ? ' is-ok' : ''));
+  }
+
+  /**
+   * 渲染手机端频道信息行（频道名 · 令牌前缀）
+   */
+  function renderAppChannel() {
+    var el = $('app-channel');
+    if (!el) return;
+    if (appState.channelError) {
+      el.textContent = liveT('live.app.channelMissing', '频道信息缺失');
+      return;
+    }
+    if (!appState.token) return;
+    el.textContent = liveT('live.app.channelInfo', '{channel} · 令牌 {token}…', {
+      channel: channelLabel(appState.channel),
+      token: appState.token.slice(0, 6)
+    });
+  }
+
+  /**
+   * 手机端开始采集麦克风并连接主播
+   */
+  async function startAppMic() {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      setAppState('live.app.micUnsupported', '当前浏览器不支持麦克风采集', null, 'error');
+      return;
+    }
+
+    var startBtn = $('app-start');
+    var stopBtn = $('app-stop');
+    if (startBtn) startBtn.disabled = true;
+    setAppState('live.app.requesting', '正在请求麦克风权限…', null, '');
+
+    try {
+      // 手机端只采集音频，关闭系统处理以保留原始声音
+      appState.micStream = await navigator.mediaDevices.getUserMedia({
+        audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false }
+      });
+    } catch (err) {
+      if (err && err.name === 'NotAllowedError') {
+        setAppState('live.app.micDenied', '麦克风权限被拒绝，请在手机浏览器设置中允许麦克风权限后重试', null, 'error');
+      } else if (!window.isSecureContext) {
+        setAppState('live.app.insecureMic', '当前页面不是 HTTPS 安全环境，浏览器禁止访问麦克风；请使用 HTTPS 或原生 APP', null, 'error');
+      } else {
+        setAppState('live.app.micFailed', '无法访问手机麦克风：{message}', { message: err && err.message ? err.message : liveT('live.common.unknownError', '未知错误') }, 'error');
+      }
+      if (startBtn) startBtn.disabled = false;
+      return;
+    }
+
+    if (stopBtn) stopBtn.hidden = false;
+    setAppState('live.app.connectingHost', '正在连接主播…', null, '');
+    connectAppSignaling();
+  }
+
+  /**
+   * 手机端建立信令连接并申请加入频道
+   */
+  function connectAppSignaling() {
+    closeAppSignaling();
+
+    var ws;
+    try {
+      ws = new WebSocket(WS_URL);
+    } catch (err) {
+      setAppState('live.app.networkError', '无法连接主播，请检查网络', null, 'error');
+      return;
+    }
+    appState.ws = ws;
+    appState.stopping = false;
+
+    ws.addEventListener('open', function () {
+      ws.send(JSON.stringify({
+        type: 'app:join',
+        channel: appState.channel,
+        token: appState.token
+      }));
+    });
+
+    ws.addEventListener('message', function (event) {
+      var msg;
+      try { msg = JSON.parse(event.data); } catch (err) { return; }
+      handleAppMessage(msg);
+    });
+
+    ws.addEventListener('close', function () {
+      if (appState.ws !== ws) return;
+      appState.ws = null;
+      if (!appState.stopping) {
+        setAppState('live.app.disconnected', '与主播的连接已断开，请刷新页面后重新扫码', null, 'error');
+        resetAppButtons();
+      }
+    });
+
+    ws.addEventListener('error', function () {
+      // 错误后浏览器会继续触发 close
+    });
+  }
+
+  /**
+   * 主动关闭手机端信令
+   */
+  function closeAppSignaling() {
+    if (appState.ws) {
+      try { appState.ws.close(); } catch (err) { /* 忽略 */ }
+      appState.ws = null;
+    }
+  }
+
+  /**
+   * 处理主播端下发的信令
+   * @param {object} msg 消息体
+   */
+  async function handleAppMessage(msg) {
+    if (!msg || !msg.type) return;
+
+    if (msg.type === 'app:joined') {
+      setAppState('live.app.paired', '已配对，等待主播建立 P2P 连接…', null, '');
+      return;
+    }
+
+    if (msg.type === 'app:rejected') {
+      setAppState(msg.message ? null : 'live.app.rejected', msg.message || '配对失败，请重新扫码', null, 'error');
+      stopApp(false);
+      return;
+    }
+
+    if (msg.type === 'app:host-left' || msg.type === 'app:closed') {
+      setAppState(msg.message ? null : 'live.app.hostLeft', msg.message || '主播已断开连接', null, 'error');
+      stopApp(false);
+      return;
+    }
+
+    if (msg.type === 'signal') {
+      await handleAppSignal(msg.data);
+    }
+  }
+
+  /**
+   * 处理主播端的 Offer / ICE
+   * @param {object} data 信令数据
+   */
+  async function handleAppSignal(data) {
+    if (!data) return;
+
+    if (data.candidate) {
+      addAppCandidate(data.candidate);
+      return;
+    }
+
+    if (data.sdp && data.sdp.type === 'offer') {
+      // 主播发来 Offer 后创建 PeerConnection 并回 Answer
+      try {
+        var pc = ensureAppPeer();
+        // 把手机麦克风轨道加入连接
+        if (appState.micStream) {
+          appState.micStream.getAudioTracks().forEach(function (track) {
+            var already = pc.getSenders().some(function (sender) { return sender.track === track; });
+            if (!already) pc.addTrack(track, appState.micStream);
+          });
+        }
+        await pc.setRemoteDescription(new RTCSessionDescription(data.sdp));
+        flushAppCandidates();
+        var answer = await pc.createAnswer();
+        await pc.setLocalDescription(answer);
+        sendAppSignal({ sdp: pc.localDescription });
+        setAppState('live.app.p2pConnecting', '正在建立 P2P 连接…', null, '');
+      } catch (err) {
+        setAppState('live.app.answerFailed', '创建 WebRTC Answer 失败：{message}', { message: err.message }, 'error');
+      }
+    }
+  }
+
+  /**
+   * 创建手机端 PeerConnection
+   * @returns {RTCPeerConnection} 连接对象
+   */
+  function ensureAppPeer() {
+    if (appState.pc) return appState.pc;
+    var pc = new RTCPeerConnection({ iceServers: appState.iceServers });
+    appState.pc = pc;
+
+    pc.onicecandidate = function (event) {
+      if (event.candidate) sendAppSignal({ candidate: event.candidate });
+    };
+
+    pc.onconnectionstatechange = function () {
+      var s = pc.connectionState;
+      if (s === 'connected') {
+        setAppState('live.app.connected', '已连接，正在把手机麦克风发送给主播', null, 'ok');
+        var stopBtn = $('app-stop');
+        if (stopBtn) stopBtn.hidden = false;
+      } else if (s === 'failed') {
+        setAppState('live.app.p2pFailed', 'P2P 连接失败，请刷新页面重试', null, 'error');
+      }
+    };
+    return pc;
+  }
+
+  /**
+   * 添加手机端 ICE 候选；远端描述未就绪时缓存
+   * @param {RTCIceCandidateInit} candidate ICE 候选
+   */
+  function addAppCandidate(candidate) {
+    if (!appState.pc) {
+      appState.pendingCandidates.push(candidate);
+      return;
+    }
+    if (!appState.pc.remoteDescription) {
+      appState.pendingCandidates.push(candidate);
+      return;
+    }
+    appState.pc.addIceCandidate(new RTCIceCandidate(candidate)).catch(function () { /* 忽略 */ });
+  }
+
+  /**
+   * 补加缓存中的 ICE 候选
+   */
+  function flushAppCandidates() {
+    if (!appState.pc) return;
+    var list = appState.pendingCandidates.slice();
+    appState.pendingCandidates = [];
+    list.forEach(function (candidate) {
+      appState.pc.addIceCandidate(new RTCIceCandidate(candidate)).catch(function () { /* 忽略 */ });
+    });
+  }
+
+  /**
+   * 向主播端发送信令
+   * @param {object} data SDP 或 ICE
+   */
+  function sendAppSignal(data) {
+    if (!appState.ws || appState.ws.readyState !== WebSocket.OPEN) return;
+    appState.ws.send(JSON.stringify({ type: 'app:signal', data: data }));
+  }
+
+  /**
+   * 停止手机端：关闭连接、停止麦克风、恢复按钮
+   * @param {boolean} byUser 是否用户主动点击停止
+   */
+  function stopApp(byUser) {
+    appState.stopping = true;
+    closeAppSignaling();
+
+    if (appState.pc) {
+      try { appState.pc.close(); } catch (err) { /* 忽略 */ }
+      appState.pc = null;
+    }
+    appState.pendingCandidates = [];
+
+    if (appState.micStream) {
+      appState.micStream.getTracks().forEach(function (track) { track.stop(); });
+      appState.micStream = null;
+    }
+
+    resetAppButtons();
+    if (byUser) setAppState('live.app.stopped', '已停止。再次点击「开始采集并连接」可重新配对', null, '');
+    else if (!appState.ws) {
+      // 由服务端拒绝/断开时，状态文案已在调用处设置，这里不覆盖
+    }
+  }
+
+  /**
+   * 恢复手机端按钮初始状态
+   */
+  function resetAppButtons() {
+    var startBtn = $('app-start');
+    var stopBtn = $('app-stop');
+    if (startBtn) startBtn.disabled = false;
+    if (stopBtn) stopBtn.hidden = true;
+  }
+
+  /**
+   * 刷新摄像头预览区的状态文案（语言切换后重新翻译）
+   */
+  function refreshCameraView() {
+    var badge = $('camera-badge');
+    if (badge) {
+      badge.textContent = state.cameraStream
+        ? liveT('live.host.camera.badgePreview', '预览中')
+        : liveT('live.host.camera.badgeOff', '未启用');
+    }
+    var placeholder = $('video-placeholder');
+    if (placeholder) {
+      placeholder.hidden = !!state.cameraStream;
+      if (!state.cameraStream) placeholder.textContent = liveT('live.host.camera.placeholder', '点击「刷新设备」授权后显示本机摄像头画面');
+    }
+  }
+
+  /**
+   * 按当前语言重新翻译全部静态标注与动态文案（首次就绪与语言切换时调用）
+   */
+  function refreshTexts() {
+    // 标签页标题统一使用站点名，不使用直播房间名
+    document.title = liveT('app.name', '明星学校');
+    if (window.I18n) I18n.applyDom(document);
+    applyAltTranslations(document);
+
+    if (IS_APP_MODE) {
+      renderAppChannel();
+      renderAppState();
+    } else if (IS_VIEWER_MODE) {
+      updateViewerChannelUI();
+      renderViewerUI();
+    } else {
+      updateChannelUI();
+      if (state.devicesLoaded) {
+        // 设备下拉中的兜底名称由 liveT 生成，语言切换后需要重建
+        fillDeviceSelect($('camera-select'), filterDevices('videoinput'), 'camera');
+        fillDeviceSelect($('mic-select'), filterDevices('audioinput'), 'mic');
+      }
+      renderConnectionUI();
+      applyViewerUrl();
+      refreshComputerHint();
+      if (state.token) applyToken(state.token);
+      else resetPairUI();
+      refreshCameraView();
+    }
+  }
+
+  /**
+   * 启动子应用：按页面身份选择主播端 / 观看端 / 手机端初始化
+   */
+  function startApp() {
+    initTheme();
+    if (IS_APP_MODE) {
+      initAppMode();
+    } else if (IS_VIEWER_MODE) {
+      initViewerMode();
+    } else {
+      initHostMode();
+    }
+  }
+
+  /* ---------------- 启动 ---------------- */
+
+  // 桌面客户端嵌入模式：隐藏网页自带侧栏与顶栏，由桌面外壳提供导航
+  if (IS_EMBED_MODE) document.body.classList.add('lv-embed');
+  // 桌面客户端：绑定原生系统声音桥（浏览器内 NATIVE_BRIDGE 为空，自动跳过）
+  initNativeBridge();
+
+  // 暴露给桌面客户端外壳的控制接口：切换频道、查询当前状态
+  window.MXLive = {
+    embed: IS_EMBED_MODE,                     // 是否为嵌入模式
+    viewer: IS_VIEWER_MODE,                   // 当前是否为观看端
+    hasNativeAudio: !!NATIVE_BRIDGE,          // 是否具备原生系统声音采集能力
+    setChannel: function (channel) {          // 切换频道（主播端 / 观看端自动分流）
+      if (IS_APP_MODE) return;
+      if (IS_VIEWER_MODE) switchViewerChannel(channel);
+      else switchChannel(channel);
+    },
+    getChannel: function () {                 // 读取当前频道
+      return IS_VIEWER_MODE ? viewerState.channel : state.channel;
+    }
+  };
+
+  // 首批渲染依赖语言包：ready 后再初始化，并注册语言切换后的重新翻译
+  if (window.I18n && window.I18n.ready) {
+    I18n.ready(function () {
+      startApp();
+      refreshTexts();
+    });
+    I18n.onChange(refreshTexts);
+  } else {
+    startApp();
+  }
+})();
+</script>
+<!-- 平台公共 UI 骨架：右侧「分享 / 关闭」悬浮工具条（与主项目完全一致，一处维护） -->
+<script src="/assets/common-ui.js?v=20261062"></script>
+</body>
+</html>

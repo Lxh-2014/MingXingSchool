@@ -1,0 +1,328 @@
+[
+  {
+    "id": "pq-1",
+    "subject_id": "sub-yw",
+    "lesson_id": "les-yw-1",
+    "type": "single_choice",
+    "content": "“春”字的正确读音是？",
+    "options": [
+      {
+        "text": "chūn"
+      },
+      {
+        "text": "cūn"
+      },
+      {
+        "text": "chēn"
+      },
+      {
+        "text": "chuēn"
+      }
+    ],
+    "correct_answer": "chūn",
+    "image_url": null,
+    "audio_url": null,
+    "explanation": "“春”读 chūn，第一声。",
+    "display_order": 1,
+    "created_at": "2026-11-12T05:46:53.434Z"
+  },
+  {
+    "id": "pq-2",
+    "subject_id": "sub-yw",
+    "lesson_id": "les-yw-1",
+    "type": "single_choice",
+    "content": "下列词语中没有错别字的一项是？",
+    "options": [
+      {
+        "text": "再接再励"
+      },
+      {
+        "text": "再接再厉"
+      },
+      {
+        "text": "再接再利"
+      },
+      {
+        "text": "再接再立"
+      }
+    ],
+    "correct_answer": "再接再厉",
+    "image_url": null,
+    "audio_url": null,
+    "explanation": "正确写法是“再接再厉”。",
+    "display_order": 2,
+    "created_at": "2026-11-12T05:46:53.434Z"
+  },
+  {
+    "id": "pq-3",
+    "subject_id": "sub-yw",
+    "lesson_id": "les-yw-1",
+    "type": "fill_blank",
+    "content": "“一寸光阴一寸金”的下一句是：________。",
+    "options": null,
+    "correct_answer": "寸金难买寸光阴",
+    "image_url": null,
+    "audio_url": null,
+    "explanation": "出自《增广贤文》。",
+    "display_order": 3,
+    "created_at": "2026-11-12T05:46:53.434Z"
+  },
+  {
+    "id": "pq-4",
+    "subject_id": "sub-yw",
+    "lesson_id": "les-yw-2",
+    "type": "multiple_choice",
+    "content": "下列哪些词可以用来形容春天？",
+    "options": [
+      {
+        "text": "鸟语花香"
+      },
+      {
+        "text": "冰天雪地"
+      },
+      {
+        "text": "春暖花开"
+      },
+      {
+        "text": "烈日炎炎"
+      }
+    ],
+    "correct_answer": [
+      "鸟语花香",
+      "春暖花开"
+    ],
+    "image_url": null,
+    "audio_url": null,
+    "explanation": "其余两项分别形容冬天和夏天。",
+    "display_order": 1,
+    "created_at": "2026-11-12T05:46:53.434Z"
+  },
+  {
+    "id": "pq-5",
+    "subject_id": "sub-yw",
+    "lesson_id": "les-yw-2",
+    "type": "matching",
+    "content": "把左右两边搭配成正确的词语。",
+    "options": {
+      "left": [
+        {
+          "text": "明亮的"
+        },
+        {
+          "text": "清澈的"
+        },
+        {
+          "text": "勤劳的"
+        }
+      ],
+      "right": [
+        {
+          "text": "眼睛"
+        },
+        {
+          "text": "河水"
+        },
+        {
+          "text": "蜜蜂"
+        }
+      ]
+    },
+    "correct_answer": {
+      "明亮的": "眼睛",
+      "清澈的": "河水",
+      "勤劳的": "蜜蜂"
+    },
+    "image_url": null,
+    "audio_url": null,
+    "explanation": "形容词与名词合理搭配。",
+    "display_order": 2,
+    "created_at": "2026-11-12T05:46:53.434Z"
+  },
+  {
+    "id": "pq-6",
+    "subject_id": "sub-yw",
+    "lesson_id": "les-yw-2",
+    "type": "sentence_order",
+    "content": "把下面的词语排成通顺的句子。",
+    "options": [
+      "小明",
+      "在家里",
+      "认真地",
+      "写作业"
+    ],
+    "correct_answer": [
+      "小明",
+      "在家里",
+      "认真地",
+      "写作业"
+    ],
+    "image_url": null,
+    "audio_url": null,
+    "explanation": "按“谁 + 在哪里 + 怎样 + 做什么”排序。",
+    "display_order": 3,
+    "created_at": "2026-11-12T05:46:53.434Z"
+  },
+  {
+    "id": "pq-7",
+    "subject_id": "sub-yw",
+    "lesson_id": "les-yw-3",
+    "type": "single_choice",
+    "content": "《静夜思》的作者是谁？",
+    "options": [
+      {
+        "text": "杜甫"
+      },
+      {
+        "text": "李白"
+      },
+      {
+        "text": "白居易"
+      },
+      {
+        "text": "王维"
+      }
+    ],
+    "correct_answer": "李白",
+    "image_url": null,
+    "audio_url": null,
+    "explanation": "《静夜思》是李白的代表作。",
+    "display_order": 1,
+    "created_at": "2026-11-12T05:46:53.434Z"
+  },
+  {
+    "id": "pq-8",
+    "subject_id": "sub-sx",
+    "lesson_id": "les-sx-1",
+    "type": "single_choice",
+    "content": "27 + 35 = ？",
+    "options": [
+      {
+        "text": "52"
+      },
+      {
+        "text": "62"
+      },
+      {
+        "text": "63"
+      },
+      {
+        "text": "72"
+      }
+    ],
+    "correct_answer": "62",
+    "image_url": null,
+    "audio_url": null,
+    "explanation": "27 + 35 = 62。",
+    "display_order": 1,
+    "created_at": "2026-11-12T05:46:53.434Z"
+  },
+  {
+    "id": "pq-9",
+    "subject_id": "sub-sx",
+    "lesson_id": "les-sx-1",
+    "type": "fill_blank",
+    "content": "90 - 46 = ________。",
+    "options": null,
+    "correct_answer": "44",
+    "image_url": null,
+    "audio_url": null,
+    "explanation": "90 - 46 = 44。",
+    "display_order": 2,
+    "created_at": "2026-11-12T05:46:53.434Z"
+  },
+  {
+    "id": "pq-10",
+    "subject_id": "sub-sx",
+    "lesson_id": "les-sx-2",
+    "type": "fill_blank",
+    "content": "七八________。",
+    "options": null,
+    "correct_answer": "五十六",
+    "image_url": null,
+    "audio_url": null,
+    "explanation": "7 × 8 = 56。",
+    "display_order": 1,
+    "created_at": "2026-11-12T05:46:53.434Z"
+  },
+  {
+    "id": "pq-11",
+    "subject_id": "sub-sx",
+    "lesson_id": "les-sx-2",
+    "type": "single_choice",
+    "content": "6 × 9 = ？",
+    "options": [
+      {
+        "text": "54"
+      },
+      {
+        "text": "45"
+      },
+      {
+        "text": "56"
+      },
+      {
+        "text": "63"
+      }
+    ],
+    "correct_answer": "54",
+    "image_url": null,
+    "audio_url": null,
+    "explanation": "六九五十四。",
+    "display_order": 2,
+    "created_at": "2026-11-12T05:46:53.434Z"
+  },
+  {
+    "id": "pq-12",
+    "subject_id": "sub-yy",
+    "lesson_id": "les-yy-1",
+    "type": "single_choice",
+    "content": "“早上好”用英语怎么说？",
+    "options": [
+      {
+        "text": "Good morning"
+      },
+      {
+        "text": "Good night"
+      },
+      {
+        "text": "Good afternoon"
+      },
+      {
+        "text": "Goodbye"
+      }
+    ],
+    "correct_answer": "Good morning",
+    "image_url": null,
+    "audio_url": null,
+    "explanation": "Good morning 表示早上好。",
+    "display_order": 1,
+    "created_at": "2026-11-12T05:46:53.434Z"
+  },
+  {
+    "id": "pq-13",
+    "subject_id": "sub-yy",
+    "lesson_id": "les-yy-1",
+    "type": "single_choice",
+    "content": "初次见面说“很高兴认识你”，应选？",
+    "options": [
+      {
+        "text": "Nice to meet you"
+      },
+      {
+        "text": "See you later"
+      },
+      {
+        "text": "Thank you"
+      },
+      {
+        "text": "Sorry"
+      }
+    ],
+    "correct_answer": "Nice to meet you",
+    "image_url": null,
+    "audio_url": null,
+    "explanation": "Nice to meet you 表示很高兴认识你。",
+    "display_order": 2,
+    "created_at": "2026-11-12T05:46:53.434Z"
+  }
+]

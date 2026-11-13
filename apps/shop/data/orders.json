@@ -1,0 +1,161 @@
+[
+  {
+    "id": "omvnw9cnsfhnq",
+    "userId": "1",
+    "items": [
+      {
+        "productId": "pmvnu66nro5no",
+        "productName": "橡皮",
+        "price": 15,
+        "basePrice": 15,
+        "specText": "",
+        "isCombo": false,
+        "comboText": "",
+        "comboSelections": [],
+        "quantity": 1,
+        "emoji": "🛒",
+        "image": "/shop/uploads/mvnuh3oa-zwnxwn.jpg",
+        "shopId": "smvmiq44xxwj4",
+        "shopName": "明星文具"
+      }
+    ],
+    "totalAmount": 15,
+    "pickup": true,
+    "note": "",
+    "status": "completed",
+    "createdAt": "2026-10-25T13:59:28.600Z",
+    "updatedAt": "2026-10-30T13:12:34.328Z",
+    "shopIncomes": [
+      {
+        "shopId": "smvmiq44xxwj4",
+        "shopName": "明星文具",
+        "ownerId": "Lxh2014",
+        "amount": 15,
+        "settled": true
+      }
+    ]
+  },
+  {
+    "id": "omvnsyy0kqabg",
+    "userId": "0",
+    "items": [
+      {
+        "productId": "pmvnsy2rugxyw",
+        "productName": "贴纸",
+        "price": 23,
+        "basePrice": 23,
+        "specText": "",
+        "isCombo": false,
+        "comboText": "",
+        "comboSelections": [],
+        "quantity": 3,
+        "emoji": "🛒",
+        "image": "",
+        "shopId": "smvmiq44xxwj4",
+        "shopName": "文具店"
+      }
+    ],
+    "totalAmount": 69,
+    "pickup": true,
+    "note": "",
+    "status": "completed",
+    "createdAt": "2026-10-25T12:27:24.212Z",
+    "updatedAt": "2026-10-25T14:05:39.007Z",
+    "shopIncomes": [
+      {
+        "shopId": "smvmiq44xxwj4",
+        "shopName": "文具店",
+        "ownerId": "Lxh2014",
+        "amount": 69,
+        "settled": true
+      }
+    ]
+  },
+  {
+    "id": "omvnrd6sisq2z",
+    "userId": "0",
+    "items": [
+      {
+        "productId": "pmvmmdo5gn8e8",
+        "productName": "铅笔",
+        "price": 10,
+        "basePrice": 10,
+        "specText": "随机",
+        "isCombo": false,
+        "comboText": "",
+        "comboSelections": [],
+        "quantity": 1,
+        "emoji": "✎",
+        "image": "/shop/uploads/mvnbkmlp-7zwi86.jpg",
+        "shopId": "smvmiq44xxwj4",
+        "shopName": "文具店"
+      }
+    ],
+    "totalAmount": 10,
+    "pickup": true,
+    "note": "",
+    "status": "completed",
+    "createdAt": "2026-10-25T11:42:29.538Z",
+    "updatedAt": "2026-10-28T13:59:25.097Z",
+    "shopIncomes": [
+      {
+        "shopId": "smvmiq44xxwj4",
+        "shopName": "文具店",
+        "ownerId": "Lxh2014",
+        "amount": 10,
+        "settled": true
+      }
+    ]
+  },
+  {
+    "id": "omvnrc78u6mn5",
+    "userId": "0",
+    "items": [
+      {
+        "productId": "pmvmmdo5gn8e8",
+        "productName": "铅笔",
+        "price": 15,
+        "basePrice": 10,
+        "specText": "红色",
+        "isCombo": false,
+        "comboText": "",
+        "comboSelections": [],
+        "quantity": 1,
+        "emoji": "✎",
+        "image": "/shop/uploads/mvnbkmlp-7zwi86.jpg",
+        "shopId": "smvmiq44xxwj4",
+        "shopName": "文具店"
+      },
+      {
+        "productId": "pmvmmdo5gn8e8",
+        "productName": "铅笔",
+        "price": 15,
+        "basePrice": 10,
+        "specText": "黄色",
+        "isCombo": false,
+        "comboText": "",
+        "comboSelections": [],
+        "quantity": 1,
+        "emoji": "✎",
+        "image": "/shop/uploads/mvnbkmlp-7zwi86.jpg",
+        "shopId": "smvmiq44xxwj4",
+        "shopName": "文具店"
+      }
+    ],
+    "totalAmount": 30,
+    "pickup": true,
+    "note": "",
+    "status": "completed",
+    "createdAt": "2026-10-25T11:41:43.469Z",
+    "updatedAt": "2026-10-25T11:48:34.147Z",
+    "shopIncomes": [
+      {
+        "shopId": "smvmiq44xxwj4",
+        "shopName": "文具店",
+        "ownerId": "Lxh2014",
+        "amount": 30,
+        "settled": true
+      }
+    ]
+  }
+]

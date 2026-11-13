@@ -1,0 +1,70 @@
+//app 模块构建配置：包名、SDK 版本、编译选项与依赖
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.mingxing.school'   // 代码所在包名
+    compileSdk 34                      // 编译使用的 SDK 版本
+
+    defaultConfig {
+        applicationId "com.mingxing.school"  // 应用唯一标识（安装后不可更改）
+        minSdk 24                            // 最低支持 Android 7.0
+        targetSdk 34                         // 目标适配版本
+        versionCode 1                        // 内部版本号，每次发版递增
+        versionName "0.1"                    // 对外展示的版本名
+
+        // 后端接口地址：已指向局域网服务器，端口沿用主项目默认的 80
+        // 模拟器调试可改为 "http://10.0.2.2"（模拟器访问宿主机的固定地址）
+        // 换网络环境时同步改成电脑当前局域网 IP，并确保手机与电脑同一网络、防火墙放行端口
+        buildConfigField "String", "API_BASE_URL", "\"http://192.168.0.138\""
+
+        // 只打包 arm64-v8a 的 WebRTC 原生库：主流手机（含小米）均为 arm64，可把安装包体积控制在约 40MB
+        ndk {
+            abiFilters 'arm64-v8a'
+        }
+    }
+
+    buildFeatures {
+        buildConfig true    // 生成 BuildConfig，供代码读取 API_BASE_URL
+        viewBinding true    // 生成视图绑定类，替代 findViewById
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false   // 暂不开启代码混淆，便于调试
+            // 混淆规则文件
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17   // 源码 Java 版本
+        targetCompatibility JavaVersion.VERSION_17   // 字节码目标版本
+    }
+}
+
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.6.1'                  // 提供 AppCompatActivity
+    implementation 'com.google.android.material:material:1.11.0'        // Material 3 组件与主题
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'   // 约束布局（后续页面备用）
+    implementation 'androidx.media:media:1.7.0'                         // MediaSession 与媒体样式通知
+    implementation 'io.github.webrtc-sdk:android:125.6422.07'           // WebRTC 预编译库（回退到不含「平台音频处理」的稳定版本）
+    implementation 'com.squareup.okhttp3:okhttp:3.14.9'                 // WebSocket 信令客户端（纯 Java 版）
+    implementation 'com.journeyapps:zxing-android-embedded:4.3.0'       // 扫码配对（ZXing 二维码扫描页）
+}
+
+// 统一 APK 产物命名：Android-x64-MingXingSchool-<版本名>.apk
+android.applicationVariants.configureEach { variant ->
+    variant.outputs.configureEach { output ->
+        output.outputFileName = "Android-x64-MingXingSchool-${variant.versionName}.apk"
+    }
+}
+
+// 构建完成后把 Debug APK 汇集到仓库根 application 目录，便于分发
+tasks.register('publishApk', Copy) {
+    dependsOn tasks.named('assembleDebug')
+    from "$buildDir/outputs/apk/debug"      // 源目录：Debug APK 输出处
+    into new File(rootDir, "../application") // 目标目录：仓库根下的 application
+    include '*.apk'
+}

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 商品封面占位图：图片加载中或加载失败时显示，浅灰圆角底 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/mx_input_stroke" />
+    <corners android:radius="12dp" />
+</shape>

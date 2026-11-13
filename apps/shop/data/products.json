@@ -1,0 +1,161 @@
+[
+  {
+    "id": "pmvmmdo5gn8e8",
+    "shopId": "smvmiq44xxwj4",
+    "name": "铅笔",
+    "description": "非常好用，学霸必备！",
+    "price": 10,
+    "image": "/shop/uploads/mvnbkmlp-7zwi86.jpg",
+    "emoji": "✎",
+    "category": "文具",
+    "isAvailable": true,
+    "isCombo": false,
+    "comboGroups": null,
+    "specs": [
+      {
+        "name": "颜色",
+        "required": true,
+        "options": [
+          {
+            "label": "随机",
+            "priceDelta": 0
+          },
+          {
+            "label": "红色",
+            "priceDelta": 5
+          },
+          {
+            "label": "黄色",
+            "priceDelta": 5
+          },
+          {
+            "label": "绿色",
+            "priceDelta": 5
+          },
+          {
+            "label": "黑色",
+            "priceDelta": 5
+          }
+        ]
+      }
+    ],
+    "sales": 10
+  },
+  {
+    "id": "pmvnsy2rugxyw",
+    "shopId": "smvmiq44xxwj4",
+    "name": "贴纸",
+    "description": "贴在．．．．．．地方＼东西",
+    "price": 23,
+    "image": "/shop/uploads/mvnugf5o-iqgmet.jpg",
+    "emoji": "🛒",
+    "category": "玩具",
+    "isAvailable": true,
+    "isCombo": false,
+    "comboGroups": null,
+    "specs": null,
+    "sales": 4
+  },
+  {
+    "id": "pmvnt0bj8nnxo",
+    "shopId": "smvmiq44xxwj4",
+    "name": "彩铅",
+    "description": "画画",
+    "price": 2,
+    "image": "/shop/uploads/mvnugo2a-vg4tzt.jpg",
+    "emoji": "🛒",
+    "category": "文具",
+    "isAvailable": true,
+    "isCombo": false,
+    "comboGroups": null,
+    "specs": null,
+    "sales": 0
+  },
+  {
+    "id": "pmvnu66nro5no",
+    "shopId": "smvmiq44xxwj4",
+    "name": "橡皮",
+    "description": "学霸橡皮",
+    "price": 15,
+    "image": "/shop/uploads/mvnuh3oa-zwnxwn.jpg",
+    "emoji": "🛒",
+    "category": "文具",
+    "isAvailable": true,
+    "isCombo": false,
+    "comboGroups": null,
+    "specs": null,
+    "sales": 1
+  },
+  {
+    "id": "pmvnu8yxnx7k6",
+    "shopId": "smvnu7c9dtk28",
+    "name": "糖",
+    "description": "Yamy~",
+    "price": 3,
+    "image": "/shop/uploads/mvnuhj05-6mp3n5.jpg",
+    "emoji": "🛒",
+    "category": "糖类",
+    "isAvailable": true,
+    "isCombo": false,
+    "comboGroups": null,
+    "specs": [
+      {
+        "name": "类型",
+        "required": true,
+        "options": [
+          {
+            "label": "随机",
+            "priceDelta": 0
+          },
+          {
+            "label": "红色",
+            "priceDelta": 7
+          },
+          {
+            "label": "绿色",
+            "priceDelta": 7
+          },
+          {
+            "label": "蓝色",
+            "priceDelta": 7
+          },
+          {
+            "label": "紫色",
+            "priceDelta": 7
+          }
+        ]
+      }
+    ],
+    "sales": 1
+  },
+  {
+    "id": "pmvnuamxkx1gh",
+    "shopId": "smvnu9ebyxnk0",
+    "name": "一次性纸杯",
+    "description": "请注意环保",
+    "price": 35,
+    "image": "/shop/uploads/mvnuhyrw-nfee8u.jpg",
+    "emoji": "🛒",
+    "category": "一次性",
+    "isAvailable": true,
+    "isCombo": false,
+    "comboGroups": null,
+    "specs": null,
+    "sales": 0
+  },
+  {
+    "id": "pmvuzwee5hs7o",
+    "shopId": "smvuzux1rgv53",
+    "name": "橘子小花",
+    "description": "猫",
+    "price": 0.01,
+    "image": "/shop/uploads/mvuzw925-s2u002.jpg",
+    "emoji": "🛒",
+    "category": "其他",
+    "isAvailable": true,
+    "isCombo": false,
+    "comboGroups": null,
+    "specs": null,
+    "sales": 0
+  }
+]

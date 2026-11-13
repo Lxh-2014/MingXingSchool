@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
+<title>明星学校</title>
+<!-- 标签页图标：邻语专属图标 -->
+<link rel="icon" type="image/png" href="/assets/home/im.png">
+<!-- 全站唯一样式表（IM 相关样式在 all.css 的 im-app 段中） -->
+<link rel="stylesheet" href="/assets/all.css?v=0.48">
+<!-- 全站国际化框架：语言包加载完成后再初始化页面 -->
+<script src="/assets/i18n.js?v=0.1"></script>
+</head>
+<body class="im-app">
+
+<!-- 页面骨架：全部 UI 由 page-im.js 渲染进 #root（无内嵌样式、无静态结构） -->
+<div id="root"></div>
+
+<!-- 平台公共 UI（Toast、悬浮工具条、头像菜单自动挂载） -->
+<script src="/assets/common-ui.js?v=20261062"></script>
+<!-- 链接识别库：消息文本中的网址/邮箱自动转为超链接 -->
+<script src="/assets/linkify.min.js?v=4.4.0"></script>
+<!-- 富文本：作业内容等 Markdown 渲染（marked 解析 + DOMPurify 消毒） -->
+<script src="/assets/marked.min.js?v=18.2.0"></script>
+<script src="/assets/purify.min.js?v=3.4.17"></script>
+<!-- 邻语主逻辑：renderShell() 注入骨架 + 会话/消息渲染 -->
+<script src="/assets/page-im.js?v=0.77"></script>
+</body>
+</html>

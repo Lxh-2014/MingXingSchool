@@ -1,0 +1,221 @@
+{
+    "app": {
+        "name": "MingXing Drive",
+        "title": "MingXing Drive",
+        "version": "1.0.2-beta-2",
+        "storagePath": "./files",
+        "errors": {
+            "loadFilesRootFailed": "Failed to load files root"
+        }
+    },
+    "server": {
+        "startupMessage": "MingXing Drive server started"
+    },
+    "auth": {
+        "missingUsernameOrPassword": "Please enter username and password",
+        "userNotFound": "User not found",
+        "wrongPassword": "Wrong password",
+        "loginSuccess": "Login successful"
+    },
+    "login": {
+        "title": "MingXing Drive",
+        "subtitle": "Sign in to continue",
+        "usernamePlaceholder": "Enter username",
+        "passwordPlaceholder": "Enter password",
+        "submitBtn": "SIGN IN",
+        "errorMsg": "Login failed, please check username and password"
+    },
+    "files": {
+        "loading": "",
+        "empty": "No files",
+        "networkError": "Network error",
+        "selectFile": "Please select a file to upload",
+        "uploadSuccess": "File uploaded successfully",
+        "uploadFailed": "Upload failed",
+        "enterFolderName": "Please enter folder name",
+        "invalidChars": "Folder name cannot contain: \\/:*?\"<>|",
+        "invalidDeviceName": "Invalid device name",
+        "folderExists": "A folder named \"{name}\" already exists here.",
+        "folderCreated": "Folder created successfully",
+        "specifyPath": "Please specify a path to delete",
+        "notExist": "File or folder not found",
+        "deleted": "Deleted successfully",
+        "deleteFailed": "Delete failed",
+        "provideOldPathAndNewName": "Please provide old path and new name",
+        "renamed": "Renamed successfully",
+        "renameFailed": "Rename failed",
+        "specifyFilePath": "Please specify a file path",
+        "fileNotFound": "File not found",
+        "cannotDownloadFolder": "Cannot download a folder"
+    },
+    "settings": {
+        "basicSettingsTitle": "Basic Settings",
+        "languageLabel": "Language",
+        "languageZh": "简体中文",
+        "languageEn": "English",
+        "userInfoTitle": "User Info",
+        "versionInfoTitle": "Version Info",
+        "versionLabel": "Version",
+        "storagePathLabel": "Storage Path",
+        "usernameLabel": "Username",
+        "changeAvatarBtn": "Change Avatar",
+        "darkModeTitle": "Dark Mode",
+        "switchLabel": "Enable Dark Mode",
+        "settingsTitle": "Settings",
+        "logoutBtn": "Log Out"
+    },
+    "modals": {
+        "confirm": {
+            "title": "Confirm",
+            "cancel": "Cancel",
+            "confirm": "Confirm",
+            "deleteFile": "Are you sure you want to delete this file?",
+            "deleteFolder": "Are you sure you want to delete this folder?",
+            "logout": "Are you sure you want to log out?"
+        },
+        "newFolder": {
+            "title": "New Folder",
+            "placeholder": "Enter folder name",
+            "defaultName": "New Folder",
+            "cancel": "Cancel",
+            "confirm": "OK"
+        },
+        "rename": {
+            "title": "Rename",
+            "placeholder": "Enter new name",
+            "cancel": "Cancel",
+            "confirm": "OK",
+            "pleaseEnterNewName": "Please enter a new name",
+            "renameFailed": "Rename failed"
+        },
+        "fileInfo": {
+            "title": "File Info"
+        },
+        "folderInfo": {
+            "title": "Folder Info"
+        },
+        "delete": {
+            "title": "Confirm Delete",
+            "confirmDeleteFolder": "Delete folder \"{name}\"?",
+            "confirmDeleteFile": "Delete file \"{name}\"?",
+            "cannotUndo": "This action cannot be undone.",
+            "cancel": "Cancel",
+            "confirm": "Delete",
+            "deleteFailed": "Delete failed",
+            "networkError": "Network error"
+        },
+        "changeAvatar": {
+            "title": "Change Avatar",
+            "uploadCustomAvatar": "Upload custom avatar:",
+            "chooseImage": "Choose Image",
+            "uploadHint": "Click to upload avatar",
+            "orChooseColor": "Or choose avatar color:",
+            "cancel": "Cancel"
+        },
+        "logout": {
+            "title": "Log Out",
+            "cancel": "Cancel",
+            "confirm": "Log Out"
+        },
+        "prompt": {
+            "title": "Input",
+            "ok": "OK",
+            "cancel": "Cancel",
+            "newFolder": "Enter new folder name:",
+            "rename": "Enter new name:"
+        },
+        "info": {
+            "title": "Info",
+            "ok": "OK",
+            "close": "Close",
+            "fileInfo": "File Info",
+            "folderInfo": "Folder Info",
+            "fileName": "File Name",
+            "folderName": "Folder Name",
+            "fileType": "File Type",
+            "location": "Location",
+            "size": "Size",
+            "allocatedSize": "Allocated",
+            "created": "Created",
+            "modified": "Modified",
+            "accessed": "Accessed",
+            "getInfoFailed": "Failed to get file info",
+            "getFolderInfoFailed": "Failed to get folder info"
+        },
+        "message": {
+            "hint": "Tip",
+            "error": "Error",
+            "pleaseEnterFolderName": "Please enter folder name",
+            "newFolderFailed": "Failed to create folder",
+            "rootDirNoInfo": "Root directory has no info",
+            "uploadFailed": "Upload failed"
+        }
+    },
+    "toast": {
+        "success": {
+            "upload": "Upload successful",
+            "newFolder": "Folder created",
+            "delete": "Deleted",
+            "rename": "Renamed",
+            "download": "Download successful"
+        },
+        "error": {
+            "upload": "Upload failed",
+            "newFolder": "Failed to create folder",
+            "delete": "Delete failed",
+            "rename": "Rename failed",
+            "download": "Download failed",
+            "network": "Network error",
+            "fileNotFound": "File not found",
+            "folderNotFound": "Folder not found"
+        },
+        "warning": {
+            "emptyName": "Name cannot be empty",
+            "invalidName": "Name contains invalid characters",
+            "nameExists": "Name already exists"
+        }
+    },
+    "contextMenu": {
+        "download": "Download",
+        "rename": "Rename",
+        "info": "Info",
+        "delete": "Delete",
+        "newFolder": "New Folder",
+        "uploadFile": "Upload File"
+    },
+    "toolbar": {
+        "newFolder": "New Folder",
+        "upload": "Upload",
+        "back": "Back",
+        "forward": "Forward",
+        "up": "Up",
+        "refresh": "Refresh",
+        "search": "Search here...",
+        "view": "View",
+        "type": "Type",
+        "dateModified": "Modified",
+        "size": "Size",
+        "noFiles": "No files",
+        "rootDir": "Root",
+        "networkError": "Network error"
+    },
+    "fileTypes": {
+        "folder": "Folder",
+        "file": "File",
+        "image": "Image",
+        "video": "Video",
+        "audio": "Audio",
+        "document": "Document",
+        "bytes": "Bytes"
+    },
+    "dateFormat": {
+        "year": "",
+        "month": "/",
+        "day": "/",
+        "separator": " "
+    },
+    "sidebar": {
+        "files": "Files",
+        "settings": "Settings"
+    }
+}

@@ -1,0 +1,34 @@
+[
+  {
+    "id": "unit-yw-1",
+    "subject_id": "sub-yw",
+    "name": "第一单元 · 字词积累",
+    "description": "生字认读与词语搭配",
+    "display_order": 1,
+    "created_at": "2026-11-12T05:46:53.434Z"
+  },
+  {
+    "id": "unit-yw-2",
+    "subject_id": "sub-yw",
+    "name": "第二单元 · 阅读理解",
+    "description": "短文理解与句子排序",
+    "display_order": 2,
+    "created_at": "2026-11-12T05:46:53.434Z"
+  },
+  {
+    "id": "unit-sx-1",
+    "subject_id": "sub-sx",
+    "name": "第一单元 · 数与运算",
+    "description": "加减法与乘法口诀",
+    "display_order": 1,
+    "created_at": "2026-11-12T05:46:53.434Z"
+  },
+  {
+    "id": "unit-yy-1",
+    "subject_id": "sub-yy",
+    "name": "第一单元 · 日常表达",
+    "description": "问候与自我介绍",
+    "display_order": 1,
+    "created_at": "2026-11-12T05:46:53.434Z"
+  }
+]

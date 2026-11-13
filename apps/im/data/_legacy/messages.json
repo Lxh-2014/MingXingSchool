@@ -1,0 +1,1227 @@
+[
+  {
+    "id": "mmvxqjat8ajqd",
+    "convId": "cmvxpaj74baed",
+    "senderId": "Lxh2014",
+    "senderName": "刘校长",
+    "text": "8",
+    "time": "2026-11-01T11:16:56.828Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": [
+      "Lxh2014",
+      "0"
+    ]
+  },
+  {
+    "id": "mmvxrfizbfw8p",
+    "convId": "cmvxpaj74baed",
+    "senderId": "0",
+    "senderName": "刘潇月",
+    "text": "",
+    "time": "2026-11-01T11:42:00.407Z",
+    "quote": null,
+    "recalled": true,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmvxrfqrzyheu",
+    "convId": "cmvxpaj74baed",
+    "senderId": "0",
+    "senderName": "刘潇月",
+    "text": "",
+    "time": "2026-11-01T11:42:10.511Z",
+    "quote": null,
+    "recalled": true,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmvxrfrxdc8tj",
+    "convId": "cmvxpaj74baed",
+    "senderId": "0",
+    "senderName": "刘潇月",
+    "text": "",
+    "time": "2026-11-01T11:42:12.001Z",
+    "quote": null,
+    "recalled": true,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmvxrftr001c2",
+    "convId": "cmvxpaj74baed",
+    "senderId": "0",
+    "senderName": "刘潇月",
+    "text": "",
+    "time": "2026-11-01T11:42:14.364Z",
+    "quote": null,
+    "recalled": true,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmvxrrwt9mq0p",
+    "convId": "cmvxpaj74baed",
+    "senderId": "Lxh2014",
+    "senderName": "刘校长",
+    "text": "",
+    "time": "2026-11-01T11:51:38.205Z",
+    "quote": null,
+    "recalled": true,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw55ekn89xxw",
+    "convId": "cmvxpaj74baed",
+    "senderId": "0",
+    "senderName": "刘潇月",
+    "text": "",
+    "time": "2026-11-06T15:47:33.764Z",
+    "quote": null,
+    "recalled": true,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw56q6r07aum",
+    "convId": "cmvxpaj74baed",
+    "senderId": "Teacher-LiuXiaoyue",
+    "senderName": "刘潇月",
+    "text": "",
+    "time": "2026-11-06T16:24:35.244Z",
+    "quote": null,
+    "recalled": true,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw60ifjgo3n5",
+    "convId": "cmvxpaj74baed",
+    "senderId": "Lxh2014",
+    "senderName": "刘校长",
+    "text": "",
+    "time": "2026-11-07T06:18:21.868Z",
+    "quote": null,
+    "recalled": true,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw63dr3f0kqe",
+    "convId": "cmw63bae8vnxy",
+    "senderId": "LiuXiaoyue",
+    "senderName": "刘潇月",
+    "text": "大家好！",
+    "time": "2026-11-07T07:38:42.411Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw63o7ysdi8z",
+    "convId": "cmw63bae8vnxy",
+    "senderId": "Lxh2014",
+    "senderName": "刘校长",
+    "text": "好！",
+    "time": "2026-11-07T07:46:50.836Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw63q8yxjhhv",
+    "convId": "cmw63bae8vnxy",
+    "senderId": "00010302",
+    "senderName": "星星",
+    "text": "我是家委",
+    "time": "2026-11-07T07:48:25.449Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw64uk6j7mgl",
+    "convId": "cmw63bae8vnxy",
+    "senderId": "00010301",
+    "senderName": "涵猫",
+    "text": "语文课代表",
+    "time": "2026-11-07T08:19:46.219Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw656y6pi9o8",
+    "convId": "cmw63bae8vnxy",
+    "senderId": "Lxh2014",
+    "senderName": "刘校长",
+    "text": "",
+    "image": "/im/api/images/mmw656y6pi9o8.png",
+    "time": "2026-11-07T08:29:24.285Z",
+    "quote": null,
+    "recalled": true,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw657dfkwc07",
+    "convId": "cmw63bae8vnxy",
+    "senderId": "Lxh2014",
+    "senderName": "刘校长",
+    "text": "",
+    "image": "/im/api/images/mmw657dfkwc07.png",
+    "time": "2026-11-07T08:29:44.002Z",
+    "quote": null,
+    "recalled": true,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw65oeexsqfe",
+    "convId": "cmw63bae8vnxy",
+    "senderId": "Lxh2014",
+    "senderName": "刘校长",
+    "text": "",
+    "image": "/im/api/images/mmw65oeexsqfe-1.png",
+    "parts": [
+      {
+        "type": "text",
+        "text": "1"
+      },
+      {
+        "type": "image",
+        "src": "/im/api/images/mmw65oeexsqfe-1.png"
+      },
+      {
+        "type": "text",
+        "text": "1"
+      }
+    ],
+    "time": "2026-11-07T08:42:58.426Z",
+    "quote": null,
+    "recalled": true,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw6648g7ou9d",
+    "convId": "cmw63bae8vnxy",
+    "senderId": "LiuXiaoyue",
+    "senderName": "刘潇月",
+    "text": "你好",
+    "time": "2026-11-07T08:55:17.191Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw66xth3fzqg",
+    "convId": "cmw63bae8vnxy",
+    "senderId": "Lxh2014",
+    "senderName": "刘校长",
+    "text": "",
+    "image": "",
+    "parts": [
+      {
+        "type": "file",
+        "name": "成都市泡桐树中学关于明确学校作息时间的公告.pdf",
+        "size": 203166,
+        "mime": "application/pdf",
+        "url": "/im/api/files/mmw66xth3fzqg-1.pdf"
+      }
+    ],
+    "time": "2026-11-07T09:18:17.466Z",
+    "quote": null,
+    "recalled": true,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw670ed7bhpu",
+    "convId": "cmw63bae8vnxy",
+    "senderId": "Lxh2014",
+    "senderName": "刘校长",
+    "text": "[文件] 1年级.xlsx",
+    "image": "",
+    "parts": [
+      {
+        "type": "file",
+        "name": "1年级.xlsx",
+        "size": 12444,
+        "mime": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "url": "/im/api/files/mmw670ed7bhpu-1.xlsx"
+      }
+    ],
+    "time": "2026-11-07T09:20:17.852Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw6772edo9zb",
+    "convId": "cmw63bae8vnxy",
+    "senderId": "LiuXiaoyue",
+    "senderName": "刘潇月",
+    "text": "这是课表",
+    "time": "2026-11-07T09:25:28.933Z",
+    "quote": {
+      "id": "mmw670ed7bhpu",
+      "name": "刘校长",
+      "text": "[文件] 1年级.xlsx"
+    },
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw68lpycg3oi",
+    "convId": "cmw68l2mclgp6",
+    "senderId": "00010302",
+    "senderName": "星星",
+    "text": "刘老师好",
+    "time": "2026-11-07T10:04:52.260Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw69ogm6xupr",
+    "convId": "cmw63bae8vnxy",
+    "senderId": "00010301",
+    "senderName": "涵猫",
+    "text": "[图片]",
+    "image": "/im/api/images/mmw69ogm6xupr-1.jpg",
+    "parts": [
+      {
+        "type": "image",
+        "src": "/im/api/images/mmw69ogm6xupr-1.jpg"
+      }
+    ],
+    "time": "2026-11-07T10:34:59.748Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw69q2qpl4zg",
+    "convId": "cmw63bae8vnxy",
+    "senderId": "00010301",
+    "senderName": "涵猫",
+    "text": "嘿",
+    "time": "2026-11-07T10:36:15.073Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw69r19ealh8",
+    "convId": "cmw63bae8vnxy",
+    "senderId": "00010301",
+    "senderName": "涵猫",
+    "text": "你好啊",
+    "time": "2026-11-07T10:36:59.810Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw69six23cwv",
+    "convId": "cmw63bae8vnxy",
+    "senderId": "00010302",
+    "senderName": "星星",
+    "text": "涵猫",
+    "time": "2026-11-07T10:38:09.350Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw69t7q7co0h",
+    "convId": "cmw63bae8vnxy",
+    "senderId": "00010302",
+    "senderName": "星星",
+    "text": "好",
+    "time": "2026-11-07T10:38:41.503Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw69ttovv871",
+    "convId": "cmw63bae8vnxy",
+    "senderId": "00010301",
+    "senderName": "涵猫",
+    "text": "不好",
+    "time": "2026-11-07T10:39:09.967Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw69u0v8vvrn",
+    "convId": "cmw63bae8vnxy",
+    "senderId": "00010301",
+    "senderName": "涵猫",
+    "text": "哼",
+    "time": "2026-11-07T10:39:19.268Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw6bc439drxr",
+    "convId": "cmw68l2mclgp6",
+    "senderId": "LiuXiaoyue",
+    "senderName": "刘潇月",
+    "text": "好",
+    "time": "2026-11-07T11:21:22.869Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw6cs7w4aq60",
+    "convId": "cmw68l2mclgp6",
+    "senderId": "LiuXiaoyue",
+    "senderName": "刘潇月",
+    "text": "[表情]",
+    "image": "",
+    "parts": [
+      {
+        "type": "emoji",
+        "code": "63"
+      },
+      {
+        "type": "emoji",
+        "code": "63"
+      },
+      {
+        "type": "emoji",
+        "code": "63"
+      }
+    ],
+    "time": "2026-11-07T12:01:53.909Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw6csrm3prvk",
+    "convId": "cmw68l2mclgp6",
+    "senderId": "LiuXiaoyue",
+    "senderName": "刘潇月",
+    "text": "",
+    "image": "",
+    "parts": [
+      {
+        "type": "emoji",
+        "code": "38"
+      }
+    ],
+    "time": "2026-11-07T12:02:19.468Z",
+    "quote": null,
+    "recalled": true,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw6czlguxcql",
+    "convId": "cmw68l2mclgp6",
+    "senderId": "LiuXiaoyue",
+    "senderName": "刘潇月",
+    "text": "",
+    "image": "",
+    "parts": [
+      {
+        "type": "emoji",
+        "code": "53"
+      },
+      {
+        "type": "text",
+        "text": "1"
+      }
+    ],
+    "time": "2026-11-07T12:07:38.094Z",
+    "quote": null,
+    "recalled": true,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw6d005iyp1o",
+    "convId": "cmw68l2mclgp6",
+    "senderId": "LiuXiaoyue",
+    "senderName": "刘潇月",
+    "text": "",
+    "image": "",
+    "parts": [
+      {
+        "type": "emoji",
+        "code": "49"
+      }
+    ],
+    "time": "2026-11-07T12:07:57.127Z",
+    "quote": null,
+    "recalled": true,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw6d05j6h4xz",
+    "convId": "cmw68l2mclgp6",
+    "senderId": "LiuXiaoyue",
+    "senderName": "刘潇月",
+    "text": "",
+    "image": "",
+    "parts": [
+      {
+        "type": "emoji",
+        "code": "124"
+      }
+    ],
+    "time": "2026-11-07T12:08:04.100Z",
+    "quote": null,
+    "recalled": true,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw6d0afcnfek",
+    "convId": "cmw68l2mclgp6",
+    "senderId": "LiuXiaoyue",
+    "senderName": "刘潇月",
+    "text": "",
+    "image": "",
+    "parts": [
+      {
+        "type": "emoji",
+        "code": "35"
+      },
+      {
+        "type": "emoji",
+        "code": "35"
+      }
+    ],
+    "time": "2026-11-07T12:08:10.441Z",
+    "quote": null,
+    "recalled": true,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw6d38rexvgw",
+    "convId": "cmw68l2mclgp6",
+    "senderId": "LiuXiaoyue",
+    "senderName": "刘潇月",
+    "text": "[表情]",
+    "image": "",
+    "parts": [
+      {
+        "type": "emoji",
+        "code": "13"
+      }
+    ],
+    "time": "2026-11-07T12:10:28.251Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw6d7rzshl6h",
+    "convId": "cmw68l2mclgp6",
+    "senderId": "LiuXiaoyue",
+    "senderName": "刘潇月",
+    "text": "[表情]",
+    "image": "",
+    "parts": [
+      {
+        "type": "emoji",
+        "code": "30"
+      }
+    ],
+    "time": "2026-11-07T12:13:59.800Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw6d8fa2ipry",
+    "convId": "cmw63bae8vnxy",
+    "senderId": "LiuXiaoyue",
+    "senderName": "刘潇月",
+    "text": "[表情]",
+    "image": "",
+    "parts": [
+      {
+        "type": "emoji",
+        "code": "18"
+      }
+    ],
+    "time": "2026-11-07T12:14:29.978Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw6d8nxk66ib",
+    "convId": "cmw63bae8vnxy",
+    "senderId": "LiuXiaoyue",
+    "senderName": "刘潇月",
+    "text": "别吵架！",
+    "time": "2026-11-07T12:14:41.192Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw6dwx1sce6t",
+    "convId": "cmw63bae8vnxy",
+    "senderId": "00010301",
+    "senderName": "涵猫",
+    "text": "[文件] U2SecB1b.mp3",
+    "image": "",
+    "parts": [
+      {
+        "type": "file",
+        "name": "U2SecB1b.mp3",
+        "size": 1366769,
+        "mime": "audio/mpeg",
+        "url": "/im/api/files/mmw6dwx1sce6t-1.mp3"
+      }
+    ],
+    "time": "2026-11-07T12:33:32.767Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw6dys2jugai",
+    "convId": "cmvxpaj74baed",
+    "senderId": "Lxh2014",
+    "senderName": "刘校长",
+    "text": "hi",
+    "time": "2026-11-07T12:34:59.611Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw6dz61tdjs5",
+    "convId": "cmvxpaj74baed",
+    "senderId": "Lxh2014",
+    "senderName": "刘校长",
+    "text": "你好",
+    "time": "2026-11-07T12:35:17.729Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw6dzmq3gj92",
+    "convId": "cmvxpaj74baed",
+    "senderId": "Lxh2014",
+    "senderName": "刘校长",
+    "text": "1",
+    "time": "2026-11-07T12:35:39.339Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw6dzuy49l7n",
+    "convId": "cmvxpaj74baed",
+    "senderId": "Lxh2014",
+    "senderName": "刘校长",
+    "text": "嘿",
+    "time": "2026-11-07T12:35:49.996Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw6e0j9nu9ug",
+    "convId": "cmvxpaj74baed",
+    "senderId": "LiuXiaoyue",
+    "senderName": "刘潇月",
+    "text": "哦哦哦",
+    "time": "2026-11-07T12:36:21.515Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw6e0vnvir34",
+    "convId": "cmvxpaj74baed",
+    "senderId": "LiuXiaoyue",
+    "senderName": "刘潇月",
+    "text": "在吗",
+    "time": "2026-11-07T12:36:37.579Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw6e18cauney",
+    "convId": "cmvxpaj74baed",
+    "senderId": "LiuXiaoyue",
+    "senderName": "刘潇月",
+    "text": "人呢",
+    "time": "2026-11-07T12:36:54.010Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw6e6wzciwet",
+    "convId": "cmw63bae8vnxy",
+    "senderId": "Lxh2014",
+    "senderName": "刘校长",
+    "text": "😀😃",
+    "time": "2026-11-07T12:41:19.224Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw6e72vjru8e",
+    "convId": "cmw63bae8vnxy",
+    "senderId": "Lxh2014",
+    "senderName": "刘校长",
+    "text": "[图片]",
+    "image": "/im/api/images/mmw6e72vjru8e-1.jpg",
+    "parts": [
+      {
+        "type": "image",
+        "src": "/im/api/images/mmw6e72vjru8e-1.jpg"
+      }
+    ],
+    "time": "2026-11-07T12:41:26.868Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw6eig1dvvki",
+    "convId": "cmw63bae8vnxy",
+    "senderId": "Lxh2014",
+    "senderName": "刘校长",
+    "text": "🤔",
+    "time": "2026-11-07T12:50:17.137Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw6epsyuianu",
+    "convId": "cmw63bae8vnxy",
+    "senderId": "LiuXiaoyue",
+    "senderName": "刘潇月",
+    "text": "都",
+    "time": "2026-11-07T12:56:00.486Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw6eq33poqy6",
+    "convId": "cmw63bae8vnxy",
+    "senderId": "LiuXiaoyue",
+    "senderName": "刘潇月",
+    "text": "6",
+    "time": "2026-11-07T12:56:13.621Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw6g3c751iib",
+    "convId": "cmw63bae8vnxy",
+    "senderId": "LiuXiaoyue",
+    "senderName": "刘潇月",
+    "text": "",
+    "image": "",
+    "parts": [
+      {
+        "type": "file",
+        "name": "U2SecB1b.mp3",
+        "size": 1366769,
+        "mime": "audio/mpeg",
+        "url": "/im/api/files/mmw6g3c751iib-1.mp3"
+      }
+    ],
+    "time": "2026-11-07T13:34:31.563Z",
+    "quote": null,
+    "recalled": true,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw6g5ezlj4jj",
+    "convId": "cmw68l2mclgp6",
+    "senderId": "LiuXiaoyue",
+    "senderName": "刘潇月",
+    "text": "[表情]",
+    "image": "",
+    "parts": [
+      {
+        "type": "emoji",
+        "code": "120"
+      },
+      {
+        "type": "emoji",
+        "code": "120"
+      }
+    ],
+    "time": "2026-11-07T13:36:08.482Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw6g9793mlqy",
+    "convId": "cmvxpaj74baed",
+    "senderId": "Lxh2014",
+    "senderName": "刘校长",
+    "text": "[表情]",
+    "image": "",
+    "parts": [
+      {
+        "type": "emoji",
+        "code": "11"
+      }
+    ],
+    "time": "2026-11-07T13:39:05.080Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw6g9dq3gjjr",
+    "convId": "cmvxpaj74baed",
+    "senderId": "Lxh2014",
+    "senderName": "刘校长",
+    "text": "你好",
+    "image": "",
+    "parts": [
+      {
+        "type": "text",
+        "text": "你好"
+      },
+      {
+        "type": "emoji",
+        "code": "13"
+      }
+    ],
+    "time": "2026-11-07T13:39:13.469Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw6g9kq77vmx",
+    "convId": "cmvxpaj74baed",
+    "senderId": "Lxh2014",
+    "senderName": "刘校长",
+    "text": "你好",
+    "image": "",
+    "parts": [
+      {
+        "type": "text",
+        "text": "你好"
+      },
+      {
+        "type": "emoji",
+        "code": "13"
+      },
+      {
+        "type": "emoji",
+        "code": "6"
+      }
+    ],
+    "time": "2026-11-07T13:39:22.543Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw6ghujkf4zr",
+    "convId": "cmvxpaj74baed",
+    "senderId": "Lxh2014",
+    "senderName": "刘校长",
+    "text": "[图片]",
+    "image": "/im/api/images/mmw6ghujkf4zr-1.jpg",
+    "parts": [
+      {
+        "type": "image",
+        "src": "/im/api/images/mmw6ghujkf4zr-1.jpg"
+      }
+    ],
+    "time": "2026-11-07T13:45:48.513Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw6ghxgmddyw",
+    "convId": "cmvxpaj74baed",
+    "senderId": "Lxh2014",
+    "senderName": "刘校长",
+    "text": "[图片]",
+    "image": "/im/api/images/mmw6ghxgmddyw-1.jpg",
+    "parts": [
+      {
+        "type": "image",
+        "src": "/im/api/images/mmw6ghxgmddyw-1.jpg"
+      }
+    ],
+    "time": "2026-11-07T13:45:52.295Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw6giz79em2d",
+    "convId": "cmvxpaj74baed",
+    "senderId": "LiuXiaoyue",
+    "senderName": "刘潇月",
+    "text": "！",
+    "time": "2026-11-07T13:46:41.205Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw6gjbql0l1q",
+    "convId": "cmvxpaj74baed",
+    "senderId": "LiuXiaoyue",
+    "senderName": "刘潇月",
+    "text": "好的",
+    "time": "2026-11-07T13:46:57.453Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw6gkv12t9pu",
+    "convId": "cmvxpaj74baed",
+    "senderId": "LiuXiaoyue",
+    "senderName": "刘潇月",
+    "text": "呃呃呃",
+    "time": "2026-11-07T13:48:09.110Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw6gngvh0crv",
+    "convId": "cmvxpaj74baed",
+    "senderId": "LiuXiaoyue",
+    "senderName": "刘潇月",
+    "text": "1",
+    "time": "2026-11-07T13:50:10.733Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw6gnpqpcubm",
+    "convId": "cmvxpaj74baed",
+    "senderId": "LiuXiaoyue",
+    "senderName": "刘潇月",
+    "text": "朱",
+    "time": "2026-11-07T13:50:22.225Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw6go0934ftp",
+    "convId": "cmvxpaj74baed",
+    "senderId": "LiuXiaoyue",
+    "senderName": "刘潇月",
+    "text": "朱",
+    "time": "2026-11-07T13:50:35.847Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw6go4uao3br",
+    "convId": "cmvxpaj74baed",
+    "senderId": "LiuXiaoyue",
+    "senderName": "刘潇月",
+    "text": "牛",
+    "time": "2026-11-07T13:50:41.794Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw6gojh5bzib",
+    "convId": "cmvxpaj74baed",
+    "senderId": "Lxh2014",
+    "senderName": "刘校长",
+    "text": "的",
+    "time": "2026-11-07T13:51:00.761Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw6gos81hxgx",
+    "convId": "cmvxpaj74baed",
+    "senderId": "Lxh2014",
+    "senderName": "刘校长",
+    "text": "[表情]",
+    "image": "",
+    "parts": [
+      {
+        "type": "emoji",
+        "code": "515"
+      }
+    ],
+    "time": "2026-11-07T13:51:12.097Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw6hfzq6nwso",
+    "convId": "cmw63bae8vnxy",
+    "senderId": "LiuXiaoyue",
+    "senderName": "刘潇月",
+    "text": "哈哈",
+    "time": "2026-11-07T14:12:21.534Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw6hk7ze1uk0",
+    "convId": "cmvxpaj74baed",
+    "senderId": "LiuXiaoyue",
+    "senderName": "刘潇月",
+    "text": "哦哦",
+    "time": "2026-11-07T14:15:38.858Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw6hlz56n2hd",
+    "convId": "cmvxpaj74baed",
+    "senderId": "LiuXiaoyue",
+    "senderName": "刘潇月",
+    "text": "1",
+    "time": "2026-11-07T14:17:00.714Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw6hm7hmgso7",
+    "convId": "cmvxpaj74baed",
+    "senderId": "LiuXiaoyue",
+    "senderName": "刘潇月",
+    "text": "666",
+    "time": "2026-11-07T14:17:11.530Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw6hmklzxi12",
+    "convId": "cmvxpaj74baed",
+    "senderId": "LiuXiaoyue",
+    "senderName": "刘潇月",
+    "text": "哈哈",
+    "time": "2026-11-07T14:17:28.535Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw6hmu36vld0",
+    "convId": "cmvxpaj74baed",
+    "senderId": "LiuXiaoyue",
+    "senderName": "刘潇月",
+    "text": "666",
+    "time": "2026-11-07T14:17:40.818Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw6hmzr9jou1",
+    "convId": "cmvxpaj74baed",
+    "senderId": "LiuXiaoyue",
+    "senderName": "刘潇月",
+    "text": "嗯嗯",
+    "time": "2026-11-07T14:17:48.165Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw6hn7zxga52",
+    "convId": "cmvxpaj74baed",
+    "senderId": "LiuXiaoyue",
+    "senderName": "刘潇月",
+    "text": "好的",
+    "time": "2026-11-07T14:17:58.845Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw6ho5qfdyxi",
+    "convId": "cmvxpaj74baed",
+    "senderId": "LiuXiaoyue",
+    "senderName": "刘潇月",
+    "text": "6",
+    "time": "2026-11-07T14:18:42.567Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw6hofm2xu6s",
+    "convId": "cmvxpaj74baed",
+    "senderId": "LiuXiaoyue",
+    "senderName": "刘潇月",
+    "text": "6",
+    "time": "2026-11-07T14:18:55.370Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw6hoodrlo8k",
+    "convId": "cmvxpaj74baed",
+    "senderId": "LiuXiaoyue",
+    "senderName": "刘潇月",
+    "text": "你还好吗",
+    "time": "2026-11-07T14:19:06.735Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw6hp27ad6io",
+    "convId": "cmvxpaj74baed",
+    "senderId": "LiuXiaoyue",
+    "senderName": "刘潇月",
+    "text": "[表情]",
+    "image": "",
+    "parts": [
+      {
+        "type": "emoji",
+        "code": "63"
+      },
+      {
+        "type": "emoji",
+        "code": "63"
+      },
+      {
+        "type": "emoji",
+        "code": "63"
+      }
+    ],
+    "time": "2026-11-07T14:19:24.646Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw6hplbydjat",
+    "convId": "cmvxpaj74baed",
+    "senderId": "LiuXiaoyue",
+    "senderName": "刘潇月",
+    "text": "狐狸精你嘻嘻嘻嘻嘻嘻嘻证明djdkksidjdnxnxndnndkfkf",
+    "time": "2026-11-07T14:19:49.438Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw768jwppqdh",
+    "convId": "cmvxpaj74baed",
+    "senderId": "LiuXiaoyue",
+    "senderName": "刘潇月",
+    "text": "233259823156-12954589213589588573287523-85237-5·7523=90（）#+&￥#）（）&%（）%&（）%&#%&*！#（%%&!&#)(&#)+&!)(#)&^（）……&（）#^&#()&^（）#&……&……（）&……（）&……（）……&#&（）#）&……（）&#（）&#（）&……（）#）&（）#）&（）#……&）#（）…\n…",
+    "time": "2026-11-08T01:46:24.841Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw7d57ca5l64",
+    "convId": "cmvxpaj74baed",
+    "senderId": "Lxh2014",
+    "senderName": "刘校长",
+    "text": "你好",
+    "time": "2026-11-08T04:59:45.898Z",
+    "quote": {
+      "id": "mmw6dzuy49l7n",
+      "name": "刘校长",
+      "text": "嘿"
+    },
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw7d8itq6cth",
+    "convId": "cmvxpaj74baed",
+    "senderId": "LiuXiaoyue",
+    "senderName": "刘潇月",
+    "text": "",
+    "image": "",
+    "parts": [
+      {
+        "type": "homework",
+        "homeworkId": "hmw7d8itk4gqe",
+        "title": "1",
+        "subject": "政治"
+      }
+    ],
+    "time": "2026-11-08T05:02:20.750Z",
+    "quote": null,
+    "recalled": true,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw7n6vfhilzw",
+    "convId": "cmw63bae8vnxy",
+    "senderId": "LiuXiaoyue",
+    "senderName": "刘潇月",
+    "text": "[表情]",
+    "image": "",
+    "parts": [
+      {
+        "type": "emoji",
+        "code": "478"
+      }
+    ],
+    "time": "2026-11-08T09:40:59.952Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw7njnym2a3h",
+    "convId": "cmw63bae8vnxy",
+    "senderId": "LiuXiaoyue",
+    "senderName": "刘潇月",
+    "text": "[表情]",
+    "image": "",
+    "parts": [
+      {
+        "type": "emoji",
+        "code": "21"
+      },
+      {
+        "type": "emoji",
+        "code": "22"
+      }
+    ],
+    "time": "2026-11-08T09:50:56.803Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmw7nktxkr69q",
+    "convId": "cmw63bae8vnxy",
+    "senderId": "LiuXiaoyue",
+    "senderName": "刘潇月",
+    "text": "https://mingxingschool.cc.cd",
+    "time": "2026-11-08T09:51:51.176Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  }
+]

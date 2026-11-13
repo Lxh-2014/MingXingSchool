@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 应用主题入口：仅继承基础样式，具体字段见 values/styles.xml -->
+<resources>
+    <style name="Theme.MingxingSchool" parent="Base.Theme.MingxingSchool" />
+</resources>

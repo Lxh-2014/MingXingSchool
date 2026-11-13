@@ -1,0 +1,254 @@
+{
+  "createdAt": "2026-11-07T07:36:47.457Z",
+  "reads": {
+    "LiuXiaoyue": "2026-11-11T14:08:41.778Z",
+    "Lxh2014": "2026-11-12T10:17:28.732Z",
+    "00010302": "2026-11-11T14:38:50.826Z",
+    "00010301": "2026-11-08T04:21:14.218Z",
+    "YuXidi": "2026-11-11T14:37:05.545Z",
+    "BaiWuchang": "2026-11-12T10:57:51.492Z",
+    "YueyaShanshang": "2026-11-11T14:36:06.400Z",
+    "DaoJianguo": "2026-11-11T14:36:30.106Z",
+    "MeiXiyi": "2026-11-11T14:37:53.785Z",
+    "PaoHenkuai": "2026-11-11T14:50:01.694Z",
+    "00010305": "2026-11-11T14:40:49.469Z",
+    "00010303": "2026-11-11T14:40:05.367Z",
+    "00010306": "2026-11-11T14:41:28.710Z",
+    "00010304": "2026-11-11T14:41:40.949Z",
+    "00010307": "2026-11-11T14:42:18.955Z"
+  },
+  "id": "cmw63bae8vnxy",
+  "type": "group",
+  "title": "1级3班",
+  "members": [
+    "LiuXiaoyue",
+    "Lxh2014",
+    "00010301",
+    "00010302",
+    "00010303",
+    "00010304",
+    "00010305",
+    "00010306",
+    "00010307",
+    "YuXidi",
+    "DaoJianguo",
+    "BaiWuchang",
+    "MeiXiyi",
+    "PaoHenkuai",
+    "YueyaShanshang"
+  ],
+  "ownerId": "LiuXiaoyue",
+  "prefs": {
+    "LiuXiaoyue": {
+      "pinned": false,
+      "muted": false,
+      "blocked": false,
+      "remark": "",
+      "clearedAt": "",
+      "identity": {
+        "role": "班主任",
+        "subject": "语文",
+        "nickname": "刘潇月",
+        "childName": "",
+        "relation": ""
+      }
+    },
+    "Lxh2014": {
+      "pinned": false,
+      "muted": false,
+      "blocked": false,
+      "remark": "",
+      "clearedAt": "",
+      "identity": {
+        "role": "老师",
+        "subject": "数学",
+        "nickname": "数大小",
+        "childName": "",
+        "relation": ""
+      }
+    },
+    "00010302": {
+      "pinned": false,
+      "muted": false,
+      "blocked": false,
+      "remark": "",
+      "clearedAt": "",
+      "identity": {
+        "role": "家委",
+        "subject": "",
+        "nickname": "",
+        "childName": "星星",
+        "relation": "爸爸"
+      }
+    },
+    "00010301": {
+      "pinned": false,
+      "muted": false,
+      "blocked": false,
+      "remark": "",
+      "clearedAt": "",
+      "identity": {
+        "role": "学生",
+        "subject": "",
+        "nickname": "涵猫",
+        "childName": "",
+        "relation": ""
+      }
+    },
+    "YuXidi": {
+      "pinned": false,
+      "muted": false,
+      "blocked": false,
+      "remark": "",
+      "clearedAt": "",
+      "identity": {
+        "role": "老师",
+        "subject": "英语",
+        "nickname": "妤吸笛",
+        "childName": "",
+        "relation": ""
+      }
+    },
+    "YueyaShanshang": {
+      "pinned": false,
+      "muted": false,
+      "blocked": false,
+      "remark": "",
+      "clearedAt": "",
+      "identity": {
+        "role": "老师",
+        "subject": "音乐",
+        "nickname": "乐牙山上",
+        "childName": "",
+        "relation": ""
+      }
+    },
+    "BaiWuchang": {
+      "pinned": false,
+      "muted": false,
+      "blocked": false,
+      "remark": "",
+      "clearedAt": "",
+      "identity": {
+        "role": "老师",
+        "subject": "自习",
+        "nickname": "白无常",
+        "childName": "",
+        "relation": ""
+      }
+    },
+    "DaoJianguo": {
+      "pinned": false,
+      "muted": false,
+      "blocked": false,
+      "remark": "",
+      "clearedAt": "",
+      "identity": {
+        "role": "老师",
+        "subject": "道法",
+        "nickname": "道建国",
+        "childName": "",
+        "relation": ""
+      }
+    },
+    "MeiXiyi": {
+      "pinned": false,
+      "muted": false,
+      "blocked": false,
+      "remark": "",
+      "clearedAt": "",
+      "identity": {
+        "role": "老师",
+        "subject": "美术",
+        "nickname": "美熙怡",
+        "childName": "",
+        "relation": ""
+      }
+    },
+    "PaoHenkuai": {
+      "pinned": false,
+      "muted": false,
+      "blocked": false,
+      "remark": "",
+      "clearedAt": "",
+      "identity": {
+        "role": "老师",
+        "subject": "体育",
+        "nickname": "跑很快",
+        "childName": "",
+        "relation": ""
+      }
+    },
+    "00010305": {
+      "pinned": false,
+      "muted": false,
+      "blocked": false,
+      "remark": "",
+      "clearedAt": "",
+      "identity": {
+        "role": "家长",
+        "subject": "",
+        "nickname": "",
+        "childName": "小名星星",
+        "relation": "爸爸"
+      }
+    },
+    "00010303": {
+      "pinned": false,
+      "muted": false,
+      "blocked": false,
+      "remark": "",
+      "clearedAt": "",
+      "identity": {
+        "role": "家长",
+        "subject": "",
+        "nickname": "",
+        "childName": "小小",
+        "relation": "妈妈"
+      }
+    },
+    "00010306": {
+      "pinned": false,
+      "muted": false,
+      "blocked": false,
+      "remark": "",
+      "clearedAt": "",
+      "identity": {
+        "role": "家长",
+        "subject": "",
+        "nickname": "",
+        "childName": "星球公主",
+        "relation": "妈妈"
+      }
+    },
+    "00010304": {
+      "pinned": false,
+      "muted": false,
+      "blocked": false,
+      "remark": "",
+      "clearedAt": "",
+      "identity": {
+        "role": "家长",
+        "subject": "",
+        "nickname": "",
+        "childName": "吸力星",
+        "relation": "奶奶"
+      }
+    },
+    "00010307": {
+      "pinned": false,
+      "muted": false,
+      "blocked": false,
+      "remark": "",
+      "clearedAt": "",
+      "identity": {
+        "role": "家长",
+        "subject": "",
+        "nickname": "",
+        "childName": "螃螃",
+        "relation": "姥姥"
+      }
+    }
+  },
+  "announcement": ""
+}

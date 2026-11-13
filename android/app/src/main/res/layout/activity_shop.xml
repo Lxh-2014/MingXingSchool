@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 明星商店页面骨架：顶栏（返回 / 标题 / 购物车 / 订单）+ 内容区
+     内容区由 ShopActivity 在「店铺列表 / 店铺详情 / 购物车 / 订单」之间切换 -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/mx_surface">
+
+    <!-- 顶栏外壳：负责状态栏安全区（wrap_content + paddingTop），
+         内层固定 56dp，保证系统栏变高时按钮与标题不被压缩 -->
+    <LinearLayout
+        android:id="@+id/layout_topbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/mx_surface">
+
+        <!-- 顶栏内容：与主界面、广播器一致的 56dp 高度 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="8dp"
+            android:paddingEnd="4dp">
+
+            <!-- 用户头像（左对齐）：点击弹出用户菜单 -->
+            <FrameLayout
+                android:id="@+id/layout_topbar_avatar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center" />
+
+            <!-- 返回按钮：子页面回到店铺列表，列表页退出页面 -->
+            <ImageButton
+                android:id="@+id/btn_back"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/action_back"
+                android:src="@drawable/ic_back"
+                app:tint="@color/mx_on_surface" />
+
+            <!-- 标题：随当前视图变化（明星商店 / 店铺名 / 购物车 / 我的订单） -->
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:text="@string/shop_title"
+                android:textColor="@color/mx_on_surface"
+                android:textSize="17sp"
+                android:textStyle="bold" />
+
+            <!-- 购物车按钮：右上角小角标显示商品件数 -->
+            <FrameLayout
+                android:layout_width="40dp"
+                android:layout_height="40dp">
+
+                <ImageButton
+                    android:id="@+id/btn_cart"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/shop_cart"
+                    android:src="@drawable/ic_cart"
+                    app:tint="@color/mx_on_surface" />
+
+                <TextView
+                    android:id="@+id/tv_cart_badge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="16dp"
+                    android:layout_gravity="top|end"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginEnd="2dp"
+                    android:gravity="center"
+                    android:minWidth="16dp"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="4dp"
+                    android:textColor="@color/mx_on_primary"
+                    android:textSize="10sp"
+                    android:visibility="gone" />
+            </FrameLayout>
+
+            <!-- 订单按钮：进入我的订单（管理员可在页内切换全部订单） -->
+            <ImageButton
+                android:id="@+id/btn_orders"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/shop_orders"
+                android:src="@drawable/ic_receipt"
+                app:tint="@color/mx_on_surface" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- 内容区：四个视图由代码构建并切换 -->
+    <FrameLayout
+        android:id="@+id/layout_content"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@color/mx_login_bg" />
+</LinearLayout>

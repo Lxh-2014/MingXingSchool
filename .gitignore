@@ -1,0 +1,98 @@
+# ---------- Node.js ----------
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.npm/
+.npm-cache/
+
+# ---------- 环境变量与密钥（禁止提交） ----------
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.crt
+*.pfx
+
+# ---------- 文档与证书目录（含 HTTPS 私钥，禁止提交） ----------
+docs/
+
+# ---------- 打包发布产物（apk / exe 安装包） ----------
+application/
+
+# ---------- 运行时数据（含用户信息、邮件账号等敏感配置） ----------
+server/data/
+!server/data/.gitkeep
+
+# ---------- 网盘应用的用户上传文件（体积达数 GB，不纳入版本管理） ----------
+apps/drive/files/
+
+# ---------- 日志 ----------
+*.log
+logs/
+debug.log
+
+# ---------- 临时与缓存 ----------
+.tmp/
+.temp/
+.cache/
+.trae/tmp/
+.screenshots/
+
+# ---------- Android / Gradle ----------
+android/.gradle/
+android/build/
+android/app/build/
+android/app/release/
+android/captures/
+android/.cxx/
+android/local.properties
+android/*.jks
+android/*.keystore
+*.apk
+*.aab
+*.ap_
+*.dex
+
+# ---------- Windows / .NET (WPF) ----------
+windows/bin/
+windows/obj/
+windows/publish/
+windows/**/bin/
+windows/**/obj/
+windows/**/publish/
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.nupkg
+packages/
+TestResults/
+
+# ---------- IDE / 编辑器 ----------
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# ---------- 操作系统 ----------
+.DS_Store
+Thumbs.db
+Desktop.ini
+ehthumbs.db
+
+# ---------- 其他 ----------
+*.bak
+*.orig
+*.rej
+
+# ---------- 其他 ----------
+*.db
+*.sqlite
+*.log
+.figma/
+.trae/
+.screenshots/

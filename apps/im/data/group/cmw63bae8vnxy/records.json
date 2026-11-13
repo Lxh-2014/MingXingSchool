@@ -1,0 +1,133 @@
+[
+  {
+    "id": "mmwc76y25brqu",
+    "convId": "cmw63bae8vnxy",
+    "senderId": "Lxh2014",
+    "senderName": "刘校长",
+    "text": "大家好",
+    "time": "2026-11-11T14:12:00.365Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmwc8cxhuhkza",
+    "convId": "cmw63bae8vnxy",
+    "senderId": "BaiWuchang",
+    "senderName": "白无常",
+    "text": "好啊",
+    "time": "2026-11-11T14:44:39.186Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmwc8dcx9bdz7",
+    "convId": "cmw63bae8vnxy",
+    "senderId": "BaiWuchang",
+    "senderName": "白无常",
+    "text": "我是大家的白自习老师",
+    "time": "2026-11-11T14:44:59.181Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmwc8e1e0zjkj",
+    "convId": "cmw63bae8vnxy",
+    "senderId": "BaiWuchang",
+    "senderName": "白无常",
+    "text": "有什么关于白自习的事都可以问我",
+    "image": "",
+    "parts": [
+      {
+        "type": "text",
+        "text": "有什么关于白自习的事都可以问我"
+      },
+      {
+        "type": "emoji",
+        "code": "63"
+      },
+      {
+        "type": "emoji",
+        "code": "63"
+      },
+      {
+        "type": "emoji",
+        "code": "63"
+      }
+    ],
+    "time": "2026-11-11T14:45:30.889Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmwc9ayoceky5",
+    "convId": "cmw63bae8vnxy",
+    "senderId": "BaiWuchang",
+    "senderName": "白无常",
+    "text": "",
+    "time": "2026-11-11T15:11:07.020Z",
+    "quote": null,
+    "recalled": true,
+    "hiddenFor": [],
+    "recalledBy": "BaiWuchang"
+  },
+  {
+    "id": "mmwc9b72oal2w",
+    "convId": "cmw63bae8vnxy",
+    "senderId": "BaiWuchang",
+    "senderName": "白无常",
+    "text": "[表情]",
+    "image": "",
+    "parts": [
+      {
+        "type": "emoji",
+        "code": "118"
+      }
+    ],
+    "time": "2026-11-11T15:11:17.905Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmwcaxz2heoaa",
+    "convId": "cmw63bae8vnxy",
+    "senderId": "BaiWuchang",
+    "senderName": "白无常",
+    "text": "课表如下：\n ​",
+    "image": "/im/api/images/mmwcaxz2heoaa-1.png",
+    "parts": [
+      {
+        "type": "text",
+        "text": "课表如下：\n"
+      },
+      {
+        "type": "image",
+        "src": "/im/api/images/mmwcaxz2heoaa-1.png"
+      },
+      {
+        "type": "text",
+        "text": "​"
+      }
+    ],
+    "time": "2026-11-11T15:57:00.313Z",
+    "quote": null,
+    "recalled": false,
+    "hiddenFor": []
+  },
+  {
+    "id": "mmwde96zgd24k",
+    "convId": "cmw63bae8vnxy",
+    "senderId": "Lxh2014",
+    "senderName": "刘校长",
+    "text": "",
+    "time": "2026-11-12T10:17:28.732Z",
+    "quote": null,
+    "recalled": true,
+    "hiddenFor": [],
+    "recalledBy": "Lxh2014"
+  }
+]

@@ -1,0 +1,8 @@
+{
+  "id": "default",
+  "correct_sound": "/quiz/uploads/fmwdb4d2v0cgy.mp3",
+  "incorrect_sound": "/quiz/uploads/fmwdb4ikildba.mp3",
+  "complete_sound": "/quiz/uploads/fmwdb4kv0p4cw.mp3",
+  "created_at": "2026-11-12T05:46:53.435Z",
+  "updated_at": "2026-11-12T08:49:57.341Z"
+}

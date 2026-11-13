@@ -1,0 +1,41 @@
+<Window x:Class="MingxingSchool.Desktop.Views.LoginWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="明星学校 · 登录" Width="420" SizeToContent="Height"
+        WindowStartupLocation="CenterScreen" ResizeMode="NoResize"
+        WindowStyle="None" AllowsTransparency="True" Background="Transparent"
+        FontFamily="{DynamicResource UiFont}"
+        Foreground="{DynamicResource TextPrimaryBrush}">
+    <Border Background="{DynamicResource CardBrush}" CornerRadius="20" Padding="32" Margin="20"
+            Effect="{StaticResource CardShadowEffect}">
+        <Grid>
+            <!-- 自绘关闭按钮（右上角），替代系统标题栏 -->
+            <Button x:Name="CloseButton" Style="{StaticResource CaptionCloseButton}"
+                    Width="30" Height="26" Content="&#xE8BB;" ToolTip="关闭"
+                    HorizontalAlignment="Right" VerticalAlignment="Top"
+                    Click="Close_Click" />
+
+            <StackPanel>
+                <!-- 标题区域：按住可拖动窗口 -->
+                <StackPanel MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
+                    <TextBlock Text="明星学校" FontSize="28" FontWeight="Bold"
+                               Foreground="{DynamicResource TextTitleBrush}" HorizontalAlignment="Center" />
+                    <TextBlock Text="桌面客户端登录" Style="{StaticResource MutedText}"
+                               HorizontalAlignment="Center" Margin="0,4,0,24" />
+                </StackPanel>
+
+                <TextBlock Text="姓名" Style="{StaticResource FieldLabelText}" Margin="0,0,0,6" />
+                <TextBox x:Name="UserBox" MinHeight="38" />
+
+                <TextBlock Text="学号" Style="{StaticResource FieldLabelText}" Margin="0,14,0,6" />
+                <PasswordBox x:Name="PassBox" MinHeight="38" KeyDown="PassBox_KeyDown" />
+
+                <TextBlock x:Name="ErrorText" Foreground="{DynamicResource DangerBrush}"
+                           FontSize="12.5" TextWrapping="Wrap" Margin="0,10,0,0" Visibility="Collapsed" />
+
+                <Button x:Name="LoginButton" Content="登 录" Style="{StaticResource PrimaryButton}"
+                        Margin="0,20,0,0" Height="46" FontSize="14" IsDefault="True" Click="Login_Click" />
+            </StackPanel>
+        </Grid>
+    </Border>
+</Window>

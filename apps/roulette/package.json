@@ -1,0 +1,22 @@
+{
+  "name": "wheel-app",
+  "version": "1.1.0",
+  "description": "做个决定平台 - 随机大转盘 (Node.js + SQLite 本地库)",
+  "type": "commonjs",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node server/index.js",
+    "seed": "node server/utils/seed.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.3",
+    "sql.js": "^1.14.2"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>明星学校</title>
+  <!-- 挂载到明星学校 /roulette：所有相对资源基于此路径解析 -->
+  <base href="/roulette/">
+  <link rel="icon" href="assets/icon.png" type="image/png">
+  <!-- 全站国际化框架（必须早于业务脚本加载，绝对路径避开 <base href> 重写） -->
+  <script src="/assets/i18n.js"></script>
+  <!-- 全站唯一样式表（原 12 个 CSS 合并，绝对路径避开 <base href> 重写） -->
+  <link rel="stylesheet" href="/assets/all.css?v=0.48">
+</head>
+<body class="rc-app">
+  <div id="app"></div>
+  <!-- 全局依赖 -->
+  <script src="js/auth.js"></script>
+  <script src="js/local-db-client.js"></script>
+  <script src="js/modal.js?v=0.2"></script>
+  <script src="js/toast.js"></script>
+  <script src="js/spin-wheel.js?v=0.2"></script>
+  <!-- SPA 入口 -->
+  <script src="js/app.js?v=0.2"></script>
+
+<!-- 悬浮工具条已抽至平台公共骨架 /assets/common-ui.js（全站共用，一处维护） -->
+<script src="/assets/common-ui.js"></script>
+</body>
+</html>

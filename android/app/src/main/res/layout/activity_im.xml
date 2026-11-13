@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 邻语页外壳：顶栏（返回 + 居中标题 + 头像） + 内容区（会话列表 / 聊天页由代码动态切换） -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/im_bg">
+
+    <!-- 顶栏外壳：wrap_content 负责接收状态栏高度的 padding，内部保持 52dp 不变形 -->
+    <LinearLayout
+        android:id="@+id/layout_topbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="?attr/colorSurface">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp">
+
+            <!-- 返回按钮：聊天页返回会话列表，列表页退出邻语（QQ 风格：位于最左侧） -->
+            <ImageButton
+                android:id="@+id/btn_back"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/action_back"
+                android:src="@drawable/ic_back"
+                android:tint="@color/mx_on_surface" />
+
+            <!-- 标题：居中显示，聊天页为会话名 -->
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:maxLines="1"
+                android:text="@string/im_title"
+                android:textColor="@color/mx_on_surface"
+                android:textSize="17sp"
+                android:textStyle="bold" />
+
+            <!-- 顶栏头像：与主项目保持一致，点击弹出用户菜单（位于最右侧） -->
+            <FrameLayout
+                android:id="@+id/layout_topbar_avatar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <!-- 右侧操作区：当前仅占位，便于后续扩展 -->
+            <LinearLayout
+                android:id="@+id/topbar_actions"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical" />
+        </LinearLayout>
+
+        <!-- 顶栏底部分隔线：与内容区拉开层次，贴近 QQ 的顶栏样式 -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="@color/mx_input_stroke" />
+    </LinearLayout>
+
+    <!-- 内容区：浅灰底，底部留出手势条安全区（由代码补 inset） -->
+    <FrameLayout
+        android:id="@+id/layout_content"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@color/im_bg" />
+</LinearLayout>

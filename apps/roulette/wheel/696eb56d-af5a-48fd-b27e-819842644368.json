@@ -1,0 +1,27 @@
+{
+  "user_id": "00010304",
+  "name": "小猫",
+  "options": [
+    "橘子",
+    "小花",
+    "小梨花",
+    "小奶牛",
+    "小黑",
+    "奶球",
+    "糖糖",
+    "招财",
+    "囤囤",
+    "涵猫",
+    "宵宵",
+    "猪哥",
+    "吉子",
+    "饺子"
+  ],
+  "colors": null,
+  "background_image": null,
+  "background_color": "#f0f8ff",
+  "is_private": false,
+  "sort_order": 0,
+  "created_at": "2026-09-30T13:20:19.097Z",
+  "updated_at": "2026-10-04T03:16:26.002Z"
+}

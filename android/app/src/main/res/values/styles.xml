@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 主题基础定义（Material 3，日夜间自适应，浅色/深色色值由 values-night 覆盖）
+     单独抽出基础样式，便于 values-v29 按系统版本追加"系统栏对比度"开关，
+     而不必复制整份字段。 -->
+<resources>
+    <style name="Base.Theme.MingxingSchool" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- 主色与主色容器 -->
+        <item name="colorPrimary">@color/mx_primary</item>
+        <item name="colorOnPrimary">@color/mx_on_primary</item>
+        <item name="colorPrimaryContainer">@color/mx_primary_container</item>
+        <item name="colorOnPrimaryContainer">@color/mx_on_primary_container</item>
+
+        <!-- 表面与背景 -->
+        <item name="colorSurface">@color/mx_surface</item>
+        <item name="colorOnSurface">@color/mx_on_surface</item>
+        <item name="colorOnSurfaceVariant">@color/mx_on_surface_variant</item>
+        <item name="android:colorBackground">@color/mx_login_bg</item>
+
+        <!-- 错误色 -->
+        <item name="colorError">@color/mx_error</item>
+
+        <!-- 系统栏初始色：启动页为登录页（淡蓝底），与页面背景一致，避免启动闪白；
+             进入主界面后由 BaseActivity#setSystemBarColor 覆盖为顶栏的 surface 色 -->
+        <item name="android:statusBarColor">@color/mx_login_bg</item>
+        <item name="android:navigationBarColor">@color/mx_login_bg</item>
+        <item name="android:windowLightStatusBar">@bool/mx_light_status_bar</item>
+        <item name="android:windowLightNavigationBar">@bool/mx_light_status_bar</item>
+    </style>
+</resources>

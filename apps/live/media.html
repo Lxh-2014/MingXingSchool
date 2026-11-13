@@ -1,0 +1,1573 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>明星直播</title>
+<!-- 标签页图标：使用平台直播应用 logo -->
+<link rel="icon" type="image/png" href="/assets/home/live.png">
+<style>
+  /* 只保留画面本身：纯黑底、无任何网页控件，全部界面由桌面客户端原生外壳提供 */
+  html, body { margin: 0; padding: 0; width: 100%; height: 100%; background: #000; overflow: hidden; }
+  /* 视频铺满整块嵌入区域，按原始比例居中显示，多余部分留黑边 */
+  #frame { position: fixed; inset: 0; width: 100%; height: 100%; background: #000; object-fit: contain; display: block; }
+  /* 禁用文本选择与长按系统菜单：本页为纯画面输出，不需要任何选中行为 */
+  html, body { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; -webkit-touch-callout: none; }
+</style>
+<script>
+  /* 禁用浏览器原生右键菜单（本页未加载 common-ui.js，单独处理） */
+  document.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+</script>
+</head>
+<body>
+<video id="frame" autoplay playsinline></video>
+<!-- 扬声器监听：只播放当前音源，不参与推流 -->
+<audio id="monitor-audio" autoplay playsinline></audio>
+<script>
+(function () {
+  'use strict';
+
+  /* ================= 基础常量 ================= */
+
+  /** 支持的频道列表（与网页端侧边栏 1~4 一一对应） */
+  var CHANNELS = ['ch1', 'ch2', 'ch3', 'ch4'];
+
+  /** URL 查询参数集合（模式、频道均由原生外壳拼进地址） */
+  var QUERY = new URLSearchParams(location.search);
+
+  /** 页面模式：host = 主播端（采集并推流），view = 观看端（只接收画面） */
+  var MODE = QUERY.get('mode') === 'host' ? 'host' : 'view';
+
+  /** 站点挂载前缀：主项目为 /live，独立运行时为 '' */
+  var BASE = (function () {
+    var path = location.pathname.replace(/\/+$/, '');      // 去掉尾部斜杠的当前路径
+    var match = /^(.*?)\/media$/.exec(path);               // 匹配 /live/media 或 /media
+    return match ? match[1] : '';
+  })();
+
+  /** WebSocket 信令地址（自动适配 http/https） */
+  var WS_URL = (location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host + BASE + '/ws';
+
+  /** 直播 API 前缀（用于读取 STUN 配置） */
+  var API = BASE + '/api';
+
+  /** 默认 STUN 配置；服务端返回可用配置后会覆盖 */
+  var DEFAULT_ICE_SERVERS = [{ urls: ['stun:stun.l.google.com:19302', 'stun:stun1.l.google.com:19302'] }];
+
+  /** WebView2 原生桥对象（浏览器内直接打开时为 null） */
+  var NATIVE_BRIDGE = (window.chrome && window.chrome.webview) ? window.chrome.webview : null;
+
+  /** 画面元素（全页唯一 UI） */
+  var frame = document.getElementById('frame');
+
+  /**
+   * 读取 URL 中的频道参数，非法时回退到 ch1
+   * @returns {string} 频道标识（ch1~ch4）
+   */
+  function readChannel() {
+    var ch = QUERY.get('ch');
+    return CHANNELS.indexOf(ch) >= 0 ? ch : 'ch1';
+  }
+
+  /* ================= 运行状态 ================= */
+
+  /** 页面运行状态（主播端与观看端共用字段，按模式使用） */
+  var state = {
+    mode: MODE,                  // 当前模式：host / view
+    channel: readChannel(),      // 当前频道
+    ws: null,                    // 信令 WebSocket
+    manualClose: false,          // 是否主动关闭（避免误重连）
+    reconnectTimer: null,        // 信令断线重连定时器
+    joinTimer: null,             // 观看端未开播时的重新申请定时器
+    signal: 'connecting',        // 信令状态：connecting / online / offline
+    hostOnline: false,           // 主播是否在线（观看端使用）
+    viewerId: '',                // 服务端分配的观众编号
+    pc: null,                    // 观看端与主播的 PeerConnection
+    pendingCandidates: [],       // 远端描述就绪前缓存的 ICE 候选
+    remoteStream: null,          // 观看端收到的远程音视频流
+    cameraStream: null,          // 主播端本机摄像头流
+    micStream: null,             // 主播端本机麦克风流
+    source: 'local',             // 主播端音源：local 本机麦克风 / app 手机麦克风 / computer 电脑声音
+    computerStream: null,        // 电脑声音采集流（原生 WASAPI 环回合成）
+    viewerPeers: new Map(),      // 主播端观众连接表：viewerId -> { pc, audioSender, videoSender }
+    iceServers: DEFAULT_ICE_SERVERS, // RTCPeerConnection 的 ICE 配置
+    lastError: '',               // 最近一次错误文案（展示在原生外壳状态栏）
+    cameraRetryAt: 0,            // 上次摄像头中断自动重试的时间戳
+    token: '',                   // 手机配对令牌（host:joined / host:token 下发）
+    liveActive: false,           // 主播是否处于开播状态（已加入频道并推流）
+    appPc: null,                 // 主播与手机麦克风的 PeerConnection
+    appCandidates: [],           // 手机端信令的 ICE 缓存
+    appStream: null,             // 手机端送来的音频流
+    appConnected: false,         // 手机端是否已配对
+    peerConnected: false,        // 手机麦克风 P2P 是否已连通
+    devices: [],                 // 已枚举的媒体设备列表
+    cameraId: '',                // 当前使用的摄像头设备 id（空表示系统默认）
+    micId: '',                   // 当前使用的麦克风设备 id（空表示系统默认）
+    cameraEnabled: true,         // 摄像头是否开启（关掉后只推音频）
+    monitorOn: false,            // 是否开启扬声器监听
+    mirror: false,               // 本地预览是否左右镜像
+    fit: 'contain',              // 画面填充方式：contain 完整显示 / cover 铺满裁切
+    started: false               // 主播端是否已开始直播
+  };
+
+  /** 监听播放用的隐藏音频元素（只在主播端使用） */
+  var monitorAudio = document.getElementById('monitor-audio');
+
+  /** 原生系统声音桥接状态（桌面端 WASAPI 环回采集扬声器输出后分块回传） */
+  var nativeAudio = {
+    active: false,        // 原生端是否正在采集
+    ctx: null,            // 页面侧 Web Audio 上下文
+    dest: null,           // MediaStreamDestination，其音轨作为「电脑声音」
+    nextTime: 0,          // 下一段音频的排程开始时间（秒）
+    sampleRate: 48000,    // 原生端回报的采样率
+    channels: 2,          // 原生端回报的声道数
+    pendingStart: null    // 等待原生端回报开始结果的回调
+  };
+
+  /* ================= 与原生外壳通信 ================= */
+
+  /**
+   * 向原生外壳发送一条消息（浏览器内打开时静默忽略）
+   * @param {object} payload 消息体
+   */
+  function postToNative(payload) {
+    if (!NATIVE_BRIDGE) return;
+    try {
+      NATIVE_BRIDGE.postMessage(payload);
+    } catch (err) {
+      // 原生桥偶发不可用时忽略，不影响画面本身
+    }
+  }
+
+  /**
+   * 当前是否已有可显示的直播画面（用于状态栏文案）
+   * @returns {boolean} 是否有画面
+   */
+  function hasLiveVideo() {
+    return !!(frame && frame.videoWidth > 0 && !frame.ended);
+  }
+
+  /**
+   * 把当前状态同步给原生外壳（连接状态 / 观众数 / 音源 / 错误）
+   */
+  function sendStatus() {
+    postToNative({
+      type: 'media:status',
+      mode: state.mode,
+      channel: state.channel,
+      signal: state.signal,
+      hostOnline: state.hostOnline,
+      viewers: state.mode === 'host' ? state.viewerPeers.size : 0,
+      source: state.source,
+      hasVideo: hasLiveVideo(),
+      error: state.lastError || '',
+      token: state.token || '',
+      started: state.started,
+      appConnected: state.appConnected,
+      peerConnected: state.peerConnected,
+      cameraEnabled: state.cameraEnabled,
+      cameraId: state.cameraId,
+      micId: state.micId,
+      monitorOn: state.monitorOn,
+      mirror: state.mirror,
+      fit: state.fit,
+      devices: state.devices.map(function (device) {
+        return { kind: device.kind, id: device.deviceId, label: device.label };
+      })
+    });
+  }
+
+  /* ================= 通用工具 ================= */
+
+  /**
+   * 生成观看端 / 主播端重连定时器
+   * @param {Function} callback 到点后执行的函数
+   * @param {number} delay 延迟毫秒数
+   */
+  function scheduleReconnect(callback, delay) {
+    if (state.reconnectTimer || state.manualClose) return;
+    state.reconnectTimer = setTimeout(function () {
+      state.reconnectTimer = null;
+      if (!state.manualClose) callback();
+    }, delay || 2000);
+  }
+
+  /**
+   * 发送 JSON 信令（连接未就绪时忽略）
+   * @param {object} payload 消息体
+   */
+  function sendSignal(payload) {
+    if (!state.ws || state.ws.readyState !== WebSocket.OPEN) return;
+    state.ws.send(JSON.stringify(payload));
+  }
+
+  /**
+   * 把 base64 字符串解码为字节数组（原生端回传的 PCM16 数据）
+   * @param {string} b64 base64 数据
+   * @returns {Uint8Array} 解码后的字节
+   */
+  function base64ToBytes(b64) {
+    var bin = atob(b64 || '');
+    var bytes = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return bytes;
+  }
+
+  /**
+   * 清理指定的定时器
+   * @param {'reconnect'|'join'} name 定时器名称
+   */
+  function clearTimer(name) {
+    if (name === 'reconnect' && state.reconnectTimer) {
+      clearTimeout(state.reconnectTimer);
+      state.reconnectTimer = null;
+    }
+    if (name === 'join' && state.joinTimer) {
+      clearTimeout(state.joinTimer);
+      state.joinTimer = null;
+    }
+  }
+
+  /* ================= 观看端 ================= */
+
+  /**
+   * 建立观看端信令连接并申请加入频道
+   */
+  function connectViewer() {
+    closeViewerSocket();
+    state.manualClose = false;
+    state.signal = 'connecting';
+    state.hostOnline = false;
+    state.viewerId = '';
+    sendStatus();
+
+    var ws;
+    try {
+      ws = new WebSocket(WS_URL);
+    } catch (err) {
+      state.signal = 'offline';
+      state.lastError = '无法创建信令连接';
+      sendStatus();
+      scheduleReconnect(connectViewer);
+      return;
+    }
+    state.ws = ws;
+
+    ws.addEventListener('open', function () {
+      state.signal = 'online';
+      state.lastError = '';
+      sendStatus();
+      sendSignal({ type: 'viewer:join', channel: state.channel });
+    });
+
+    ws.addEventListener('message', function (event) {
+      var msg;
+      try { msg = JSON.parse(event.data); } catch (err) { return; }
+      handleViewerMessage(msg);
+    });
+
+    ws.addEventListener('close', function () {
+      if (state.ws !== ws) return;
+      state.ws = null;
+      state.signal = 'offline';
+      state.hostOnline = false;
+      closeViewerPeer();
+      sendStatus();
+      if (!state.manualClose) scheduleReconnect(connectViewer);
+    });
+
+    ws.addEventListener('error', function () {
+      // 失败后浏览器会继续触发 close，这里不重复处理
+    });
+  }
+
+  /**
+   * 主动关闭观看端信令连接
+   */
+  function closeViewerSocket() {
+    state.manualClose = true;
+    clearTimer('reconnect');
+    clearTimer('join');
+    if (state.ws) {
+      try { state.ws.close(); } catch (err) { /* 忽略 */ }
+      state.ws = null;
+    }
+  }
+
+  /**
+   * 主播未开播 / 已下播时，每 3 秒重新申请加入频道
+   */
+  function scheduleViewerJoin() {
+    if (state.joinTimer || state.manualClose) return;
+    state.joinTimer = setTimeout(function () {
+      state.joinTimer = null;
+      if (state.manualClose) return;
+      if (!state.ws || state.ws.readyState !== WebSocket.OPEN) return;
+      sendSignal({ type: 'viewer:join', channel: state.channel });
+    }, 3000);
+  }
+
+  /**
+   * 处理服务端下发的观看端消息
+   * @param {object} msg 消息体
+   */
+  function handleViewerMessage(msg) {
+    if (!msg || !msg.type) return;
+
+    if (msg.type === 'viewer:joined') {
+      state.hostOnline = true;
+      state.viewerId = msg.viewerId || '';
+      state.lastError = '';
+      sendStatus();
+      return;
+    }
+
+    if (msg.type === 'viewer:rejected') {
+      // 主播尚未开播或人数已满：保持页面，稍后自动重试
+      state.hostOnline = false;
+      sendStatus();
+      scheduleViewerJoin();
+      return;
+    }
+
+    if (msg.type === 'viewer:closed') {
+      state.hostOnline = false;
+      closeViewerPeer();
+      sendStatus();
+      scheduleViewerJoin();
+      return;
+    }
+
+    if (msg.type === 'signal') {
+      handleViewerSignal(msg.data);
+    }
+  }
+
+  /**
+   * 处理主播端发来的 Offer / ICE
+   * @param {object} data 信令数据
+   */
+  async function handleViewerSignal(data) {
+    if (!data) return;
+
+    if (data.candidate) {
+      addViewerCandidate(data.candidate);
+      return;
+    }
+
+    if (data.sdp && data.sdp.type === 'offer') {
+      try {
+        var pc = ensureViewerPeer();
+        await pc.setRemoteDescription(new RTCSessionDescription(data.sdp));
+        flushViewerCandidates();
+        var answer = await pc.createAnswer();
+        await pc.setLocalDescription(answer);
+        sendSignal({ type: 'viewer:signal', data: { sdp: pc.localDescription } });
+      } catch (err) {
+        state.lastError = '建立观看连接失败：' + (err && err.message ? err.message : '未知错误');
+        sendStatus();
+      }
+    }
+  }
+
+  /**
+   * 创建观看端 PeerConnection（只接收主播的音视频）
+   * @returns {RTCPeerConnection} 连接对象
+   */
+  function ensureViewerPeer() {
+    if (state.pc) return state.pc;
+    var pc = new RTCPeerConnection({ iceServers: state.iceServers });
+    state.pc = pc;
+
+    pc.onicecandidate = function (event) {
+      if (event.candidate) sendSignal({ type: 'viewer:signal', data: { candidate: event.candidate } });
+    };
+
+    pc.ontrack = function (event) {
+      // 音轨与视频轨来自不同的发送器，统一合并到同一条流，避免互相覆盖
+      if (!state.remoteStream) state.remoteStream = new MediaStream();
+      var stream = state.remoteStream;
+      var exists = stream.getTracks().some(function (track) { return track.id === event.track.id; });
+      if (!exists) stream.addTrack(event.track);
+
+      event.track.addEventListener('ended', function () {
+        try { stream.removeTrack(event.track); } catch (err) { /* 忽略 */ }
+        sendStatus();
+      });
+
+      attachRemoteStream(stream);
+    };
+
+    pc.onconnectionstatechange = function () {
+      if (pc.connectionState === 'failed' || pc.connectionState === 'closed') {
+        closeViewerPeer();
+        sendStatus();
+        scheduleViewerJoin();
+      }
+    };
+    return pc;
+  }
+
+  /**
+   * 把主播推送的媒体流挂到视频元素上（自动播放被拦截时保留画面提示）
+   * @param {MediaStream} stream 远程音视频流
+   */
+  function attachRemoteStream(stream) {
+    state.remoteStream = stream;
+    if (frame.srcObject !== stream) frame.srcObject = stream;
+    if (frame.paused) {
+      frame.play().catch(function () {
+        // WebView2 已配置自动播放免手势；浏览器内打开被拦截时静默忽略
+      });
+    }
+    sendStatus();
+  }
+
+  /**
+   * 添加 ICE 候选；远端描述未就绪时先缓存
+   * @param {RTCIceCandidateInit} candidate ICE 候选
+   */
+  function addViewerCandidate(candidate) {
+    if (!state.pc || !state.pc.remoteDescription) {
+      state.pendingCandidates.push(candidate);
+      return;
+    }
+    state.pc.addIceCandidate(new RTCIceCandidate(candidate)).catch(function () { /* 忽略 */ });
+  }
+
+  /**
+   * 补加缓存的 ICE 候选
+   */
+  function flushViewerCandidates() {
+    if (!state.pc) return;
+    var list = state.pendingCandidates.slice();
+    state.pendingCandidates = [];
+    list.forEach(function (candidate) {
+      state.pc.addIceCandidate(new RTCIceCandidate(candidate)).catch(function () { /* 忽略 */ });
+    });
+  }
+
+  /**
+   * 关闭观看端 PeerConnection 并清空画面
+   */
+  function closeViewerPeer() {
+    state.pendingCandidates = [];
+    if (state.pc) {
+      try { state.pc.close(); } catch (err) { /* 忽略 */ }
+      state.pc = null;
+    }
+    state.remoteStream = null;
+    if (frame) {
+      frame.pause();
+      frame.srcObject = null;
+    }
+  }
+
+  /* ================= 主播端 ================= */
+
+  /**
+   * 启动主播端：先建立信令，再采集摄像头与麦克风
+   */
+  function startHost() {
+    connectHost();
+    // 采集完成后枚举一次设备，供原生外壳填充下拉框
+    Promise.all([startCamera(), startMic()]).then(function () {
+      syncDeviceList();
+    });
+  }
+
+  /**
+   * 建立主播端信令连接并加入频道
+   */
+  function connectHost() {
+    closeHostSocket();
+    state.manualClose = false;
+    state.signal = 'connecting';
+    sendStatus();
+
+    var ws;
+    try {
+      ws = new WebSocket(WS_URL);
+    } catch (err) {
+      state.signal = 'offline';
+      state.lastError = '无法创建信令连接';
+      sendStatus();
+      scheduleReconnect(connectHost);
+      return;
+    }
+    state.ws = ws;
+
+    ws.addEventListener('open', function () {
+      state.signal = 'online';
+      sendStatus();
+      sendSignal({ type: 'host:join', channel: state.channel });
+    });
+
+    ws.addEventListener('message', function (event) {
+      var msg;
+      try { msg = JSON.parse(event.data); } catch (err) { return; }
+      handleHostMessage(msg);
+    });
+
+    ws.addEventListener('close', function () {
+      if (state.ws !== ws) return;
+      state.ws = null;
+      state.signal = 'offline';
+      state.started = false;
+      state.liveActive = false;
+      state.hostOnline = false;
+      state.token = '';
+      state.appConnected = false;
+      state.peerConnected = false;
+      closeAllViewerPeers();
+      closeAppPeer();
+      stopMonitor();
+      sendStatus();
+      if (!state.manualClose) scheduleReconnect(connectHost);
+    });
+
+    ws.addEventListener('error', function () {
+      // 失败后浏览器会继续触发 close
+    });
+  }
+
+  /**
+   * 主动关闭主播端信令连接
+   */
+  function closeHostSocket() {
+    state.manualClose = true;
+    clearTimer('reconnect');
+    if (state.ws) {
+      try { state.ws.close(); } catch (err) { /* 忽略 */ }
+      state.ws = null;
+    }
+  }
+
+  /**
+   * 处理服务端下发的主播端消息
+   * @param {object} msg 消息体
+   */
+  function handleHostMessage(msg) {
+    if (!msg || !msg.type) return;
+
+    if (msg.type === 'host:joined') {
+      state.hostOnline = true;
+      state.started = true;
+      state.liveActive = true;
+      state.lastError = '';
+      if (msg.token) state.token = msg.token;      // 配对令牌用于生成手机端二维码
+      sendStatus();
+      return;
+    }
+
+    // 重新生成配对令牌后服务端会下发新令牌
+    if (msg.type === 'host:token') {
+      state.token = msg.token || '';
+      state.appConnected = false;
+      state.peerConnected = false;
+      closeAppPeer();
+      state.lastError = '';
+      sendStatus();
+      return;
+    }
+
+    // 手机麦克风接入：自动切到手机音源并主动建立 P2P（手机端只收 Offer）
+    if (msg.type === 'app:joined') {
+      state.appConnected = true;
+      state.peerConnected = false;
+      state.source = 'app';
+      state.lastError = '';
+      createAppOffer();
+      syncViewerMedia();
+      updateMonitorSource();
+      sendStatus();
+      return;
+    }
+
+    if (msg.type === 'app:left') {
+      state.appConnected = false;
+      state.peerConnected = false;
+      closeAppPeer();
+      if (state.source === 'app') {
+        state.source = 'local';
+        syncViewerMedia();
+        updateMonitorSource();
+      }
+      sendStatus();
+      return;
+    }
+
+    // 手机端回传的 Answer / ICE
+    if (msg.type === 'signal') {
+      handleHostAppSignal(msg.data);
+      return;
+    }
+
+    if (msg.type === 'error') {
+      // 权限不足 / 频道已有其他主播：停止自动重连，避免两个主播端互相踢人形成死循环
+      var text = msg.message || '信令服务返回错误';
+      state.lastError = text;
+      if (text.indexOf('仅管理员') >= 0 || text.indexOf('已有其他主播') >= 0) {
+        state.manualClose = true;
+        state.signal = 'offline';
+      }
+      sendStatus();
+      return;
+    }
+
+    // 有观众进入：为该观众单独建立一条 P2P 连接并推送音视频
+    if (msg.type === 'viewer:joined') {
+      createViewerPeer(msg.viewerId);
+      sendStatus();
+      return;
+    }
+
+    // 观众离开：释放对应连接
+    if (msg.type === 'viewer:left') {
+      closeHostViewerPeer(msg.viewerId);
+      sendStatus();
+      return;
+    }
+
+    // 观众回传的 Answer / ICE
+    if (msg.type === 'viewer:signal') {
+      handleViewerAnswer(msg.viewerId, msg.data);
+    }
+  }
+
+  /**
+   * 获取当前音源对应的音频轨道
+   * 电脑声音取原生采集合成的音轨，本机音源取本机麦克风音轨。
+   * @returns {MediaStreamTrack|null} 音频轨道，没有可用音源时返回 null
+   */
+  function getActiveAudioTrack() {
+    if (state.source === 'computer') {
+      return state.computerStream ? (state.computerStream.getAudioTracks()[0] || null) : null;
+    }
+    if (state.source === 'app') {
+      return state.appStream ? (state.appStream.getAudioTracks()[0] || null) : null;
+    }
+    if (state.micStream) return state.micStream.getAudioTracks()[0] || null;
+    return null;
+  }
+
+  /**
+   * 获取当前音源对应的完整媒体流（供扬声器监听使用）
+   * @returns {MediaStream|null} 音源流，没有可用音源时返回 null
+   */
+  function getActiveAudioStream() {
+    if (state.source === 'computer') return state.computerStream;
+    if (state.source === 'app') return state.appStream;
+    return state.micStream;
+  }
+
+  /**
+   * 把当前音源与摄像头画面同步到所有观众的 P2P 连接
+   */
+  function syncViewerMedia() {
+    if (!state.viewerPeers.size) return;
+    var audioTrack = getActiveAudioTrack();                                    // 当前音源轨道
+    var videoTrack = state.cameraStream ? (state.cameraStream.getVideoTracks()[0] || null) : null; // 摄像头轨道
+    state.viewerPeers.forEach(function (entry) {
+      if (entry.audioSender) entry.audioSender.replaceTrack(audioTrack).catch(function () { /* 忽略 */ });
+      if (entry.videoSender) entry.videoSender.replaceTrack(videoTrack).catch(function () { /* 忽略 */ });
+    });
+  }
+
+  /**
+   * 调高观众推流的编码参数，带宽不足时优先保分辨率
+   * @param {RTCRtpSender} sender 视频发送器
+   */
+  function tuneVideoSender(sender) {
+    if (!sender || typeof sender.getParameters !== 'function') return;
+    try {
+      var params = sender.getParameters();
+      if (!params.encodings || !params.encodings.length) params.encodings = [{}];
+      params.encodings[0].maxBitrate = 6000000;                  // 码率上限 6 Mbps
+      params.encodings[0].maxFramerate = 60;                     // 最高 60 帧
+      params.degradationPreference = 'maintain-resolution';      // 带宽不足时优先保分辨率
+      sender.setParameters(params).catch(function () { /* 忽略 */ });
+    } catch (err) {
+      // 个别内核不支持参数微调，忽略即可
+    }
+  }
+
+  /**
+   * 为一位观众创建 PeerConnection 并发送 Offer（主播发、观众收的 sendonly 连接）
+   * @param {string} viewerId 服务端分配的观众编号
+   */
+  function createViewerPeer(viewerId) {
+    if (!viewerId) return;
+    closeHostViewerPeer(viewerId);
+
+    var pc;
+    try {
+      pc = new RTCPeerConnection({ iceServers: state.iceServers });
+    } catch (err) {
+      state.lastError = '当前内核不支持多路 WebRTC 推流';
+      sendStatus();
+      return;
+    }
+
+    /** 该观众的连接信息 */
+    var entry = { pc: pc, audioSender: null, videoSender: null, pendingCandidates: [] };
+
+    entry.audioSender = pc.addTransceiver('audio', { direction: 'sendonly' }).sender;
+    entry.videoSender = pc.addTransceiver('video', { direction: 'sendonly' }).sender;
+
+    // 先挂上当前轨道，再创建 Offer，观众一连接即可看到画面
+    var audioTrack = getActiveAudioTrack();
+    if (audioTrack) entry.audioSender.replaceTrack(audioTrack).catch(function () { /* 忽略 */ });
+    var videoTrack = state.cameraStream ? state.cameraStream.getVideoTracks()[0] : null;
+    if (videoTrack) entry.videoSender.replaceTrack(videoTrack).catch(function () { /* 忽略 */ });
+
+    pc.onicecandidate = function (event) {
+      if (event.candidate) {
+        sendSignal({ type: 'host:viewer-signal', viewerId: viewerId, data: { candidate: event.candidate } });
+      }
+    };
+
+    pc.onconnectionstatechange = function () {
+      if (pc.connectionState === 'failed' || pc.connectionState === 'closed') {
+        closeHostViewerPeer(viewerId);
+        sendStatus();
+      }
+    };
+
+    state.viewerPeers.set(viewerId, entry);
+
+    pc.createOffer()
+      .then(function (offer) { return pc.setLocalDescription(offer); })
+      .then(function () {
+        tuneVideoSender(entry.videoSender);
+        sendSignal({ type: 'host:viewer-signal', viewerId: viewerId, data: { sdp: pc.localDescription } });
+      })
+      .catch(function (err) {
+        state.lastError = '创建观众推流失败：' + (err && err.message ? err.message : '未知错误');
+        closeHostViewerPeer(viewerId);
+        sendStatus();
+      });
+  }
+
+  /**
+   * 处理观众回传的 Answer / ICE
+   * @param {string} viewerId 观众编号
+   * @param {object} data 信令数据
+   */
+  async function handleViewerAnswer(viewerId, data) {
+    var entry = state.viewerPeers.get(viewerId);
+    if (!entry || !data) return;
+    var pc = entry.pc;
+
+    if (data.sdp) {
+      try {
+        await pc.setRemoteDescription(new RTCSessionDescription(data.sdp));
+        entry.pendingCandidates.forEach(function (candidate) {
+          pc.addIceCandidate(new RTCIceCandidate(candidate)).catch(function () { /* 忽略 */ });
+        });
+        entry.pendingCandidates = [];
+        syncViewerMedia();
+      } catch (err) {
+        // 观众已离开时设置远端描述会失败，忽略即可
+      }
+      return;
+    }
+
+    if (data.candidate) {
+      if (!pc.remoteDescription) {
+        entry.pendingCandidates.push(data.candidate);
+        return;
+      }
+      pc.addIceCandidate(new RTCIceCandidate(data.candidate)).catch(function () { /* 忽略 */ });
+    }
+  }
+
+  /**
+   * 释放单个观众的 P2P 连接
+   * @param {string} viewerId 观众编号
+   */
+  function closeHostViewerPeer(viewerId) {
+    var entry = state.viewerPeers.get(viewerId);
+    if (!entry) return;
+    try { entry.pc.close(); } catch (err) { /* 忽略 */ }
+    state.viewerPeers.delete(viewerId);
+  }
+
+  /**
+   * 释放所有观众的 P2P 连接
+   */
+  function closeAllViewerPeers() {
+    state.viewerPeers.forEach(function (entry) {
+      try { entry.pc.close(); } catch (err) { /* 忽略 */ }
+    });
+    state.viewerPeers.clear();
+  }
+
+  /* ================= 主播端：手机麦克风配对 ================= */
+
+  /**
+   * 主播端主动向手机端发送 Offer（只接收音频，不发送本机媒体）
+   */
+  function createAppOffer() {
+    closeAppPeer();
+    if (!state.ws || state.ws.readyState !== WebSocket.OPEN) return;
+
+    var pc;
+    try {
+      pc = new RTCPeerConnection({ iceServers: state.iceServers });
+    } catch (err) {
+      state.lastError = '当前内核不支持手机麦克风连接';
+      sendStatus();
+      return;
+    }
+    state.appPc = pc;
+    pc.addTransceiver('audio', { direction: 'recvonly' });
+
+    pc.onicecandidate = function (event) {
+      if (event.candidate) sendSignal({ type: 'host:signal', data: { candidate: event.candidate } });
+    };
+
+    pc.ontrack = function (event) {
+      // 手机音频到达后合并成一条流，并立即同步给所有观众
+      if (!state.appStream) state.appStream = new MediaStream();
+      var exists = state.appStream.getTracks().some(function (track) { return track.id === event.track.id; });
+      if (!exists) state.appStream.addTrack(event.track);
+      event.track.addEventListener('ended', function () {
+        try { state.appStream.removeTrack(event.track); } catch (err) { /* 忽略 */ }
+        syncViewerMedia();
+        sendStatus();
+      });
+      syncViewerMedia();
+      updateMonitorSource();
+      sendStatus();
+    };
+
+    pc.onconnectionstatechange = function () {
+      var status = pc.connectionState;                    // 手机麦克风 P2P 连接状态
+      if (status === 'connected') {
+        state.peerConnected = true;
+        state.lastError = '';
+        sendStatus();
+      } else if (status === 'failed' || status === 'disconnected' || status === 'closed') {
+        state.peerConnected = false;
+        sendStatus();
+      }
+    };
+
+    pc.createOffer()
+      .then(function (offer) { return pc.setLocalDescription(offer); })
+      .then(function () {
+        sendSignal({ type: 'host:signal', data: { sdp: pc.localDescription } });
+      })
+      .catch(function (err) {
+        state.lastError = '手机麦克风连接失败：' + (err && err.message ? err.message : '未知错误');
+        sendStatus();
+      });
+  }
+
+  /**
+   * 处理手机端回传的 Answer / ICE
+   * @param {object} data 信令数据
+   */
+  async function handleHostAppSignal(data) {
+    if (!state.appPc || !data) return;
+    var pc = state.appPc;
+
+    if (data.candidate) {
+      if (!pc.remoteDescription) {
+        state.appCandidates.push(data.candidate);
+        return;
+      }
+      pc.addIceCandidate(new RTCIceCandidate(data.candidate)).catch(function () { /* 忽略 */ });
+      return;
+    }
+
+    if (data.sdp) {
+      try {
+        await pc.setRemoteDescription(new RTCSessionDescription(data.sdp));
+        state.appCandidates.forEach(function (candidate) {
+          pc.addIceCandidate(new RTCIceCandidate(candidate)).catch(function () { /* 忽略 */ });
+        });
+        state.appCandidates = [];
+      } catch (err) {
+        // 手机已断开时设置远端描述会失败，忽略即可
+      }
+    }
+  }
+
+  /**
+   * 释放手机麦克风连接
+   */
+  function closeAppPeer() {
+    state.appCandidates = [];
+    state.peerConnected = false;
+    if (state.appPc) {
+      try { state.appPc.close(); } catch (err) { /* 忽略 */ }
+      state.appPc = null;
+    }
+    state.appStream = null;
+  }
+
+  /* ================= 主播端：设备管理 ================= */
+
+  /**
+   * 静默枚举一次设备（不弹权限）并同步给原生外壳
+   */
+  async function syncDeviceList() {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) return;
+    try {
+      state.devices = await navigator.mediaDevices.enumerateDevices();
+    } catch (err) {
+      state.devices = [];
+    }
+    sendStatus();
+  }
+
+  /**
+   * 刷新设备列表：先申请一次权限解锁设备名称，再重新枚举并重启采集
+   */
+  async function refreshDevices() {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      state.lastError = '当前内核不支持媒体设备访问';
+      sendStatus();
+      return;
+    }
+    try {
+      var temp = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+      temp.getTracks().forEach(function (track) { track.stop(); });
+    } catch (err) {
+      try {
+        var tempAudio = await navigator.mediaDevices.getUserMedia({ audio: true });
+        tempAudio.getTracks().forEach(function (track) { track.stop(); });
+      } catch (err2) {
+        state.lastError = err2 && err2.name === 'NotAllowedError'
+          ? '麦克风权限被拒绝，请在系统中允许桌面客户端访问麦克风'
+          : ('无法访问麦克风：' + (err2 && err2.message ? err2.message : '未知错误'));
+        sendStatus();
+        return;
+      }
+    }
+
+    try {
+      state.devices = await navigator.mediaDevices.enumerateDevices();
+    } catch (err) {
+      state.devices = [];
+    }
+
+    // 设备名称解锁后重新开始采集，保证换设备立即生效
+    await startCamera();
+    await startMic();
+    state.lastError = '';
+    sendStatus();
+  }
+
+  /**
+   * 切换摄像头设备
+   * @param {string} deviceId 设备 id（空字符串表示系统默认）
+   */
+  async function setCameraDevice(deviceId) {
+    state.cameraId = deviceId || '';
+    if (state.cameraEnabled) await startCamera();
+    sendStatus();
+    return true;
+  }
+
+  /**
+   * 切换麦克风设备
+   * @param {string} deviceId 设备 id（空字符串表示系统默认）
+   */
+  async function setMicDevice(deviceId) {
+    state.micId = deviceId || '';
+    await startMic();
+    if (state.source === 'local') syncViewerMedia();
+    updateMonitorSource();
+    sendStatus();
+    return true;
+  }
+
+  /**
+   * 开关摄像头（关闭后只推音频）
+   * @param {boolean} enabled 是否开启
+   */
+  async function setCameraEnabled(enabled) {
+    state.cameraEnabled = !!enabled;
+    if (state.cameraEnabled) {
+      await startCamera();
+    } else {
+      stopCamera();
+      frame.srcObject = null;
+    }
+    sendStatus();
+    return true;
+  }
+
+  /* ================= 主播端：监听 / 镜像 / 填充 ================= */
+
+  /**
+   * 当前音源变化后重新挂载监听音频
+   */
+  function updateMonitorSource() {
+    if (!state.monitorOn || !monitorAudio) return;
+    var stream = getActiveAudioStream();
+    if (monitorAudio.srcObject !== stream) monitorAudio.srcObject = stream || null;
+    if (stream) monitorAudio.play().catch(function () { /* 自动播放被拦截时静默忽略 */ });
+  }
+
+  /**
+   * 开启 / 关闭扬声器监听
+   * @param {boolean} enabled 是否开启
+   * @returns {boolean} 是否成功
+   */
+  function setMonitor(enabled) {
+    if (!monitorAudio) return false;
+    if (!enabled) {
+      stopMonitor();
+      sendStatus();
+      return true;
+    }
+    var stream = getActiveAudioStream();
+    if (!stream) {
+      state.lastError = '当前音源尚未就绪，无法开启监听';
+      sendStatus();
+      return false;
+    }
+    state.monitorOn = true;
+    monitorAudio.srcObject = stream;
+    monitorAudio.play().catch(function () {
+      state.lastError = '监听播放被系统拦截，请重试';
+      sendStatus();
+    });
+    sendStatus();
+    return true;
+  }
+
+  /**
+   * 停止扬声器监听
+   */
+  function stopMonitor() {
+    state.monitorOn = false;
+    if (monitorAudio) {
+      monitorAudio.pause();
+      monitorAudio.srcObject = null;
+    }
+  }
+
+  /**
+   * 本地预览镜像（仅主播端）
+   * @param {boolean} enabled 是否镜像
+   */
+  function setMirror(enabled) {
+    state.mirror = !!enabled;
+    frame.style.transform = state.mirror ? 'scaleX(-1)' : '';
+    sendStatus();
+    return true;
+  }
+
+  /**
+   * 画面填充方式
+   * @param {'contain'|'cover'} mode contain 完整显示 / cover 铺满裁切
+   */
+  function setFit(mode) {
+    state.fit = mode === 'cover' ? 'cover' : 'contain';
+    frame.style.objectFit = state.fit;
+    sendStatus();
+    return true;
+  }
+
+  /* ================= 主播端：开播 / 下播 / 配对控制 ================= */
+
+  /**
+   * 开播：加入频道并开始向观众推流
+   */
+  function startLive() {
+    if (state.mode !== 'host' || state.started) return false;
+    state.lastError = '';
+    state.manualClose = false;
+    connectHost();
+    return true;
+  }
+
+  /**
+   * 下播：断开频道、释放观众与手机端，但保留本地预览
+   */
+  function stopLive() {
+    if (state.mode !== 'host') return false;
+    closeHostSocket();
+    closeAllViewerPeers();
+    closeAppPeer();
+    state.started = false;
+    state.liveActive = false;
+    state.hostOnline = false;
+    state.token = '';
+    state.appConnected = false;
+    state.peerConnected = false;
+    state.signal = 'offline';
+    stopMonitor();
+    sendStatus();
+    return true;
+  }
+
+  /**
+   * 重新生成手机配对令牌（旧令牌与已配对的手机端立即失效）
+   */
+  function refreshToken() {
+    sendSignal({ type: 'host:refresh-token' });
+    return true;
+  }
+
+  /**
+   * 断开已配对的手机端
+   */
+  function kickApp() {
+    sendSignal({ type: 'host:kick' });
+    return true;
+  }
+
+  /* ================= 主播端：本机摄像头 / 麦克风 ================= */
+
+  /**
+   * 启动摄像头预览（同时作为推流画面源）
+   */
+  async function startCamera() {
+    if (!state.cameraEnabled) return;
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      state.lastError = '当前内核不支持摄像头采集';
+      sendStatus();
+      return;
+    }
+    stopCamera();
+
+    var deviceId = state.cameraId;                             // 指定摄像头 id，空表示系统默认
+    var baseVideo = deviceId ? { deviceId: { exact: deviceId } } : {};   // 设备约束
+    var attempts = [
+      { video: Object.assign({ width: { ideal: 1920 }, height: { ideal: 1080 }, frameRate: { ideal: 60, max: 60 } }, baseVideo) },
+      { video: Object.assign({ width: { ideal: 1280 }, height: { ideal: 720 }, frameRate: { ideal: 30 } }, baseVideo) },
+      { video: true }
+    ];
+    var stream = null;
+    for (var i = 0; i < attempts.length && !stream; i++) {
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ video: attempts[i].video, audio: false });
+      } catch (err) {
+        stream = null;
+      }
+    }
+    if (!stream) {
+      state.lastError = '摄像头启动失败，请检查设备是否被其他程序占用';
+      sendStatus();
+      return;
+    }
+
+    state.cameraStream = stream;
+    var videoTrack = stream.getVideoTracks()[0];               // 摄像头视频轨道
+    var currentStream = stream;                                // 本次采集的流，供 ended 回调判断
+    if (videoTrack) {
+      if ('contentHint' in videoTrack) {
+        try { videoTrack.contentHint = 'detail'; } catch (e) { /* 忽略 */ }
+      }
+      // 摄像头被拔出或被其他程序抢占时轨道会 ended，短暂等待后自动重试一次
+      videoTrack.addEventListener('ended', function () {
+        if (state.cameraStream !== currentStream) return;
+        state.cameraStream = null;
+        syncViewerMedia();
+        var now = Date.now();                                  // 当前时间戳，用于限制重试频率
+        if (now - state.cameraRetryAt > 5000) {
+          state.cameraRetryAt = now;
+          setTimeout(function () {
+            if (!state.cameraStream) startCamera();
+          }, 1200);
+        }
+      });
+    }
+
+    if (frame.srcObject !== stream) frame.srcObject = stream;
+    frame.play().catch(function () { /* 静音视频自动播放失败时忽略 */ });
+    state.lastError = '';
+    syncViewerMedia();
+    sendStatus();
+  }
+
+  /**
+   * 停止摄像头并释放设备
+   */
+  function stopCamera() {
+    var oldStream = state.cameraStream;
+    state.cameraStream = null;
+    if (oldStream) oldStream.getTracks().forEach(function (track) { track.stop(); });
+    if (frame && state.mode === 'host') frame.srcObject = null;
+    syncViewerMedia();
+  }
+
+  /**
+   * 启动本机麦克风采集（主播端默认音源）
+   */
+  async function startMic() {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return;
+    stopMic();
+    var deviceId = state.micId;                                // 指定麦克风 id，空表示系统默认
+    var baseAudio = deviceId ? { deviceId: { exact: deviceId } } : {};   // 设备约束
+    try {
+      var stream = await navigator.mediaDevices.getUserMedia({
+        audio: Object.assign({
+          echoCancellation: false,     // 关闭回声消除，保留原始声音
+          noiseSuppression: false,     // 关闭降噪
+          autoGainControl: false       // 关闭自动增益
+        }, baseAudio)
+      });
+      state.micStream = stream;
+    } catch (err) {
+      try {
+        var fallback = await navigator.mediaDevices.getUserMedia({ audio: true });
+        state.micStream = fallback;
+      } catch (err2) {
+        state.lastError = '麦克风启动失败：' + (err2 && err2.message ? err2.message : '未知错误');
+        sendStatus();
+        return;
+      }
+    }
+    syncViewerMedia();
+    sendStatus();
+  }
+
+  /**
+   * 停止本机麦克风采集
+   */
+  function stopMic() {
+    if (state.micStream) {
+      state.micStream.getTracks().forEach(function (track) { track.stop(); });
+      state.micStream = null;
+    }
+  }
+
+  /* ================= 主播端：电脑声音（原生 WASAPI 环回） ================= */
+
+  /**
+   * 开启原生系统声音采集
+   * 流程：页面请求开始 → 原生回报 started → 原生持续回传 PCM 分块
+   * @returns {Promise<boolean>} 是否成功开始
+   */
+  function startNativeSystemAudio() {
+    if (!NATIVE_BRIDGE) return Promise.resolve(false);
+    if (nativeAudio.active && nativeAudio.dest) return Promise.resolve(true);
+    try {
+      if (!nativeAudio.ctx) {
+        nativeAudio.ctx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (!nativeAudio.dest) {
+        nativeAudio.dest = nativeAudio.ctx.createMediaStreamDestination();
+      }
+      nativeAudio.active = true;
+      nativeAudio.nextTime = 0;
+    } catch (err) {
+      nativeAudio.active = false;
+      return Promise.resolve(false);
+    }
+
+    return new Promise(function (resolve) {
+      var settled = false;                        // 防止超时与回报重复结算
+      var timer = setTimeout(function () {
+        if (settled) return;
+        settled = true;
+        nativeAudio.pendingStart = null;
+        state.lastError = '系统声音采集启动超时';
+        sendStatus();
+        resolve(false);
+      }, 3000);
+      nativeAudio.pendingStart = function (ok) {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timer);
+        nativeAudio.pendingStart = null;
+        resolve(ok);
+      };
+      var resume = nativeAudio.ctx.state === 'suspended' ? nativeAudio.ctx.resume() : Promise.resolve();
+      resume.catch(function () { /* 忽略 */ }).then(function () {
+        NATIVE_BRIDGE.postMessage({ type: 'live:system-audio-start' });
+      });
+    });
+  }
+
+  /**
+   * 停止原生系统声音采集并释放页面侧音频资源
+   */
+  function stopNativeSystemAudio() {
+    if (NATIVE_BRIDGE) {
+      try { NATIVE_BRIDGE.postMessage({ type: 'live:system-audio-stop' }); } catch (err) { /* 忽略 */ }
+    }
+    if (nativeAudio.pendingStart) nativeAudio.pendingStart(false);
+    nativeAudio.active = false;
+    nativeAudio.nextTime = 0;
+    if (nativeAudio.dest) {
+      try {
+        nativeAudio.dest.stream.getTracks().forEach(function (track) { track.stop(); });
+      } catch (err) { /* 忽略 */ }
+      try { nativeAudio.dest.disconnect(); } catch (err) { /* 忽略 */ }
+      nativeAudio.dest = null;
+    }
+    if (nativeAudio.ctx) {
+      try { nativeAudio.ctx.close(); } catch (err) { /* 忽略 */ }
+      nativeAudio.ctx = null;
+    }
+  }
+
+  /**
+   * 把原生端回传的一段 PCM16 数据排程播放，形成连续的「电脑声音」音轨
+   * @param {{data: string, sampleRate: number, channels: number}} msg 原生消息
+   */
+  function pushNativePcmChunk(msg) {
+    if (!nativeAudio.active || !nativeAudio.ctx || !nativeAudio.dest) return;
+    var sampleRate = msg.sampleRate || nativeAudio.sampleRate || 48000;   // 原生采样率
+    var channels = msg.channels || nativeAudio.channels || 2;             // 声道数
+    var bytes = base64ToBytes(msg.data);                                  // PCM16 字节
+    var total = Math.floor(bytes.length / 2);                             // 采样点总数
+    if (channels <= 0 || total <= 0 || total % channels !== 0) return;
+    var frames = total / channels;                                        // 每声道帧数
+    var pcm = new Int16Array(bytes.buffer, bytes.byteOffset, total);      // 16 位采样
+    var buffer = nativeAudio.ctx.createBuffer(channels, frames, sampleRate);
+    for (var c = 0; c < channels; c++) {
+      var data = buffer.getChannelData(c);
+      for (var i = 0; i < frames; i++) data[i] = pcm[i * channels + c] / 32768;
+    }
+    var now = nativeAudio.ctx.currentTime;                                // 当前播放时间
+    // 队列落后（刚启动或卡顿）时重新对齐，避免一次性补播大量积压音频
+    if (nativeAudio.nextTime < now + 0.04 || nativeAudio.nextTime > now + 1) {
+      nativeAudio.nextTime = now + 0.04;
+    }
+    var source = nativeAudio.ctx.createBufferSource();
+    source.buffer = buffer;
+    source.connect(nativeAudio.dest);
+    source.start(nativeAudio.nextTime);
+    nativeAudio.nextTime += buffer.duration;
+  }
+
+  /**
+   * 处理原生外壳回传的消息（系统声音采集结果与 PCM 分块）
+   * @param {MessageEvent} event WebView2 消息事件
+   */
+  function handleNativeMessage(event) {
+    var msg = event.data;
+    if (!msg || !msg.type) return;
+
+    if (msg.type === 'live:system-audio-started') {
+      nativeAudio.sampleRate = msg.sampleRate || 48000;
+      nativeAudio.channels = msg.channels || 2;
+      if (nativeAudio.pendingStart) nativeAudio.pendingStart(true);
+      return;
+    }
+    if (msg.type === 'live:system-audio-failed') {
+      state.lastError = '系统声音采集失败：' + (msg.message || '未知错误');
+      if (nativeAudio.pendingStart) nativeAudio.pendingStart(false);
+      sendStatus();
+      return;
+    }
+    if (msg.type === 'live:system-audio-chunk') {
+      pushNativePcmChunk(msg);
+      return;
+    }
+    if (msg.type === 'live:system-audio-ended') {
+      // 原生采集被系统终止：清理并回退到本机麦克风
+      stopNativeSystemAudio();
+      if (state.source === 'computer') {
+        state.source = 'local';
+        state.computerStream = null;
+        state.lastError = '系统声音采集已停止，已切换回本机麦克风';
+        syncViewerMedia();
+        sendStatus();
+      }
+    }
+  }
+
+  /**
+   * 采集电脑声音（桌面客户端内直接使用原生 WASAPI 环回）
+   * @returns {Promise<boolean>} 是否成功拿到系统声音轨道
+   */
+  async function startComputerAudio() {
+    if (!NATIVE_BRIDGE) {
+      state.lastError = '当前环境不支持采集电脑声音，请使用桌面客户端';
+      sendStatus();
+      return false;
+    }
+    var ok = await startNativeSystemAudio();
+    if (!ok) return false;
+    state.computerStream = nativeAudio.dest ? nativeAudio.dest.stream : null;
+    state.lastError = '';
+    return !!state.computerStream;
+  }
+
+  /**
+   * 停止电脑声音采集并释放资源
+   */
+  function stopComputerAudio() {
+    stopNativeSystemAudio();
+    if (state.computerStream) {
+      state.computerStream.getTracks().forEach(function (track) { track.stop(); });
+      state.computerStream = null;
+    }
+  }
+
+  /* ================= 对外控制接口（原生外壳调用） ================= */
+
+  /**
+   * 切换音源（仅主播端有效）：本机麦克风 / 手机麦克风 / 电脑声音
+   * @param {'local'|'app'|'computer'} source 目标音源
+   * @returns {Promise<boolean>} 是否切换成功
+   */
+  async function setSource(source) {
+    if (state.mode !== 'host') return false;
+    if (source === 'computer') {
+      var ok = await startComputerAudio();
+      if (!ok) {
+        sendStatus();
+        return false;
+      }
+      state.source = 'computer';
+    } else if (source === 'app') {
+      stopComputerAudio();
+      state.source = 'app';
+      if (!state.appConnected) state.lastError = '手机端尚未配对，请先扫码连接';
+    } else {
+      stopComputerAudio();
+      state.source = 'local';
+      state.lastError = '';
+    }
+    syncViewerMedia();
+    updateMonitorSource();
+    sendStatus();
+    return true;
+  }
+
+  /**
+   * 切换频道：关闭当前连接后以同一模式重新加入新频道
+   * @param {string} channel 目标频道（ch1~ch4）
+   */
+  function switchChannel(channel) {
+    if (CHANNELS.indexOf(channel) < 0 || channel === state.channel) return;
+    state.channel = channel;
+    state.lastError = '';
+    if (state.mode === 'host') {
+      closeHostSocket();
+      closeAllViewerPeers();
+      closeAppPeer();
+      state.signal = 'connecting';
+      state.started = false;
+      state.token = '';
+      state.appConnected = false;
+      state.peerConnected = false;
+      state.source = state.source === 'app' ? 'local' : state.source;
+      stopMonitor();
+      sendStatus();
+      connectHost();
+    } else {
+      closeViewerSocket();
+      closeViewerPeer();
+      state.signal = 'connecting';
+      state.hostOnline = false;
+      sendStatus();
+      connectViewer();
+    }
+  }
+
+  /**
+   * 停止全部连接与设备采集（原生外壳退出页面时调用）
+   */
+  function teardown() {
+    state.manualClose = true;
+    clearTimer('reconnect');
+    clearTimer('join');
+    if (state.ws) {
+      try { state.ws.close(); } catch (err) { /* 忽略 */ }
+      state.ws = null;
+    }
+    if (state.mode === 'host') {
+      closeAllViewerPeers();
+      closeAppPeer();
+      stopCamera();
+      stopMic();
+      stopComputerAudio();
+      stopMonitor();
+    } else {
+      closeViewerPeer();
+    }
+  }
+
+  // 暴露给原生外壳的控制接口
+  window.MXMedia = {
+    mode: state.mode,                                    // 当前模式：host / view
+    setChannel: switchChannel,                           // 切换频道
+    setSource: setSource,                                // 切换主播音源
+    startLive: startLive,                                // 开播
+    stopLive: stopLive,                                  // 下播
+    refreshDevices: refreshDevices,                      // 刷新设备列表
+    setCameraDevice: setCameraDevice,                    // 切换摄像头
+    setMicDevice: setMicDevice,                          // 切换麦克风
+    setCameraEnabled: setCameraEnabled,                  // 开关摄像头
+    setMonitor: setMonitor,                              // 开关扬声器监听
+    setMirror: setMirror,                                // 本地预览镜像
+    setFit: setFit,                                      // 画面填充方式
+    refreshToken: refreshToken,                          // 重新生成配对令牌
+    kickApp: kickApp,                                    // 断开手机端
+    stop: teardown,                                      // 释放全部资源
+    getState: function () {                              // 读取当前状态（调试用）
+      return {
+        mode: state.mode,
+        channel: state.channel,
+        signal: state.signal,
+        hostOnline: state.hostOnline,
+        viewers: state.viewerPeers.size,
+        source: state.source,
+        hasVideo: hasLiveVideo(),
+        error: state.lastError || '',
+        token: state.token,
+        started: state.started,
+        appConnected: state.appConnected,
+        peerConnected: state.peerConnected,
+        cameraEnabled: state.cameraEnabled,
+        monitorOn: state.monitorOn,
+        mirror: state.mirror,
+        fit: state.fit
+      };
+    }
+  };
+
+  /* ================= 启动 ================= */
+
+  // 画面出现/消失时同步状态，便于原生外壳展示「画面已就绪」
+  frame.addEventListener('playing', sendStatus);
+  frame.addEventListener('loadedmetadata', sendStatus);
+  frame.addEventListener('emptied', sendStatus);
+
+  // 画面区域内按 ESC：把按键交给原生外壳处理（WebView2 内的键盘事件不会冒泡到 WPF）
+  window.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape') postToNative({ type: 'media:key', key: 'Escape' });
+  });
+
+  /**
+   * 读取服务端 STUN 配置（失败时保留默认配置，不影响局域网直连）
+   */
+  function loadServerInfo() {
+    if (!window.fetch) return Promise.resolve();
+    return fetch(API + '/info')
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        if (data && Array.isArray(data.iceServers)) state.iceServers = data.iceServers;
+      })
+      .catch(function () {
+        // 普通用户访问 /live/api/info 会被角色守卫拦截，忽略即可
+      });
+  }
+
+  // 绑定原生桥消息（浏览器内打开时自动跳过）
+  if (NATIVE_BRIDGE) NATIVE_BRIDGE.addEventListener('message', handleNativeMessage);
+
+  // 页面卸载时释放采集与连接，避免后台持续占用摄像头 / 麦克风
+  window.addEventListener('pagehide', teardown);
+
+  loadServerInfo().then(function () {
+    if (state.mode === 'host') startHost();
+    else connectViewer();
+    sendStatus();
+  });
+})();
+</script>
+</body>
+</html>

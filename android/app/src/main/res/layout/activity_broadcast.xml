@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 广播器页面骨架：顶栏（返回 / 标题 / 连接状态 / 刷新）+ 内容区
+     内容区由 BroadcastActivity 在控制台与频道收听页之间切换 -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/mx_surface">
+
+    <!-- 顶栏外壳：负责状态栏安全区（wrap_content + paddingTop），
+         内层固定 56dp，保证系统栏变高时按钮与标题不被压缩 -->
+    <LinearLayout
+        android:id="@+id/layout_topbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/mx_surface">
+
+        <!-- 顶栏内容：与主界面一致的 56dp 高度 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="8dp"
+            android:paddingEnd="4dp">
+
+            <!-- 用户头像（左对齐）：点击弹出用户菜单 -->
+            <FrameLayout
+                android:id="@+id/layout_topbar_avatar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center" />
+
+            <!-- 返回按钮：在收听页时回到控制台，在控制台时退出页面 -->
+            <ImageButton
+                android:id="@+id/btn_back"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/action_back"
+                android:src="@drawable/ic_back"
+                app:tint="@color/mx_on_surface" />
+
+            <!-- 标题：控制台显示「明星广播器」，收听页显示频道名 -->
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:text="@string/broadcast_title"
+                android:textColor="@color/mx_on_surface"
+                android:textSize="17sp"
+                android:textStyle="bold" />
+
+            <!-- 连接状态圆点：已连接为主题色，断开为浅灰 -->
+            <View
+                android:id="@+id/view_conn"
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/bg_dot_off" />
+
+            <!-- 刷新按钮：重新拉取频道状态与音频列表 -->
+            <ImageButton
+                android:id="@+id/btn_refresh"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/broadcast_refresh"
+                android:src="@drawable/ic_refresh"
+                app:tint="@color/mx_on_surface" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- 内容区：控制台 / 收听页由代码填充 -->
+    <FrameLayout
+        android:id="@+id/layout_content"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@color/mx_login_bg" />
+</LinearLayout>

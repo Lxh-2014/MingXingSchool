@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 网络安全配置：开发阶段允许明文 HTTP，方便连接局域网开发服务器 -->
+<network-security-config>
+    <!-- cleartextTrafficPermitted=true 允许 http:// 请求；上线改用 HTTPS 后请改为 false -->
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <!-- 信任系统证书 -->
+            <certificates src="system" />
+            <!-- 信任用户安装的证书（便于抓包调试，上线可移除） -->
+            <certificates src="user" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>

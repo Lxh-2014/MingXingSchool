@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>明星学校</title>
+<!-- 全站国际化框架（window.I18n + 语言包 API），必须在页面其它脚本之前加载 -->
+<script src="/assets/i18n.js"></script>
+<!-- 标签页图标：商店专属图标 -->
+<link rel="icon" type="image/png" href="/assets/home/shop.png">
+<!-- 全站唯一样式表（CSS 已全部在 all.css 中，含商店 .sp- 前缀段） -->
+<link rel="stylesheet" href="/assets/all.css?v=0.48">
+</head>
+<body class="sp-app">
+
+<!-- 页面骨架：全部 UI 由 page-shop.js 渲染进 #root（无内嵌样式、无静态结构） -->
+<div id="root"></div>
+
+<!-- 平台公共 UI（Toast 兜底、悬浮工具条、头像菜单自动挂载） -->
+<script src="/assets/common-ui.js?v=0.2"></script>
+<!-- 明星商店主逻辑：renderShell() 注入骨架 + 路由分发 + 所有视图渲染 -->
+<script src="/assets/page-shop.js?v=0.2"></script>
+</body>
+</html>

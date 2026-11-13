@@ -1,0 +1,182 @@
+[
+  {
+    "createdAt": "2026-11-01T10:42:08.177Z",
+    "reads": {
+      "0": "2026-11-06T15:54:27.732Z",
+      "Lxh2014": "2026-11-08T07:10:49.567Z",
+      "Teacher-LiuXiaoyue": "2026-11-07T07:25:57.394Z",
+      "LiuXiaoyue": "2026-11-08T09:41:04.288Z",
+      "00010301": "2026-11-08T04:21:14.823Z"
+    },
+    "id": "cmvxpaj74baed",
+    "type": "group",
+    "title": "老师群",
+    "members": [
+      "Lxh2014",
+      "LiuXiaoyue",
+      "00010301"
+    ],
+    "ownerId": "Lxh2014",
+    "settings": {
+      "muteAll": true,
+      "rateLimit": 0,
+      "joinMode": "verify"
+    },
+    "prefs": {
+      "0": {
+        "pinned": false,
+        "muted": false,
+        "blocked": false,
+        "remark": "",
+        "clearedAt": "",
+        "identity": {
+          "role": "班主任",
+          "subject": "语文",
+          "nickname": "刘潇月",
+          "childName": "",
+          "relation": ""
+        }
+      },
+      "Lxh2014": {
+        "pinned": false,
+        "muted": false,
+        "blocked": false,
+        "remark": "",
+        "clearedAt": "",
+        "identity": {
+          "role": "老师",
+          "subject": "数学",
+          "nickname": "数大小",
+          "childName": "",
+          "relation": ""
+        }
+      },
+      "Teacher-LiuXiaoyue": {
+        "pinned": false,
+        "muted": false,
+        "blocked": false,
+        "remark": "",
+        "clearedAt": "",
+        "identity": {
+          "role": "班主任",
+          "subject": "语文",
+          "nickname": "刘潇月",
+          "childName": "",
+          "relation": ""
+        }
+      },
+      "LiuXiaoyue": {
+        "pinned": false,
+        "muted": false,
+        "blocked": false,
+        "remark": "",
+        "clearedAt": "",
+        "identity": {
+          "role": "班主任",
+          "subject": "语文",
+          "nickname": "刘潇月",
+          "childName": "",
+          "relation": ""
+        }
+      }
+    }
+  },
+  {
+    "createdAt": "2026-11-07T07:36:47.457Z",
+    "reads": {
+      "LiuXiaoyue": "2026-11-08T10:00:04.610Z",
+      "Lxh2014": "2026-11-08T07:09:30.422Z",
+      "00010302": "2026-11-07T10:39:11.108Z",
+      "00010301": "2026-11-08T04:21:14.218Z"
+    },
+    "id": "cmw63bae8vnxy",
+    "type": "group",
+    "title": "1级3班",
+    "members": [
+      "LiuXiaoyue",
+      "Lxh2014",
+      "00010301",
+      "00010302",
+      "00010303",
+      "00010304",
+      "00010305",
+      "00010306",
+      "00010307"
+    ],
+    "ownerId": "LiuXiaoyue",
+    "prefs": {
+      "LiuXiaoyue": {
+        "pinned": false,
+        "muted": false,
+        "blocked": false,
+        "remark": "",
+        "clearedAt": "",
+        "identity": {
+          "role": "班主任",
+          "subject": "语文",
+          "nickname": "刘潇月",
+          "childName": "",
+          "relation": ""
+        }
+      },
+      "Lxh2014": {
+        "pinned": true,
+        "muted": false,
+        "blocked": false,
+        "remark": "",
+        "clearedAt": "",
+        "identity": {
+          "role": "老师",
+          "subject": "数学",
+          "nickname": "数大小",
+          "childName": "",
+          "relation": ""
+        }
+      },
+      "00010302": {
+        "pinned": false,
+        "muted": false,
+        "blocked": false,
+        "remark": "",
+        "clearedAt": "",
+        "identity": {
+          "role": "家委",
+          "subject": "",
+          "nickname": "",
+          "childName": "星星",
+          "relation": "爸爸"
+        }
+      },
+      "00010301": {
+        "pinned": false,
+        "muted": false,
+        "blocked": false,
+        "remark": "",
+        "clearedAt": "",
+        "identity": {
+          "role": "学生",
+          "subject": "",
+          "nickname": "涵猫",
+          "childName": "",
+          "relation": ""
+        }
+      }
+    },
+    "announcement": ""
+  },
+  {
+    "createdAt": "2026-11-07T10:04:22.020Z",
+    "reads": {
+      "00010302": "2026-11-07T10:36:05.106Z",
+      "LiuXiaoyue": "2026-11-08T01:41:23.245Z"
+    },
+    "id": "cmw68l2mclgp6",
+    "type": "c2c",
+    "title": "刘潇月",
+    "members": [
+      "00010302",
+      "LiuXiaoyue"
+    ],
+    "ownerId": "00010302"
+  }
+]

@@ -1,0 +1,50 @@
+[
+  {
+    "id": "psmwdb57eplldd",
+    "user_id": "BaiWuchang",
+    "subject_id": "sub-yw",
+    "lesson_id": "les-yw-1",
+    "total_questions": 3,
+    "correct_count": 3,
+    "time_spent": 22,
+    "correct_rate": 100,
+    "completed_at": "2026-11-12T08:50:23.809Z",
+    "record_id": "prmwdb57enknyo",
+    "user_name": "白无常",
+    "subject_name": "语文",
+    "unit_name": "第一单元 · 字词积累",
+    "lesson_name": "生字认读"
+  },
+  {
+    "id": "psmwdhy7240gj8",
+    "user_id": "BaiWuchang",
+    "subject_id": "sub-yw",
+    "lesson_id": null,
+    "total_questions": 5,
+    "correct_count": 1,
+    "time_spent": 18,
+    "correct_rate": 20,
+    "completed_at": "2026-11-12T12:00:54.076Z",
+    "record_id": "prmwdhy6yt8x2o",
+    "user_name": "白无常",
+    "subject_name": "语文",
+    "unit_name": null,
+    "lesson_name": null
+  },
+  {
+    "id": "psmwdhz3krj6fd",
+    "user_id": "BaiWuchang",
+    "subject_id": "sub-yw",
+    "lesson_id": null,
+    "total_questions": 5,
+    "correct_count": 0,
+    "time_spent": 36,
+    "correct_rate": 0,
+    "completed_at": "2026-11-12T12:01:36.219Z",
+    "record_id": "prmwdhz3k2jw1e",
+    "user_name": "白无常",
+    "subject_name": "语文",
+    "unit_name": null,
+    "lesson_name": null
+  }
+]

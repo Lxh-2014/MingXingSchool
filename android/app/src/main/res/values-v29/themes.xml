@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android 10 (API 29) 起：关闭系统栏自动对比度叠加。
+     若不关闭，系统会在浅色状态栏/导航栏（小白条）区域再叠一层半透明遮罩，
+     导致该区域与页面相邻背景出现色差，表现为"系统栏没适配好"。 -->
+<resources>
+    <style name="Theme.MingxingSchool" parent="Base.Theme.MingxingSchool">
+        <item name="android:enforceStatusBarContrast">false</item>
+        <item name="android:enforceNavigationBarContrast">false</item>
+    </style>
+</resources>

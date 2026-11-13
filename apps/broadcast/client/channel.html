@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>明星学校</title>
+  <link rel="icon" type="image/png" href="/assets/home/broadcast.png">
+<!-- 挂载到明星学校 /broadcast：所有相对资源基于此路径解析 -->
+<base href="/broadcast/">
+<!-- 全站唯一样式表（原 12 个 CSS 合并，绝对路径避开 <base href> 重写） -->
+<link rel="stylesheet" href="/assets/all.css?v=0.48">
+<!-- 全站国际化框架：语言包加载完成后再初始化页面（绝对路径避开 <base href> 重写） -->
+<script src="/assets/i18n.js?v=0.1"></script>
+<script>
+  // 防首屏闪白：在 CSS 加载前就读 localStorage，立即给 <body> 加 dark-mode。
+  (function(){
+    var saved = null;
+    try { saved = localStorage.getItem('darkMode'); } catch(e){}
+    var isDark = saved !== null ? saved === 'true'
+                : window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (isDark) document.write('<body class="bc-app dark-mode">');
+    else document.write('<body class="bc-app">');
+  })();
+</script>
+</head>
+<body>
+
+<div class="toast-container" id="toast-container"></div>
+
+<!-- 顶栏 -->
+<header class="channel-header">
+  <a class="back" href="./">
+    <span class="icon" id="back-icon"></span>
+    <span data-i18n="broadcast.channel.back">返回控制台</span>
+  </a>
+  <div class="connect-status">
+    <span class="status-dot connecting" id="status-dot"></span>
+    <span id="status-text" data-i18n="broadcast.status.connecting">连接中…</span>
+  </div>
+</header>
+
+<main class="channel-main">
+  <div class="large-card">
+    <div class="channel-icon" id="card-icon"></div>
+    <h1 class="channel-name" id="card-name">—</h1>
+    <span class="badge idle status-badge" id="card-badge" data-i18n="broadcast.status.idle">空闲</span>
+    <div class="now-playing" id="card-now" data-i18n="broadcast.channel.waiting">等待投放…</div>
+    <div class="now-hint" id="card-hint" data-i18n="broadcast.channel.hintIdle">收听该频道，接收控制台投放的音频</div>
+    <div class="player-ui" id="player-ui">
+      <span class="icon" id="player-icon"></span>
+    </div>
+  </div>
+</main>
+
+<!-- 真实播放元素：永久隐藏，不占位 -->
+<audio id="audio" preload="auto" playsinline crossorigin="anonymous"></audio>
+
+<!-- 首次解锁遮罩：用户点一下 → 给 audio 元素绑定播放许可（先静音预热再恢复） -->
+<div class="unlock-overlay" id="unlock-overlay">
+  <div class="unlock-card">
+    <span class="icon" id="unlock-icon"></span>
+    <h2 data-i18n="broadcast.channel.unlockTitle">点击开始收听</h2>
+    <p data-i18n="broadcast.channel.unlockDesc">浏览器策略要求首次点击后才能播放声音。点击一下，后续就会自动同步了。</p>
+  </div>
+</div>
+
+<!-- 被拦截后常驻浮层：显示「点击继续播放」 -->
+<div class="blocked-float hidden" id="blocked-float">
+  <p data-i18n="broadcast.channel.blockedText">浏览器阻止了自动播放，点击继续播放</p>
+  <button class="btn btn-column2" id="blocked-btn" data-i18n="broadcast.channel.continuePlay">
+    继续播放
+  </button>
+</div>
+
+<script src="js/icons.js?v=0.32"></script>
+<script src="js/common.js?v=0.32"></script>
+<script defer src="js/channel.js?v=0.32"></script>
+<!-- 平台公共 UI 骨架：favicon / Toast / 悬浮工具条（全站共用，一处维护） -->
+<script src="/assets/common-ui.js"></script>
+</body>
+</html>

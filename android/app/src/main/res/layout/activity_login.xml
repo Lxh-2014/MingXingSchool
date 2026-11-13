@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 登录页布局：内容垂直居中，外层 ScrollView 保证键盘弹出时仍可滚动到输入框。
+     已去掉卡片“底板”，Logo、输入框、按钮直接铺在背景上。 -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/mx_login_bg"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <!-- Logo：直接使用网页端同一张校徽图（自带蓝色圆角背景） -->
+        <ImageView
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_gravity="center_horizontal"
+            android:contentDescription="@string/login_logo_desc"
+            android:scaleType="fitCenter"
+            android:src="@drawable/logo" />
+
+        <!-- 主标题 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:text="@string/login_title"
+            android:textColor="@color/mx_primary"
+            android:textSize="28sp"
+            android:textStyle="bold" />
+
+        <!-- 副标题 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="20dp"
+            android:text="@string/login_subtitle"
+            android:textColor="@color/mx_on_surface_variant"
+            android:textSize="14sp" />
+
+        <!-- 姓名输入框：带浮动标签与聚焦变色边框 -->
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/login_account_hint"
+            app:boxBackgroundColor="@color/mx_input_bg"
+            app:boxStrokeColor="@color/input_box_stroke"
+            app:hintTextColor="@color/mx_primary">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_username"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionNext"
+                android:inputType="text"
+                android:maxLines="1"
+                android:textColor="@color/mx_on_surface"
+                android:textColorHint="@color/mx_on_surface_variant" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- 学号输入框：密码模式，右侧提供明文切换按钮 -->
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:hint="@string/login_password_hint"
+            app:boxBackgroundColor="@color/mx_input_bg"
+            app:boxStrokeColor="@color/input_box_stroke"
+            app:endIconMode="password_toggle"
+            app:hintTextColor="@color/mx_primary">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionDone"
+                android:inputType="textPassword"
+                android:maxLines="1"
+                android:textColor="@color/mx_on_surface"
+                android:textColorHint="@color/mx_on_surface_variant" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- 错误提示：默认隐藏，登录失败时显示服务端返回的中文原因 -->
+        <TextView
+            android:id="@+id/tv_error"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:gravity="center"
+            android:textColor="@color/mx_error"
+            android:textSize="14sp"
+            android:visibility="gone"
+            tools:text="姓名或学号错误"
+            tools:visibility="visible" />
+
+        <!-- 登录按钮：直接使用 Material 3 原生 Button 样式，不覆盖背景、圆角与文字颜色 -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_login"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/login_button" />
+    </LinearLayout>
+</ScrollView>

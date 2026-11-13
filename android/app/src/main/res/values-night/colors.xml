@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 深色模式色板：取自 public/assets/all.css 的 body.dark-mode 变量 -->
+<resources>
+    <!-- 深色下主色保持不变，保证品牌识别 -->
+    <color name="mx_primary">#4A90E2</color>
+    <color name="mx_on_primary">#FFFFFF</color>
+    <!-- 深色下的主色容器 -->
+    <color name="mx_primary_container">#1B2A3C</color>
+    <color name="mx_on_primary_container">#D6E9FF</color>
+
+    <!-- 深色页面背景 -->
+    <color name="mx_login_bg">#17181A</color>
+    <!-- 深色卡片背景 -->
+    <color name="mx_surface">#1A1B1F</color>
+    <!-- 深色主要文字 -->
+    <color name="mx_on_surface">#EAEAEA</color>
+    <!-- 深色次要文字 -->
+    <color name="mx_on_surface_variant">#B8B8B8</color>
+
+    <!-- 深色输入框背景 -->
+    <color name="mx_input_bg">#1A1B1F</color>
+    <!-- 深色输入框边框 -->
+    <color name="mx_input_stroke">#242424</color>
+
+    <!-- 深色错误提示：提亮以提高对比度 -->
+    <color name="mx_error">#FF6B5E</color>
+
+    <!-- Logo 底色与启动图标背景：与校徽图保持一致，不随主题变化 -->
+    <color name="mx_logo_bg">#0066FF</color>
+
+    <!-- 在线/已连接状态指示色：深色下略微提亮，保证辨识度 -->
+    <color name="mx_online">#3DDC84</color>
+</resources>

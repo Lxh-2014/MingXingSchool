@@ -1,0 +1,35 @@
+{
+  "groups": [
+    {
+      "id": "default",
+      "name": "我的好友"
+    },
+    {
+      "id": "family",
+      "name": "家人"
+    },
+    {
+      "id": "classmate",
+      "name": "同学"
+    },
+    {
+      "id": "colleague",
+      "name": "同事"
+    },
+    {
+      "id": "stranger",
+      "name": "陌生人"
+    },
+    {
+      "id": "block",
+      "name": "黑名单"
+    }
+  ],
+  "friends": {
+    "LiuXiaoyue": {
+      "groupId": "default",
+      "remark": "语文-刘潇月",
+      "blocked": false
+    }
+  }
+}

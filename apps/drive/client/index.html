@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>明星学校</title>
+    <!-- 挂载到明星学校 /drive：所有相对资源基于此路径解析 -->
+    <base href="/drive/">
+    <link rel="icon" href="assets/icon.png" type="image/png">
+    <!-- 全站唯一样式表（原 12 个 CSS 合并，绝对路径避开 <base href> 重写） -->
+    <link rel="stylesheet" href="/assets/all.css?v=0.48">
+    <!-- 全站 i18n：与主站共用语言偏好，标签页标题统一为站点名 -->
+    <script src="/assets/i18n.js?v=0.1"></script>
+    <link rel="assets" href="files/">
+</head>
+<body class="dc-app">
+    <div id="app"></div>
+    <script src="js/app.js?v=0.2"></script>
+
+<!-- 悬浮工具条已抽至平台公共骨架 /assets/common-ui.js（全站共用，一处维护） -->
+<script src="/assets/common-ui.js"></script>
+</body>
+</html>

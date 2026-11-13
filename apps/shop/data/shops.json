@@ -1,0 +1,59 @@
+[
+  {
+    "id": "smvmiq44xxwj4",
+    "name": "明星文具",
+    "description": "",
+    "category": "文具",
+    "image": "",
+    "emoji": "🏬",
+    "isOpen": true,
+    "ownerId": "Lxh2014",
+    "seized": false,
+    "seizeInfo": null
+  },
+  {
+    "id": "smvnu7c9dtk28",
+    "name": "明星零食",
+    "description": "",
+    "category": "零食饮品",
+    "image": "",
+    "emoji": "🏬",
+    "isOpen": true,
+    "ownerId": "Lxh2014",
+    "seized": false,
+    "seizeInfo": null
+  },
+  {
+    "id": "smvnu9ebyxnk0",
+    "name": "日用百货",
+    "description": "",
+    "category": "日用",
+    "image": "",
+    "emoji": "🏬",
+    "isOpen": true,
+    "ownerId": "Lxh2014",
+    "seized": false,
+    "seizeInfo": null
+  },
+  {
+    "id": "smvuzux1rgv53",
+    "name": "啥都木有",
+    "description": "",
+    "category": "综合",
+    "image": "/shop/uploads/mvuzuvtj-i18er9.jpg",
+    "emoji": "🏬",
+    "isOpen": false,
+    "ownerId": "2",
+    "seized": true,
+    "seizeInfo": {
+      "grade": "一",
+      "className": "3",
+      "deadline": "0001-10-07",
+      "issues": [
+        "乱卖"
+      ],
+      "at": "2026-10-30T18:32:17.459Z"
+    },
+    "seizedAt": "2026-10-30T18:32:17.459Z"
+  }
+]
