@@ -1,4 +1,9 @@
-# ---------- Node.js ----------
+# ==========================================================
+# 明星学校项目 .gitignore
+# 说明：项目包含 Node 服务、apps 子应用、Android(Gradle)、Windows(WPF)
+# ==========================================================
+
+# ---------- Node.js 依赖与构建产物 ----------
 node_modules/
 npm-debug.log*
 yarn-debug.log*
@@ -9,16 +14,15 @@ lerna-debug.log*
 .npm-cache/
 coverage/
 .nyc_output/
-*.tsbuildinfo
-*.tgz
 .eslintcache
 .cache/
 .parcel-cache/
 .vite/
-.next/
-.nuxt/
+.turbo/
 dist/
 out/
+*.tgz
+*.tsbuildinfo
 
 # ---------- 环境变量与密钥（禁止提交） ----------
 .env
@@ -28,8 +32,9 @@ out/
 *.key
 *.crt
 *.pfx
+*.p12
 
-# ---------- 文档与证书目录（含 HTTPS 私钥，禁止提交） ----------
+# ---------- 文档与证书目录（docs 内含 HTTPS 私钥，整体忽略） ----------
 docs/
 
 # ---------- 打包发布产物（apk / exe 安装包） ----------
@@ -38,55 +43,39 @@ application/
 # ---------- 运行时数据（含用户信息、邮件账号等敏感配置） ----------
 server/data/
 !server/data/.gitkeep
+apps/im/data/qq-config.json
 
-# ---------- 网盘应用的用户上传文件（体积达数 GB，不纳入版本管理） ----------
+# ---------- 网盘用户上传文件（体积可达数 GB） ----------
 apps/drive/files/
+
+# ---------- AI 工具生成的分享包（可随时重新生成） ----------
+.trae-html-share-packages/
 
 # ---------- 日志 ----------
 *.log
 logs/
 debug.log
 
-# ---------- 临时与缓存 ----------
+# ---------- 临时文件与调试缓存 ----------
 .tmp/
 .temp/
-.trae/tmp/
 .screenshots/
+*.bak
+*.orig
+*.rej
+*.pid
 
-# ---------- Android / Gradle ----------
-android/.gradle/
-android/build/
-android/app/build/
-android/app/release/
-android/captures/
-android/.cxx/
-android/local.properties
-android/*.jks
-android/*.keystore
-*.apk
-*.aab
-*.ap_
-*.dex
-
-# ---------- Windows / .NET (WPF) ----------
-windows/bin/
-windows/obj/
-windows/publish/
-windows/**/bin/
-windows/**/obj/
-windows/**/publish/
+# ---------- Android 端 / Windows 桌面端（按要求整体屏蔽，不纳入版本管理） ----------
+android/
+windows/
 .vs/
 *.user
-*.suo
-*.userosscache
-*.sln.docstates
-*.nupkg
-packages/
 TestResults/
 
 # ---------- 数据库文件 ----------
 *.db
 *.sqlite
+*.sqlite3
 
 # ---------- IDE / 编辑器 ----------
 .idea/
@@ -94,7 +83,7 @@ TestResults/
 *.swp
 *.swo
 
-# ---------- 设计稿 ----------
+# ---------- 设计稿与 AI 工具缓存 ----------
 .figma/
 .trae/
 
@@ -103,8 +92,3 @@ TestResults/
 Thumbs.db
 Desktop.ini
 ehthumbs.db
-
-# ---------- 其他 ----------
-*.bak
-*.orig
-*.rej
