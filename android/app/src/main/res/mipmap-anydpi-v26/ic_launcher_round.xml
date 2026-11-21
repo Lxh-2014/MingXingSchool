@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Android 8.0+ 圆形自适应图标（部分启动器使用），与方形图标共用同一套颜色与前景 -->
-<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
-    <background android:drawable="@color/mx_logo_bg" />
-    <foreground android:drawable="@drawable/ic_launcher_foreground" />
-</adaptive-icon>

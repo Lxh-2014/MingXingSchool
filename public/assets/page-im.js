@@ -799,7 +799,6 @@
             '<div class="im-new-menu" id="imNewMenu">' +
               '<button data-act="c2c"><span class="im-new-menu-icon">' + ICON_CHAT + '</span><span>' + imT('im.shell.newC2c', '发起单聊') + '</span></button>' +
               '<button data-act="group"><span class="im-new-menu-icon">' + ICON_GROUP_PLUS + '</span><span>' + imT('im.shell.newGroup', '新建群聊') + '</span></button>' +
-              '<button data-act="friends"><span class="im-new-menu-icon">' + ICON_USER_PLUS + '</span><span>' + imT('im.friends.entry', '新朋友') + '</span></button>' +
             '</div>' +
           '</div>' +
           '<div class="im-conv-list" id="imConvList"></div>' +
@@ -1017,8 +1016,7 @@
       if (!btn) return;
       dom.newMenu.classList.remove('show');
       var act = btn.getAttribute('data-act');
-      if (act === 'friends') openFriendsPage();
-      else openModal(act);
+      openModal(act);
     });
     document.addEventListener('click', function () {
       if (dom.newMenu) dom.newMenu.classList.remove('show');     // 点空白处收起菜单
@@ -1074,14 +1072,12 @@
       if (!btn) return;
       var tab = btn.getAttribute('data-tab');
       if (tab === 'new') {
-        switchMode('chat');
+        highlightContactsTab('new');                            // 保持联系人模式，左侧人形图标高亮
         openFriendsPage();
         return;
       }
       state.contactTab = tab;
-      Array.prototype.forEach.call(dom.contactsTabs.querySelectorAll('[data-tab]'), function (b) {
-        b.classList.toggle('active', b === btn);
-      });
+      highlightContactsTab(tab);
       renderContacts();
     });
 
@@ -1692,6 +1688,18 @@
     dom.chatTitle.textContent = conv
       ? convLabel(conv)
       : imT('im.common.conversation', '会话');
+    highlightContactsTab(state.contactTab || 'friends');       // 底部 tab 高亮从「新朋友」恢复
+  }
+
+  /**
+   * 仅切换联系人页底部 tab 的高亮样式（不触发列表渲染）
+   * @param {string} tab 目标 tab：friends / groups / new
+   */
+  function highlightContactsTab(tab) {
+    if (!dom.contactsTabs) return;
+    Array.prototype.forEach.call(dom.contactsTabs.querySelectorAll('[data-tab]'), function (b) {
+      b.classList.toggle('active', b.getAttribute('data-tab') === tab);
+    });
   }
 
   /**

@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- 浅色模式下状态栏使用深色图标，保证在淡蓝背景上可见 -->
-<resources>
-    <bool name="mx_light_status_bar">true</bool>
-</resources>

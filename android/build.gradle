@@ -1,5 +1,0 @@
-// 顶层构建脚本：只声明插件版本，具体配置见 app/build.gradle
-plugins {
-    // Android Gradle Plugin：选择 8.2.0（与 Gradle 8.8、JDK 17 兼容）
-    id 'com.android.application' version '8.2.0' apply false
-}

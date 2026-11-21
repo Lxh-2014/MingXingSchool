@@ -5301,7 +5301,7 @@ body.im-app #root { height: 100vh; display: flex; }
 .im-search-empty-text { font-size: 14px; }
 /* 新朋友（好友申请页）：覆盖整个聊天区，顶部标题复用全局顶栏 */
 .im-friends-page {
-  position: absolute; inset: 0; z-index: 6;
+  position: absolute; inset: 0; z-index: 7;   /* 高于联系人资料页（6），避免被遮挡 */
   display: none; flex-direction: column;
   background: var(--bg-color);
 }
